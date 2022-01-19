@@ -1,46 +1,88 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"strings"
+	"github.com/small-ek/ant-cli/cmd"
+	"github.com/urfave/cli/v2"
+	"log"
+	"os"
 )
 
-var name = flag.Int("name", 1, "学生的姓名")
-
-var major string
-
-func init() {
-	const (
-		defaultMajor = "计算机"
-		usage        = "学生的专业"
-	)
-	flag.StringVar(&major, "major", "1212", usage)
-	flag.StringVar(&major, "m", "122112", usage+" (简写)")
-}
-
-type Classmates []string
-
-func (i *Classmates) String() string {
-	return fmt.Sprint(*i)
-}
-
-func (i *Classmates) Set(value string) error {
-	for _, dt := range strings.Split(value, ",") {
-		*i = append(*i, dt)
-	}
-	return nil
-}
-
-var mates Classmates
-
-func init() {
-	flag.Var(&mates, "class", "逗号分隔的同学列表")
+type Func struct {
+	Env cmd.Env
 }
 
 func main() {
-	flag.Parse()
-	fmt.Println("name ", *name)
-	fmt.Println("major ", major)
-	fmt.Println("classmates ", mates)
+	funcs := Func{}
+	app := &cli.App{
+		Name:    "ant-cli",
+		Usage:   "Used to build antgo projects",
+		Version: "1.0.0",
+		Flags: []cli.Flag{
+
+		},
+		Action: func(c *cli.Context) error {
+			//fmt.Println(c.String("lang"))
+			//fmt.Println(c.String("aaa"))
+			return nil
+		},
+		Commands: []*cli.Command{
+			{
+				Name:    "install",
+				Aliases: []string{"i"},
+				Usage:   "Install ant binary to system environment variables (requires run permission)",
+				Action: func(c *cli.Context) error {
+					fmt.Println(c.Args().First())
+					return nil
+				},
+			},
+			{
+				Name:    "create",
+				Aliases: []string{"c"},
+				Usage:   "Create an Antgo application",
+				Action: func(c *cli.Context) error {
+					fmt.Println(c.Args().First())
+					return nil
+				},
+			},
+			{
+				Name:    "env",
+				Aliases: []string{"e"},
+				Usage:   "Show current Golang environment variables",
+				Action:  funcs.Env.Action,
+			},
+			{
+				Name:    "run",
+				Aliases: []string{"r"},
+				Usage:   "Run go code with hot compilation-like features",
+				Action: func(c *cli.Context) error {
+					fmt.Println(c.Args().First())
+					return nil
+				},
+			},
+			{
+				Name:    "build",
+				Aliases: []string{"r"},
+				Usage:   "Build Go projects cross-platform",
+				Action: func(c *cli.Context) error {
+					fmt.Println(c.Args().First())
+					return nil
+				},
+			},
+			{
+				Name:    "docker",
+				Aliases: []string{"r"},
+				Usage:   "Build a docker image for the current Antgo project",
+				Action: func(c *cli.Context) error {
+					fmt.Println(c.Args().First())
+					return nil
+				},
+			},
+		},
+	}
+
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
