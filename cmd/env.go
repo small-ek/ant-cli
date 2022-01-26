@@ -14,9 +14,12 @@ type Env struct {
 func (e Env) Action(c *cli.Context) error {
 	cmd := exec.Command("cmd")
 	in := bytes.NewBuffer(nil)
+
 	cmd.Stdin = in
 	var out bytes.Buffer
 	cmd.Stdout = &out
+	data, _ := cmd.Output()
+	log.Println(data)
 	go func() {
 		// start stop restart
 		in.WriteString("go env\n") //写入你的命令，可以有多行，"\n"表示回车
