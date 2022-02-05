@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/small-ek/ant-cli/cmd"
 	"github.com/urfave/cli/v2"
@@ -13,14 +14,14 @@ type Func struct {
 }
 
 func main() {
+	log.SetFlags(log.Llongfile | log.LstdFlags)
+	flag.Parse()
 	funcs := Func{}
 	app := &cli.App{
 		Name:    "ant-cli",
 		Usage:   "Used to build antgo projects",
 		Version: "1.0.0",
-		Flags: []cli.Flag{
-
-		},
+		Flags:   []cli.Flag{},
 		Action: func(c *cli.Context) error {
 			//fmt.Println(c.String("lang"))
 			//fmt.Println(c.String("aaa"))
