@@ -8,10 +8,10 @@ import (
 	"strings"
 )
 
-type Env struct {
+type Create struct {
 }
 
-func (e Env) Action(c *cli.Context) error {
+func (e Create) Action(c *cli.Context) error {
 	result, err := aexec.ShellExec("go env")
 	if err != nil {
 		log.Println(err)

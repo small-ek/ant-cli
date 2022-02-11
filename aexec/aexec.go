@@ -2,7 +2,6 @@ package aexec
 
 import (
 	"bytes"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -174,7 +173,6 @@ func SearchBinaryPath(file string) string {
 			}
 		}
 	}
-	log.Println(array)
 	return ""
 }
 

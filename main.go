@@ -10,7 +10,8 @@ import (
 )
 
 type Func struct {
-	Env cmd.Env
+	Env    cmd.Env
+	Create cmd.Create
 }
 
 func main() {
@@ -32,10 +33,7 @@ func main() {
 				Name:    "install",
 				Aliases: []string{"i"},
 				Usage:   "Install ant binary to system environment variables (requires run permission)",
-				Action: func(c *cli.Context) error {
-					fmt.Println(c.Args().First())
-					return nil
-				},
+				Action:  funcs.Create.Action,
 			},
 			{
 				Name:    "create",
