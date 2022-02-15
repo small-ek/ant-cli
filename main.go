@@ -33,16 +33,16 @@ func main() {
 				Name:    "install",
 				Aliases: []string{"i"},
 				Usage:   "Install ant binary to system environment variables (requires run permission)",
-				Action:  funcs.Create.Action,
+				Action:  func(c *cli.Context) error {
+					fmt.Println(c.Args().First())
+					return nil
+				},
 			},
 			{
 				Name:    "create",
 				Aliases: []string{"c"},
 				Usage:   "Create an Antgo application",
-				Action: func(c *cli.Context) error {
-					fmt.Println(c.Args().First())
-					return nil
-				},
+				Action: funcs.Create.Action,
 			},
 			{
 				Name:    "env",
