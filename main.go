@@ -33,7 +33,7 @@ func main() {
 				Name:    "install",
 				Aliases: []string{"i"},
 				Usage:   "Install ant binary to system environment variables (requires run permission)",
-				Action:  func(c *cli.Context) error {
+				Action: func(c *cli.Context) error {
 					fmt.Println(c.Args().First())
 					return nil
 				},
@@ -42,7 +42,7 @@ func main() {
 				Name:    "create",
 				Aliases: []string{"c"},
 				Usage:   "Create an Antgo application",
-				Action: funcs.Create.Action,
+				Action:  funcs.Create.Action,
 			},
 			{
 				Name:    "env",
@@ -61,7 +61,7 @@ func main() {
 			},
 			{
 				Name:    "build",
-				Aliases: []string{"r"},
+				Aliases: []string{"b"},
 				Usage:   "Build Go projects cross-platform",
 				Action: func(c *cli.Context) error {
 					fmt.Println(c.Args().First())
@@ -70,7 +70,7 @@ func main() {
 			},
 			{
 				Name:    "docker",
-				Aliases: []string{"r"},
+				Aliases: []string{"d"},
 				Usage:   "Build a docker image for the current Antgo project",
 				Action: func(c *cli.Context) error {
 					fmt.Println(c.Args().First())
@@ -80,8 +80,7 @@ func main() {
 		},
 	}
 
-	err := app.Run(os.Args)
-	if err != nil {
+	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
 }
