@@ -5,16 +5,11 @@ func Config(name string) string {
 [system]
 #启动地址
 address = ":9000"
-#权限配置路径
-rbac_path = "./config/rbac.conf"
 #是否开启跨域
-cors = true
+cors = false
 #是否开发调试模式
 debug = true
 
-#权限配置文件目录
-[casbin]
-path = "rbac.conf"
 
 #接口请求日志
 [log]
@@ -31,11 +26,11 @@ console = true
 #是否开启日志
 switch = true
 #文件最长保存时间(天)
-max_age = 30
+max_age = 180
 #分割大小(MB)
-max_size = 1
+max_size = 10
 #保留30个备份(个)
-max_backups = 300
+max_backups = 5000
 #是否需要压缩
 compress = false
 
@@ -50,11 +45,11 @@ hostname = "127.0.0.1"
 #服务器端口
 port = "3306"
 #数据库用户名
-username = "root"
+username = ""
 #数据库密码
-password = "root"
+password = ""
 #数据库名
-database = "test"
+database = ""
 #数据库连接参数
 params = "charset=utf8mb4&parseTime=True&loc=Local"
 #是否开启日志
@@ -69,18 +64,18 @@ bucket = ""
 
 #Redis配置
 [[redis]]
-name="redis1"
-address = "localhost:6379"
+name=""
+address = ""
 password = ""
 db = 0
 
-#邮箱警报发送
+#邮箱
 [emaill]
 switch = true
-to = ['56494565@qq.com']
-from = '56494565@qq.com'
-host = 'smtp.qq.com:25'
-secret = 'fdtshicbbvybbiic'
+to = ['']
+from = ''
+host = ''
+secret = ''
 
 #Json web token
 [jwt]

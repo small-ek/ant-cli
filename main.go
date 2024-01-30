@@ -7,6 +7,8 @@ import (
 	"github.com/urfave/cli/v2"
 	"log"
 	"os"
+	"os/exec"
+	"runtime"
 )
 
 type Func struct {
@@ -34,7 +36,25 @@ func main() {
 				Aliases: []string{"i"},
 				Usage:   "Install ant binary to system environment variables (requires run permission)",
 				Action: func(c *cli.Context) error {
-					fmt.Println(c.Args().First())
+
+					commandStr := "go mod tidy"
+					var cmd *exec.Cmd
+
+					if runtime.GOOS == "windows" {
+						cmd = exec.Command("cmd.exe", "/C", commandStr)
+					} else {
+						cmd = exec.Command("sh", "-c", commandStr)
+					}
+
+					// Run the command and get the output
+					output, err := cmd.CombinedOutput()
+					if err != nil {
+						panic(err)
+					}
+
+					// Print the output
+					fmt.Println(string(output))
+
 					return nil
 				},
 			},

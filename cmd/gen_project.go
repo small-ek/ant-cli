@@ -15,12 +15,6 @@ type TreePath struct {
 }
 
 func GenGo(app string) {
-	// 确保父目录存在
-	//if err := os.MkdirAll(app, os.ModePerm); err != nil {
-	//	fmt.Println("Error occurs when creating the root director:", err)
-	//	return
-	//}
-
 	projectTree := TreePath{
 		Name: app,
 		Child: []TreePath{
@@ -29,7 +23,12 @@ func GenGo(app string) {
 				Name: "app",
 				Child: []TreePath{
 					{Name: "dao"},
-					{Name: "http"},
+					{Name: "http", Child: []TreePath{
+						{Name: "base.go", Template: template.Base(app)},
+						{Name: "index", Child: []TreePath{
+							{Name: "index.go", Template: template.Index(app)},
+						}},
+					}},
 					{Name: "model"},
 					{Name: "request"},
 					{Name: "service"},
@@ -66,7 +65,8 @@ func GenGo(app string) {
 				Name: "log",
 				Child: []TreePath{
 					{
-						Name: "ant.log",
+						Name:     "ant.log",
+						Template: "",
 					},
 				},
 			},
@@ -82,49 +82,46 @@ func GenGo(app string) {
 		},
 	}
 
-	err := generateFiles("./", projectTree)
-	if err != nil {
-		fmt.Println("错误:", err)
-		return
-	}
-
+	createProjectTree(projectTree, ".")
+	fmt.Println("Successful creation " + app)
 	fmt.Println("cd " + app)
+	fmt.Println("go mod init " + app)
 	fmt.Println("go mod tidy")
 	fmt.Println("go mod vendor")
 }
 
-// generateFiles 生成代码
-func generateFiles(rootPath string, tree TreePath) error {
-	currentPath := filepath.Join(rootPath, tree.Name)
-	fmt.Println("--------------")
-	fmt.Println(rootPath)
-	fmt.Println(currentPath)
-	// 创建当前目录
-	if err := os.Mkdir(currentPath, os.ModePerm); err != nil && !os.IsExist(err) {
+func createProjectTree(node TreePath, parentPath string) {
+	currentPath := filepath.Join(parentPath, node.Name)
+	
+	err := os.MkdirAll(currentPath, os.ModePerm)
+	if err != nil {
+		fmt.Printf("Error creating directory %s: %v\n", currentPath, err)
+		return
+	}
+
+	for _, child := range node.Child {
+		if child.Template != "" || strings.Contains(child.Name, ".") {
+			filePath := filepath.Join(currentPath, child.Name)
+			err := writeFile(filePath, child.Template)
+			if err != nil {
+				fmt.Printf("Error creating file %s: %v\n", filePath, err)
+			}
+		} else {
+			createProjectTree(child, currentPath)
+		}
+	}
+}
+
+func writeFile(filePath, content string) error {
+	file, err := os.Create(filePath)
+	if err != nil {
 		return err
 	}
-	// 写入文件
-	if tree.Template != "" {
-		fileName := strings.ToLower(tree.Name) // 示例中文件名为小写的目录名
-		filePath := filepath.Join(currentPath, fileName)
-		fmt.Println(filePath)
-		file, err := os.Create(filePath)
-		if err != nil {
-			return err
-		}
-		defer file.Close()
-		// 写入模板内容
-		_, err = file.WriteString(tree.Template)
-		if err != nil {
-			return err
-		}
-		fmt.Printf("文件 %s 已成功创建。\n", filePath)
-	}
-	// 递归创建子目录
-	for _, child := range tree.Child {
-		if err := generateFiles(currentPath, child); err != nil {
-			return err
-		}
+	defer file.Close()
+
+	_, err = file.WriteString(content)
+	if err != nil {
+		return err
 	}
 
 	return nil
