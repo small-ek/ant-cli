@@ -14,6 +14,7 @@ import (
 type Func struct {
 	Env    cmd.Env
 	Create cmd.Create
+	Run    cmd.Run
 }
 
 func main() {
@@ -36,8 +37,7 @@ func main() {
 				Aliases: []string{"i"},
 				Usage:   "Install ant binary to system environment variables (requires run permission)",
 				Action: func(c *cli.Context) error {
-
-					commandStr := "go mod tidy"
+					commandStr := "go mod tidy && go mod vendor"
 					var cmd *exec.Cmd
 
 					if runtime.GOOS == "windows" {
@@ -46,14 +46,12 @@ func main() {
 						cmd = exec.Command("sh", "-c", commandStr)
 					}
 
-					// Run the command and get the output
-					output, err := cmd.CombinedOutput()
+					_, err := cmd.CombinedOutput()
 					if err != nil {
 						panic(err)
 					}
 
-					// Print the output
-					fmt.Println(string(output))
+					fmt.Println("Successful creation")
 
 					return nil
 				},
@@ -74,10 +72,7 @@ func main() {
 				Name:    "run",
 				Aliases: []string{"r"},
 				Usage:   "Run go code with hot compilation-like features",
-				Action: func(c *cli.Context) error {
-					fmt.Println(c.Args().First())
-					return nil
-				},
+				Action:  funcs.Run.Action,
 			},
 			{
 				Name:    "build",

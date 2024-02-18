@@ -19,6 +19,7 @@ func GenGo(app string) {
 		Name: app,
 		Child: []TreePath{
 			{Name: "main.go", Template: template.Main(app)},
+			{Name: "go.mod", Template: template.Mod(app)},
 			{
 				Name: "app",
 				Child: []TreePath{
@@ -85,14 +86,13 @@ func GenGo(app string) {
 	createProjectTree(projectTree, ".")
 	fmt.Println("Successful creation " + app)
 	fmt.Println("cd " + app)
-	fmt.Println("go mod init " + app)
-	fmt.Println("go mod tidy")
-	fmt.Println("go mod vendor")
+	fmt.Println("ant install")
+	fmt.Println("go run main.go")
 }
 
 func createProjectTree(node TreePath, parentPath string) {
 	currentPath := filepath.Join(parentPath, node.Name)
-	
+
 	err := os.MkdirAll(currentPath, os.ModePerm)
 	if err != nil {
 		fmt.Printf("Error creating directory %s: %v\n", currentPath, err)
