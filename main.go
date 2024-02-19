@@ -83,15 +83,6 @@ func main() {
 					return nil
 				},
 			},
-			{
-				Name:    "docker",
-				Aliases: []string{"d"},
-				Usage:   "Build a docker image for the current Antgo project",
-				Action: func(c *cli.Context) error {
-					fmt.Println(c.Args().First())
-					return nil
-				},
-			},
 		},
 	}
 
