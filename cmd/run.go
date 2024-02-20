@@ -22,7 +22,7 @@ var cmdString string // 保存当前正在运行的命令字符串
 
 func (e Run) Action(c *cli.Context) error {
 	main := c.Args().First()
-	commandStr := "go run " + main
+	commandStr := "go build -o main.exe " + main + "&& main.exe"
 	err := runApp(commandStr)
 	if err != nil {
 		fmt.Println(err)
@@ -47,7 +47,7 @@ func watchApp(commandStr string) {
 			// 处理文件变化事件
 			if event.Op&fsnotify.Write == fsnotify.Write {
 				log.Println("File modified:", event.Name)
-				time.Sleep(5 * time.Second)
+				//time.Sleep(5 * time.Second)
 
 				// 先停止监听端口
 				stopApp()
@@ -96,7 +96,10 @@ func runApp(commandStr string) error {
 		fmt.Println(err)
 		return err
 	}
-
+	//defer func() {
+	//	stdout.Close()
+	//	stderr.Close()
+	//}()
 	// 启动命令
 	err = cmd.Start()
 	if err != nil {
@@ -154,4 +157,5 @@ func stopApp() {
 	}
 	// 清空当前命令字符串
 	cmdString = ""
+
 }
