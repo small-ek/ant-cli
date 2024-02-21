@@ -2,19 +2,18 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"github.com/small-ek/ant-cli/cmd"
 	"github.com/urfave/cli/v2"
 	"log"
 	"os"
-	"os/exec"
-	"runtime"
 )
 
 type Func struct {
-	Env    cmd.Env
-	Create cmd.Create
-	Run    cmd.Run
+	Env     cmd.Env
+	Create  cmd.Create
+	Run     cmd.Run
+	Build   cmd.Build
+	Install cmd.Install
 }
 
 func main() {
@@ -36,25 +35,7 @@ func main() {
 				Name:    "install",
 				Aliases: []string{"i"},
 				Usage:   "Install ant binary to system environment variables (requires run permission)",
-				Action: func(c *cli.Context) error {
-					commandStr := "go mod tidy && go mod vendor"
-					var cmd *exec.Cmd
-
-					if runtime.GOOS == "windows" {
-						cmd = exec.Command("cmd.exe", "/C", commandStr)
-					} else {
-						cmd = exec.Command("sh", "-c", commandStr)
-					}
-
-					_, err := cmd.CombinedOutput()
-					if err != nil {
-						panic(err)
-					}
-
-					fmt.Println("Successful creation")
-
-					return nil
-				},
+				Action:  funcs.Install.Action,
 			},
 			{
 				Name:    "create",
@@ -78,10 +59,7 @@ func main() {
 				Name:    "build",
 				Aliases: []string{"b"},
 				Usage:   "Build Go projects cross-platform",
-				Action: func(c *cli.Context) error {
-					fmt.Println(c.Args().First())
-					return nil
-				},
+				Action:  funcs.Build.Action,
 			},
 		},
 	}
