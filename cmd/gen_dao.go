@@ -52,13 +52,22 @@ func (b GenDao) Action(c *cli.Context) error {
 
 	fmt.Println("type Admin struct {")
 	for _, col := range tableStructure {
-		fmt.Printf("    %s %s `json:\"%s\";form:\"%s\";comment:\"%s\"`\n", col.COLUMN_NAME, sqlToGoType(col.DATA_TYPE), col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_COMMENT)
+		fmt.Printf("    %s %s `json:\"%s\";form:\"%s\";comment:\"%s\"`\n", toCamelCase(col.COLUMN_NAME), sqlToGoType(col.DATA_TYPE), col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_COMMENT)
 	}
 	fmt.Println("}")
 	return nil
 }
 
-// sqlToGoType
+// toCamelCase 驼峰
+func toCamelCase(s string) string {
+	parts := strings.Split(s, "_")
+	for i := range parts {
+		parts[i] = strings.Title(parts[i])
+	}
+	return strings.Join(parts, "")
+}
+
+// sqlToGoType 数据库类型
 func sqlToGoType(sqlType string) string {
 	switch sqlType {
 	case "int", "tinyint", "smallint", "mediumint", "bigint":
