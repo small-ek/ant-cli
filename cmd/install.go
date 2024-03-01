@@ -25,7 +25,7 @@ func (e Install) Action(c *cli.Context) error {
 		panic(err)
 	}
 
-	fmt.Println("Successful creation")
+	fmt.Println("Successful installation")
 
 	return nil
 }

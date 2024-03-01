@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"github.com/small-ek/ant-cli/cmd"
 	"github.com/urfave/cli/v2"
 	"log"
@@ -15,7 +14,8 @@ type Func struct {
 	Run     cmd.Run
 	Build   cmd.Build
 	Install cmd.Install
-	Gen     cmd.Gen
+	GenDao  cmd.GenDao
+	GenApi  cmd.GenApi
 }
 
 func main() {
@@ -70,20 +70,14 @@ func main() {
 It is based on database generation controller, model, service, router, API`,
 				Subcommands: []*cli.Command{
 					{
-						Name:  "add",
-						Usage: "add a new template",
-						Action: func(cCtx *cli.Context) error {
-							fmt.Println("new task template: ", cCtx.Args().First())
-							return nil
-						},
+						Name:   "dao",
+						Usage:  "Automatically generate DAO and Model files for SQL",
+						Action: funcs.GenDao.Action,
 					},
 					{
-						Name:  "remove",
-						Usage: "remove an existing template",
-						Action: func(cCtx *cli.Context) error {
-							fmt.Println("removed task template: ", cCtx.Args().First())
-							return nil
-						},
+						Name:   "api",
+						Usage:  "Automatically generate API interface files for SQL",
+						Action: funcs.GenApi.Action,
 					},
 				},
 			},
