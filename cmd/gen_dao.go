@@ -52,7 +52,7 @@ func (b GenDao) Action(c *cli.Context) error {
 
 	fmt.Println("type Admin struct {")
 	for _, col := range tableStructure {
-		fmt.Printf("    %s %s `json:\"%s\";form:\"%s\";comment:\"%s\"`\n", toCamelCase(col.COLUMN_NAME), sqlToGoType(col.DATA_TYPE), col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_COMMENT)
+		fmt.Printf("    %s %s `json:\"%s\" form:\"%s\" comment:\"%s\"`\n", toCamelCase(col.COLUMN_NAME), sqlToGoType(col.DATA_TYPE), col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_COMMENT)
 	}
 	fmt.Println("}")
 	return nil
@@ -83,7 +83,7 @@ func sqlToGoType(sqlType string) string {
 	case "decimal", "float", "double":
 		return "float64"
 	case "json":
-		return "Json"
+		return "sql.Json"
 	default:
 		return "interface{}"
 	}
