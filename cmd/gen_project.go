@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/small-ek/ant-cli/template"
+	"github.com/small-ek/ant-cli/utils"
 	"os"
 	"path/filepath"
 	"strings"
@@ -102,7 +103,7 @@ func createProjectTree(node TreePath, parentPath string) {
 	for _, child := range node.Child {
 		if child.Template != "" || strings.Contains(child.Name, ".") {
 			filePath := filepath.Join(currentPath, child.Name)
-			err := writeFile(filePath, child.Template)
+			err := utils.WriteFile(filePath, child.Template)
 			if err != nil {
 				fmt.Printf("Error creating file %s: %v\n", filePath, err)
 			}
@@ -110,19 +111,4 @@ func createProjectTree(node TreePath, parentPath string) {
 			createProjectTree(child, currentPath)
 		}
 	}
-}
-
-func writeFile(filePath, content string) error {
-	file, err := os.Create(filePath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = file.WriteString(content)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
