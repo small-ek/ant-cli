@@ -9,7 +9,8 @@ import (
 )
 
 func IndexRoute(Router *gin.RouterGroup) {
-	Router.GET("/", new(index.IndexController).Index)
+	IndexController := new(index.IndexController)
+	Router.GET("/", IndexController.Index)
 }
 
 `
