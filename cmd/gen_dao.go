@@ -46,8 +46,10 @@ func (b GenDao) Action(c *cli.Context) error {
 	if len(tableStructure) == 0 {
 		return errors.New("Database or data table does not exist")
 	}
+	//生成Model
 	getModelStr := template.GenGormModel(tableStr[0], tableStr[1], tableStructure)
 	utils.WriteFile("./app/model/"+tableStr[1]+".go", getModelStr)
+	//生成Dao
 	getDaoStr := template.GenDao(tableStr[1])
 	utils.WriteFile("./app/dao/"+tableStr[1]+".go", getDaoStr)
 

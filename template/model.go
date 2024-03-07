@@ -29,13 +29,15 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 		if col.COLUMN_NAME == "deleted_at" || col.COLUMN_NAME == "delete_time" {
 			isImportDeletedAt = true
 		}
-
-		switch col.DATA_TYPE {
-		case "date", "datetime", "timestamp":
-			isImportDate = true
-		case "json":
-			isImportJson = true
+		if col.COLUMN_NAME != "deleted_at" && col.COLUMN_NAME != "delete_time" {
+			switch col.DATA_TYPE {
+			case "date", "datetime", "timestamp":
+				isImportDate = true
+			case "json":
+				isImportJson = true
+			}
 		}
+
 	}
 	buffer.WriteString(packageStr)
 	importStr := fmt.Sprintf("import (\n")
@@ -64,9 +66,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 	buffer.WriteString(structStr)
 	for _, col := range tableStructure {
 		if col.COLUMN_NAME == "id" {
-			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;primaryKey;autoIncrement;\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.COLUMN_NAME), sqlToGoType(col.DATA_TYPE, col.COLUMN_NAME), col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_COMMENT))
-		} else if col.COLUMN_NAME == "deleted_at" || col.COLUMN_NAME == "delete_time" {
-			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s,omitempty\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.COLUMN_NAME), sqlToGoType(col.DATA_TYPE, col.COLUMN_NAME), col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_COMMENT))
+			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;primaryKey;autoIncrement;\" uri:\"%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.COLUMN_NAME), sqlToGoType(col.DATA_TYPE, col.COLUMN_NAME), col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_COMMENT))
 		} else {
 			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.COLUMN_NAME), sqlToGoType(col.DATA_TYPE, col.COLUMN_NAME), col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_COMMENT))
 		}
