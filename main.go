@@ -9,13 +9,14 @@ import (
 )
 
 type Func struct {
-	Env     cmd.Env
-	Create  cmd.Create
-	Run     cmd.Run
-	Build   cmd.Build
-	Install cmd.Install
-	GenDao  cmd.GenDao
-	GenApi  cmd.GenApi
+	Env      cmd.Env
+	Create   cmd.Create
+	Run      cmd.Run
+	Build    cmd.Build
+	Install  cmd.Install
+	GenDao   cmd.GenDao
+	GenApi   cmd.GenApi
+	GenModel cmd.GenModel
 }
 
 func main() {
@@ -69,6 +70,11 @@ func main() {
 				Usage: `The "GEN" command is used for multiple generation purposes.
 It is based on database generation controller, model, service, router, API`,
 				Subcommands: []*cli.Command{
+					{
+						Name:   "model",
+						Usage:  "Automatically generate Model files for SQL",
+						Action: funcs.GenModel.Action,
+					},
 					{
 						Name:   "dao",
 						Usage:  "Automatically generate DAO and Model files for SQL",

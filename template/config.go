@@ -4,12 +4,13 @@ func Config(name string) string {
 	return `#系统配置
 [system]
 #启动地址
-address = ":9000"
+address = ":9001"
 #是否开启跨域
 cors = false
 #是否开发调试模式
 debug = true
-
+#默认数据库
+default_connections=""
 
 #接口请求日志
 [log]
