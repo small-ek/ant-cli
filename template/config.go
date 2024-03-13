@@ -4,13 +4,11 @@ func Config(name string) string {
 	return `#系统配置
 [system]
 #启动地址
-address = ":9001"
+address = "9001"
 #是否开启跨域
 cors = false
 #是否开发调试模式
 debug = true
-#默认数据库
-default_connections=""
 
 #接口请求日志
 [log]
@@ -35,10 +33,10 @@ max_backups = 5000
 #是否需要压缩
 compress = false
 
-#数据库设置1
+#数据库设置
 [[connections]]
 #数据库名称
-name = "mysql1"
+name = ""
 #数据库类型
 type = "mysql"
 #服务器地址
