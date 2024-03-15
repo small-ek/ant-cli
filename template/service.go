@@ -20,10 +20,13 @@ type ` + humpTable + ` struct {
 	req request.` + humpTable + `Request
 }
 
-func New` + humpTable + `Service(req request.` + humpTable + `Request) *` + humpTable + ` {
-	return &` + humpTable + `{
-		req: req,
-	}
+func New` + humpTable + `Service() *` + humpTable + ` {
+	return &` + humpTable + `{}
+}
+
+func (s *` + humpTable + `) SetReq(req request.` + humpTable + `Request) *` + humpTable + ` {
+	s.req = req
+	return s
 }
 
 // Index 分页

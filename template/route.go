@@ -8,19 +8,22 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/small-ek/antgo/os/config"
 	"github.com/small-ek/antgo/utils/gin_cors"
+	"github.com/small-ek/antgo/frame/middleware"
+	"io/ioutil"
 )
 
 func Router() *gin.Engine {
-	var app = gin.New()
-	app.Use(gin.Logger())
-	//跨域处理
-	if config.GetBool("system.cors") == true {
-		app.Use(gin_cors.Cors)
-	}
-
 	//开发者模式
 	if config.GetBool("system.debug") == false {
 		gin.SetMode(gin.ReleaseMode)
+		gin.DefaultWriter = ioutil.Discard
+	}
+	
+	var app = gin.New()
+	app.Use(gin.Logger()).Use(middleware.Recovery())
+	//跨域处理
+	if config.GetBool("system.cors") == true {
+		app.Use(gin_cors.Cors)
 	}
 
 	return app

@@ -21,10 +21,17 @@ import (
 
 type ` + humpTable + `Controller struct {
 	http.Base
+	` + humpTable + `Service *service.` + humpTable + `
+}
+
+func New` + humpTable + `Controller() *` + humpTable + `Controller {
+	return &` + humpTable + `Controller{
+		` + humpTable + `Service: service.New` + humpTable + `Service(),
+	}
 }
 
 // Index
-func (index *` + humpTable + `Controller) Index(c *gin.Context) {
+func (ctrl *` + humpTable + `Controller) Index(c *gin.Context) {
 	req := request.` + humpTable + `Request{
 		PageParam: page.New(),
 	}
@@ -33,7 +40,7 @@ func (index *` + humpTable + `Controller) Index(c *gin.Context) {
 		return
 	}
 
-	list, total, err := service.New` + humpTable + `Service(req).Index()
+	list, total, err := ctrl.` + humpTable + `Service.SetReq(req).Index()
 	if err != nil {
 		c.SecureJSON(200, response.Fail("参数错误", err.Error()))
 		return
@@ -46,27 +53,27 @@ func (index *` + humpTable + `Controller) Index(c *gin.Context) {
 }
 
 // Show
-func (index *` + humpTable + `Controller) Show(c *gin.Context) {
+func (ctrl *` + humpTable + `Controller) Show(c *gin.Context) {
 	req := request.` + humpTable + `Request{}
 	if err := c.ShouldBindUri(&req); err != nil {
 		c.SecureJSON(200, response.Fail("参数错误", err.Error()))
 		return
 	}
 
-	row := service.New` + humpTable + `Service(req).Show()
+	row := ctrl.` + humpTable + `Service.SetReq(req).Show()
 
 	c.SecureJSON(200, response.Success("success", row))
 }
 
 // Create
-func (index *` + humpTable + `Controller) Create(c *gin.Context) {
+func (ctrl *` + humpTable + `Controller) Create(c *gin.Context) {
 	req := request.` + humpTable + `Request{}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.SecureJSON(200, response.Fail("参数错误", err.Error()))
 		return
 	}
 
-	if err := service.New` + humpTable + `Service(req).Store(); err != nil {
+	if err := ctrl.` + humpTable + `Service.SetReq(req).Store(); err != nil {
 		c.SecureJSON(200, response.Fail("error", err.Error()))
 		return
 	}
@@ -75,27 +82,27 @@ func (index *` + humpTable + `Controller) Create(c *gin.Context) {
 }
 
 // Update
-func (index *` + humpTable + `Controller) Update(c *gin.Context) {
+func (ctrl *` + humpTable + `Controller) Update(c *gin.Context) {
 	req := request.` + humpTable + `Request{}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.SecureJSON(200, response.Fail("参数错误", err.Error()))
 		return
 	}
 
-	row := service.New` + humpTable + `Service(req).Update()
+	row := ctrl.` + humpTable + `Service.SetReq(req).Update()
 
 	c.SecureJSON(200, response.Success("success", row))
 }
 
 // Delete
-func (index *` + humpTable + `Controller) Delete(c *gin.Context) {
+func (ctrl *` + humpTable + `Controller) Delete(c *gin.Context) {
 	req := request.` + humpTable + `Request{}
 	if err := c.ShouldBindUri(&req); err != nil {
 		c.SecureJSON(200, response.Fail("参数错误", err.Error()))
 		return
 	}
 
-	if err := service.New` + humpTable + `Service(req).Delete(); err != nil {
+	if err := ctrl.` + humpTable + `Service.SetReq(req).Delete(); err != nil {
 		c.SecureJSON(200, response.Fail("参数错误", err.Error()))
 		return
 	}

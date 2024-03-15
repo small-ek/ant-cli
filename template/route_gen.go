@@ -13,7 +13,7 @@ import (
 )
 
 func ` + humpTable + `Route(Router *gin.RouterGroup) {
-	` + humpTable + `Controller := new(index.` + humpTable + `Controller)
+	` + humpTable + `Controller := index.New` + humpTable + `Controller()
 	v1 := Router.Group("/v1/` + table + `")
 	{
 		v1.GET("/", ` + humpTable + `Controller.Index)
