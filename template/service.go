@@ -24,6 +24,7 @@ func New` + humpTable + `Service() *` + humpTable + ` {
 	return &` + humpTable + `{}
 }
 
+//SetReq 设置参数
 func (s *` + humpTable + `) SetReq(req request.` + humpTable + `Request) *` + humpTable + ` {
 	s.req = req
 	return s
