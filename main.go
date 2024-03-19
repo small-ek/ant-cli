@@ -17,6 +17,7 @@ type Func struct {
 	GenDao   cmd.GenDao
 	GenApi   cmd.GenApi
 	GenModel cmd.GenModel
+	Ui       cmd.Ui
 }
 
 func main() {
@@ -57,6 +58,12 @@ func main() {
 				Aliases: []string{"r"},
 				Usage:   "Run go code with hot compilation-like features",
 				Action:  funcs.Run.Action,
+			},
+			{
+				Name:    "ui",
+				Aliases: []string{"u"},
+				Usage:   "Run go code with hot compilation-like features",
+				Action:  funcs.Ui.Action,
 			},
 			{
 				Name:    "build",
