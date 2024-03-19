@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"github.com/small-ek/ant-cli/cmd"
 	"github.com/urfave/cli/v2"
@@ -19,6 +20,11 @@ type Func struct {
 	GenModel cmd.GenModel
 	Ui       cmd.Ui
 }
+
+// 嵌入前端构建的静态资源
+//
+//go:embed dist/*
+var frontendEmbed embed.FS
 
 func main() {
 	log.SetFlags(log.Llongfile | log.LstdFlags)

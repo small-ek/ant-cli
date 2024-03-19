@@ -30,8 +30,9 @@ func Load() *gin.Engine {
 	app := Router()
 	//添加路由组前缀
 	//Group := app.Group("")
-	////注册路由
-	app.LoadHTMLGlob("public/*")
+	//注册路由
+
+	app.LoadHTMLGlob("dist/*")
 	//router.LoadHTMLFiles("templates/template1.html", "templates/template2.html")
 	// 设置一个路由，当访问/时，渲染名为"index"的模板
 	app.GET("/index.html", func(c *gin.Context) {
@@ -39,6 +40,5 @@ func Load() *gin.Engine {
 			"title": "Hello, Gin!",
 		})
 	})
-
 	return app
 }
