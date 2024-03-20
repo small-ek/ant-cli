@@ -1,6 +1,7 @@
 package serve
 
 import (
+	"embed"
 	"flag"
 	"github.com/gin-gonic/gin"
 	"github.com/small-ek/ant-cli/boot/router"
@@ -9,14 +10,14 @@ import (
 )
 
 // LoadSrv Load Api service<加载API服务>
-func LoadSrv() {
+func LoadSrv(f embed.FS) {
 	gin.ForceConsoleColor()
 
 	configPath := flag.String("config", "./config/config.toml", "Configuration file path")
 
 	flag.Parse()
 
-	eng := ant.New(*configPath).Serve(router.Load())
+	eng := ant.New(*configPath).Serve(router.Load(f))
 
 	defer eng.Close()
 }

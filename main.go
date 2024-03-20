@@ -2,12 +2,18 @@ package main
 
 import (
 	"embed"
+	_ "embed"
 	"flag"
 	"github.com/small-ek/ant-cli/cmd"
 	"github.com/urfave/cli/v2"
 	"log"
 	"os"
 )
+
+// 嵌入前端构建的静态资源
+//
+//go:embed web/dist/*
+var f embed.FS
 
 type Func struct {
 	Env      cmd.Env
@@ -21,15 +27,12 @@ type Func struct {
 	Ui       cmd.Ui
 }
 
-// 嵌入前端构建的静态资源
-//
-//go:embed dist/*
-var frontendEmbed embed.FS
-
 func main() {
 	log.SetFlags(log.Llongfile | log.LstdFlags)
 	flag.Parse()
-	funcs := Func{}
+	funcs := Func{
+		Ui: cmd.Ui{Fs: f},
+	}
 	app := &cli.App{
 		Name:    "ant-cli",
 		Usage:   "Used to build antgo projects",

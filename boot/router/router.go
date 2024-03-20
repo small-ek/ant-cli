@@ -1,11 +1,14 @@
 package router
 
 import (
+	"embed"
 	"github.com/gin-gonic/gin"
 	"github.com/small-ek/antgo/frame/middleware"
 	"github.com/small-ek/antgo/os/config"
 	"github.com/small-ek/antgo/utils/gin_cors"
+	"io/fs"
 	"io/ioutil"
+	"net/http"
 )
 
 func Router() *gin.Engine {
@@ -26,19 +29,31 @@ func Router() *gin.Engine {
 }
 
 // Load 加载路由
-func Load() *gin.Engine {
+func Load(f embed.FS) *gin.Engine {
 	app := Router()
 	//添加路由组前缀
 	//Group := app.Group("")
 	//注册路由
 
-	app.LoadHTMLGlob("dist/*")
-	//router.LoadHTMLFiles("templates/template1.html", "templates/template2.html")
-	// 设置一个路由，当访问/时，渲染名为"index"的模板
-	app.GET("/index.html", func(c *gin.Context) {
-		c.HTML(200, "index.html", gin.H{
-			"title": "Hello, Gin!",
+	st, _ := fs.Sub(f, "web/dist")
+	//设置资源路径
+	app.StaticFS("/web", http.FS(st))
+
+	//找不到默认跳转这里
+	app.NoRoute(func(c *gin.Context) {
+		data, err := f.ReadFile("web/dist/index.html")
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		c.Data(http.StatusOK, "text/html; charset=utf-8", data)
+	})
+
+	app.GET("/api/hello", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"msg": "hello world",
 		})
 	})
+
 	return app
 }
