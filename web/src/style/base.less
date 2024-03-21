@@ -1,0 +1,45 @@
+// 定义一些常用的尺寸变量
+@font-size-base: 16px;
+@line-height-base: 1.5;
+@container-width: 1600px;
+
+body {
+  font-family: Arial, sans-serif; // 设置全局字体
+  font-size: @font-size-base; // 设置全局字号
+  line-height: @line-height-base; // 设置全局行高
+  margin: 0; // 重置页面外边距
+  padding: 0; // 重置页面内边距
+}
+
+::selection {
+  background: #F56C6C;
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 13px;
+  background-color: #A7A2A0;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #A7A2A0;
+  border-radius: 15px;
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  background-color: #A7A2A0;
+  border-radius: 15px;
+}
+
+
+
+.bg-100-auto {
+  background-size: 100% auto;
+}
+
+.bg-100 {
+  background-size: 100% 100%;
+}
