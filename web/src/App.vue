@@ -9,9 +9,10 @@ import Menu from "@/components/menu/index.vue"
 </template>
 
 
-
 <style scoped>
-.bodys{
+.bodys {
   min-width: 1200px;
+  background-color: var(--color-neutral-1);
+  height: 100vh;
 }
 </style>

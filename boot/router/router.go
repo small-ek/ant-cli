@@ -3,6 +3,7 @@ package router
 import (
 	"embed"
 	"github.com/gin-gonic/gin"
+	"github.com/small-ek/antgo/frame/ant"
 	"github.com/small-ek/antgo/frame/middleware"
 	"github.com/small-ek/antgo/os/config"
 	"github.com/small-ek/antgo/utils/gin_cors"
@@ -49,10 +50,17 @@ func Load(f embed.FS) *gin.Engine {
 		c.Data(http.StatusOK, "text/html; charset=utf-8", data)
 	})
 
-	app.GET("/api/hello", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"msg": "hello world",
-		})
+	app.GET("api/get_database", func(c *gin.Context) {
+		var result = []string{}
+		ant.Db().Raw("SHOW DATABASES;").Find(&result)
+		c.JSON(200, result)
+	})
+
+	app.GET("api/get_table", func(c *gin.Context) {
+		var table = c.Query("table")
+		var list = []map[string]interface{}{}
+		ant.Db().Raw("SELECT TABLE_NAME AS table_name,TABLE_ROWS AS table_rows,TABLE_COLLATION AS table_collation,TABLE_COMMENT AS table_comment FROM INFORMATION_SCHEMA.Tables WHERE table_schema = ?", table).Find(&list)
+		c.JSON(200, list)
 	})
 
 	return app
