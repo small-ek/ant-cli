@@ -25,6 +25,7 @@ type Func struct {
 	GenApi   cmd.GenApi
 	GenModel cmd.GenModel
 	Ui       cmd.Ui
+	Rsa      cmd.Rsa
 }
 
 func main() {
@@ -79,6 +80,11 @@ func main() {
 				Aliases: []string{"b"},
 				Usage:   "Build Go projects cross-platform",
 				Action:  funcs.Build.Action,
+			},
+			{
+				Name:   "rsa",
+				Usage:  "Generate RSA certificate",
+				Action: funcs.Rsa.Action,
 			},
 			{
 				Name:    "gen",
