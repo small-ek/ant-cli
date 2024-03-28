@@ -56,10 +56,31 @@ func Load(f embed.FS) *gin.Engine {
 		c.JSON(200, result)
 	})
 
-	app.GET("api/get_table", func(c *gin.Context) {
+	app.GET("api/get_table_list", func(c *gin.Context) {
 		var table = c.Query("table")
 		var list = []map[string]interface{}{}
 		ant.Db().Raw("SELECT TABLE_NAME AS table_name,TABLE_ROWS AS table_rows,TABLE_COLLATION AS table_collation,TABLE_COMMENT AS table_comment FROM INFORMATION_SCHEMA.Tables WHERE table_schema = ?", table).Find(&list)
+		c.JSON(200, list)
+	})
+
+	app.GET("api/get_table", func(c *gin.Context) {
+		var db = c.Query("db")
+		var table = c.Query("table")
+		var list = []map[string]interface{}{}
+		var sql = `SELECT 
+				COLUMN_NAME,
+				DATA_TYPE,
+				COLUMN_COMMENT,
+					COLUMN_TYPE,
+					COLUMN_KEY
+				FROM 
+				INFORMATION_SCHEMA.COLUMNS 
+				WHERE 
+				TABLE_SCHEMA = ?
+				AND 
+				TABLE_NAME = ?
+                ORDER BY ORDINAL_POSITION;`
+		ant.Db().Raw(sql, db, table).Find(&list)
 		c.JSON(200, list)
 	})
 
