@@ -55,7 +55,7 @@ func (dao *` + humpTable + `Dao) GetPage(page page.PageParam, ` + table + ` mode
 		sql.Filters(page.Filter),
 		sql.Order(page.Order),
 		sql.Paginate(page.PageSize, page.CurrentPage),
-	).Find(&list).Offset(0).Count(&total).Error
+	).Find(&list).Offset(-1).Count(&total).Error
 	return list, total, err
 }
 
