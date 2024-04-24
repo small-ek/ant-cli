@@ -10,7 +10,7 @@ import logo from '@/assets/logo.png';
           <img :src="logo"/>
         </div>
       </a-menu-item>
-      <a-menu-item key="1">代码生成</a-menu-item>
+      <a-menu-item key="1">{{ $t("code.generation") }}</a-menu-item>
 
     </a-menu>
   </div>

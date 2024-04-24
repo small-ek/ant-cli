@@ -1,109 +1,103 @@
 <script setup>
-import {reactive} from "vue";
+import {reactive, ref} from "vue";
+import {useI18n} from "vue-i18n"
+import {getDatabase, getTable, getTableList} from "@/api/db/index.js"
 
-const handleSubmit = ({values, errors}) => {
-  console.log('values:', values, '\nerrors:', errors)
-}
+const {t} = useI18n()
+const dbnameList = ref([]);
+const tableList = ref([]);
+const tableData = ref([]);
 
 const form = reactive({
-  name: '',
-  password: '',
-  password2: '',
-  email: '',
-  ip: '192.168.2.1',
-  url: '',
-  match: ''
+  dbname: '',
+  table: ''
 });
 
+
 const rules = {
-  name: [
+  dbname: [
     {
       required: true,
-      message:'name is required',
+      message: t('verify.databaseName'),
     },
   ],
-  password: [
+  table: [
     {
       required: true,
-      message:'password is required',
+      message: t('verify.tableName'),
     },
   ],
-  password2: [
-    {
-      required: true,
-      message:'password is required',
-    },
-    {
-      validator: (value, cb) => {
-        if (value !== form.password) {
-          cb('two passwords do not match')
-        } else {
-          cb()
-        }
-      }
-    }
-  ],
-  email: [
-    {
-      type: 'email',
-      required: true,
-    }
-  ],
-  ip: [
-    {
-      type: 'ip',
-      required: true,
-    }
-  ],
-  url: [
-    {
-      type: 'url',
-      required: true,
-    }
-  ],
-  match: [
-    {
-      required: true,
-      validator: (value, cb) => {
-        return new Promise((resolve) => {
-          if (!value) {
-            cb('Please enter match')
-          }
-          if (value !== 'match') {
-            cb('match must be match!')
-          }
-          resolve()
-        })
-      }
-    }
-  ],
+}
+const columns = [
+  {
+    title: '中文名称',
+    dataIndex: 'COLUMN_COMMENT',
+    ellipsis: true,
+    tooltip: true,
+  },
+  {
+    title: '数据库类型',
+    dataIndex: 'COLUMN_TYPE',
+    ellipsis: true,
+    tooltip: true,
+  },
+  {
+    title: '数据库字段名称',
+    dataIndex: 'COLUMN_NAME',
+    ellipsis: true,
+    tooltip: true,
+  },
+];
+
+
+getDatabase().then(res => {
+  dbnameList.value = res.data
+})
+
+//获取数据库表
+const onchangeDbName = () => {
+  getTableList({table: form.dbname}).then(res => {
+    tableList.value = res.data
+  })
+}
+const handleSubmit = ({values, errors}) => {
+  console.log('values:', values, '\nerrors:', errors)
+  if (errors !== undefined) {
+    return
+  }
+  getTable({db: form.dbname, table: form.table}).then(res => {
+    tableData.value = res.data
+  })
 }
 
 </script>
+
 <template>
   <div class="container">
-    <a-card :style="{ width: '860px',marginTop:'50px' }" title="代码生成" hoverable>
+    <a-card :style="{ width: '860px',marginTop:'50px' }" :title="$t('code.generation')" hoverable>
       <a-form ref="formRef" :rules="rules" :model="form" :style="{width:'600px'}" @submit="handleSubmit">
-        <a-form-item field="dbname" label="数据库名" validate-trigger="blur">
-          <a-select v-model="form.db" placeholder="请选择" allow-clear>
-            <a-option value="section one">Section One</a-option>
-            <a-option value="section two">Section Two</a-option>
-            <a-option value="section three">Section Three</a-option>
+        <a-form-item field="dbname" :label="$t('code.databaseName')" validate-trigger="blur">
+          <a-select v-model="form.dbname" :placeholder="$t('code.select')" allow-clear allow-search @change="onchangeDbName">
+            <a-option :value="row" v-for="row in dbnameList">{{ row }}</a-option>
           </a-select>
         </a-form-item>
-        <a-form-item field="table" label="表名" validate-trigger="blur">
-          <a-select v-model="form.table" placeholder="请选择" allow-clear>
-            <a-option value="section one">Section One</a-option>
-            <a-option value="section two">Section Two</a-option>
-            <a-option value="section three">Section Three</a-option>
+        <a-form-item field="table" :label="$t('code.tableName')" validate-trigger="blur">
+          <a-select v-model="form.table" :placeholder="$t('code.select')" allow-clear allow-search>
+            <a-option :value="row.table_name" v-for="row in tableList">{{ row.table_name }}</a-option>
           </a-select>
         </a-form-item>
         <a-form-item>
           <a-space>
-            <a-button html-type="submit">确认</a-button>
+            <a-button html-type="submit" type="primary" shape="round">{{ $t("code.verify") }}</a-button>
           </a-space>
         </a-form-item>
       </a-form>
+
+      <a-table :columns="columns" :data="tableData" :virtual-list-props="{height:500}" :pagination="false">
+        <template #name="{ rowIndex }">
+          <a-input v-model="data[rowIndex].name" />
+        </template>
+      </a-table>
     </a-card>
   </div>
 </template>

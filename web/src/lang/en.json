@@ -1,0 +1,8 @@
+{
+  "code": {
+    "generation": "Code Generation",
+    "databaseName": "Database Name",
+    "tableName": "Table Name",
+    "select": "Please Select"
+  }
+}
