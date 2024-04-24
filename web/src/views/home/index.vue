@@ -46,7 +46,11 @@ const columns = [
     dataIndex: 'COLUMN_NAME',
     ellipsis: true,
     tooltip: true,
-  },
+  },{
+    title: '是否必填',
+    dataIndex: 'required',
+    slotName: 'required'
+  }
 ];
 
 
@@ -94,8 +98,11 @@ const handleSubmit = ({values, errors}) => {
       </a-form>
 
       <a-table :columns="columns" :data="tableData" :virtual-list-props="{height:500}" :pagination="false">
-        <template #name="{ rowIndex }">
-          <a-input v-model="data[rowIndex].name" />
+        <template #required="{ rowIndex }">
+          <a-select :style="{width:'150px'}" v-model="tableData[rowIndex].required" placeholder="请选择">
+            <a-option>是</a-option>
+            <a-option>否</a-option>
+          </a-select>
         </template>
       </a-table>
     </a-card>
