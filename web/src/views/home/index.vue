@@ -7,10 +7,18 @@ const {t} = useI18n()
 const dbnameList = ref([]);
 const tableList = ref([]);
 const tableData = ref([]);
+const relevanceFieldList = ref([]);
 const visible = ref(false);
+const FormRef = ref(null);
 
-const handleOk = () => {
-  visible.value = false;
+const handleOk = async () => {
+  const error = await FormRef.value?.validate();
+  if (!error) {
+    //提交表单逻辑
+    return true;
+  }
+  return false;
+
 };
 
 
@@ -20,9 +28,22 @@ const form = reactive({
 });
 
 const formField = ref({
-  join_table:false
+  name: "",
+  filed: "",
+  is_join_table: false,
+  column_name: "",
+  join_table: "",
+  join_column_filed: ""
 });
 
+const rulesForm = {
+  name: [
+    {
+      required: true,
+      message: t('verify.databaseName'),
+    },
+  ],
+}
 
 const rules = {
   dbname: [
@@ -87,12 +108,20 @@ const handleSubmit = ({values, errors}) => {
   })
 }
 
+const associationTable = () => {
+  console.log(11111)
+  console.log(formField)
+  getTable({db: form.dbname, table: formField.value.join_table}).then(res => {
+    relevanceFieldList.value = res.data
+  })
+}
+
 </script>
 
 <template>
   <div class="container">
     <a-card :style="{ width: '860px',marginTop:'50px' }" :title="$t('code.generation')" hoverable>
-      <a-form ref="formRef" :rules="rules" :model="form" :style="{width:'600px'}" @submit="handleSubmit">
+      <a-form :rules="rules" :model="form" :style="{width:'600px'}" @submit="handleSubmit">
         <a-form-item field="dbname" :label="$t('code.databaseName')" validate-trigger="blur">
           <a-select v-model="form.dbname" :placeholder="$t('code.select')" allow-clear allow-search @change="onchangeDbName">
             <a-option :value="row" v-for="row in dbnameList">{{ row }}</a-option>
@@ -114,7 +143,7 @@ const handleSubmit = ({values, errors}) => {
           <template #icon>
             <icon-plus/>
           </template>
-          新建字段
+          新建关联表
         </a-button>
       </a-form-item>
       <a-table :columns="columns" :data="tableData" :virtual-list-props="{height:500}" :pagination="false">
@@ -126,27 +155,36 @@ const handleSubmit = ({values, errors}) => {
         </template>
       </a-table>
     </a-card>
-    <a-modal v-model:visible="visible" @ok="handleOk" @cancel="handleOk" draggable>
+    <!--表单-->
+    <a-modal v-model:visible="visible" @on-before-ok="handleOk" ref="FormRef" draggable>
       <template #title>
         编辑字段
       </template>
       <div>
-        <a-form :model="formField">
+        <a-form ref="formRef" :model="formField" :rules="rulesForm">
           <a-form-item field="name" label="中文名称">
             <a-input v-model="formField.name"/>
           </a-form-item>
-          <a-form-item field="post" label="是否关联表">
-            <a-switch v-model="formField.join_table"/>
+          <a-form-item field="filed" label="结构体变量">
+            <a-input v-model="formField.filed"/>
           </a-form-item>
-          <template v-if="formField.join_table">
-            <a-form-item field="post" label="当前关联字段">
-              <a-select placeholder="请选择" allow-clear allow-search>
-                <a-option :value="formField.COLUMN_NAME" v-for="row in tableData">{{ row["COLUMN_NAME"] }}</a-option>
+          <a-form-item field="is_join_table" label="是否关联表">
+            <a-switch v-model="formField.is_join_table"/>
+          </a-form-item>
+          <template v-if="formField.is_join_table">
+            <a-form-item field="column_name" label="当前关联字段">
+              <a-select placeholder="请选择" v-model="formField.column_name" allow-clear allow-search>
+                <a-option :value="row.COLUMN_NAME" v-for="row in tableData">{{ row["COLUMN_NAME"] }}</a-option>
               </a-select>
             </a-form-item>
-            <a-form-item field="post" label="关联表">
-              <a-select placeholder="请选择" allow-clear allow-search>
-                <a-option :value="row.table_name" v-for="row in tableList" >{{ row["table_name"] }}</a-option>
+            <a-form-item field="join_table" label="关联表">
+              <a-select placeholder="请选择" v-model="formField.join_table" allow-clear allow-search @change="associationTable">
+                <a-option :value="row.table_name" v-for="row in tableList">{{ row["table_name"] }}</a-option>
+              </a-select>
+            </a-form-item>
+            <a-form-item field="join_column_filed" label="关联表字段">
+              <a-select placeholder="请选择" v-model="formField.join_column_filed" allow-clear allow-search>
+                <a-option :value="row.COLUMN_NAME" v-for="row in relevanceFieldList">{{ row["COLUMN_NAME"] }}</a-option>
               </a-select>
             </a-form-item>
           </template>
