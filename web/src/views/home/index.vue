@@ -9,18 +9,26 @@ const tableList = ref([]);
 const tableData = ref([]);
 const relevanceFieldList = ref([]);
 const visible = ref(false);
-const FormRef = ref(null);
 
-const handleOk = async () => {
-  const error = await FormRef.value?.validate();
-  if (!error) {
-    //提交表单逻辑
-    return true;
+/**
+ * 追加字段
+ * @param values
+ * @param errors
+ */
+const newField = ({values, errors}) => {
+  if (errors !== undefined) {
+    return
   }
-  return false;
 
-};
-
+  tableData.value.push({
+    COLUMN_COMMENT: formField.value.name,
+    COLUMN_NAME: formField.value.filed,
+    COLUMN_TYPE: "varchar",
+    required: 0,
+    isSearch: 0
+  })
+  visible.value = false
+}
 
 const form = reactive({
   dbname: '',
@@ -77,10 +85,16 @@ const columns = [
     dataIndex: 'COLUMN_NAME',
     ellipsis: true,
     tooltip: true,
-  }, {
+  },
+  {
     title: '是否必填',
     dataIndex: 'required',
     slotName: 'required'
+  },
+  {
+    title: '是否搜索',
+    dataIndex: 'isSearch',
+    slotName: 'isSearch'
   }
 ];
 
@@ -109,8 +123,6 @@ const handleSubmit = ({values, errors}) => {
 }
 
 const associationTable = () => {
-  console.log(11111)
-  console.log(formField)
   getTable({db: form.dbname, table: formField.value.join_table}).then(res => {
     relevanceFieldList.value = res.data
   })
@@ -156,12 +168,12 @@ const associationTable = () => {
       </a-table>
     </a-card>
     <!--表单-->
-    <a-modal v-model:visible="visible" @on-before-ok="handleOk" ref="FormRef" draggable>
+    <a-modal v-model:visible="visible" :footer="false" draggable>
       <template #title>
         编辑字段
       </template>
       <div>
-        <a-form ref="formRef" :model="formField" :rules="rulesForm">
+        <a-form :model="formField" :rules="rulesForm" @submit="newField">
           <a-form-item field="name" label="中文名称">
             <a-input v-model="formField.name"/>
           </a-form-item>
@@ -188,7 +200,9 @@ const associationTable = () => {
               </a-select>
             </a-form-item>
           </template>
-
+          <a-form-item>
+            <a-button html-type="submit" type="primary" shape="round">{{ $t("code.verify") }}</a-button>
+          </a-form-item>
         </a-form>
       </div>
     </a-modal>

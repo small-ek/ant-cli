@@ -8,13 +8,15 @@ address = "9001"
 #是否开启跨域
 cors = false
 #是否开发调试模式
-debug = true
+debug = false
+#项目名称
+app_name="antgo"
 
 #接口请求日志
 [log]
 #路径
 path = "./log/ant.log"
-#格式 json、console
+#输出格式 支持(json、console)
 format = "console"
 #日志服务名称
 service_name = "antgo"
@@ -35,9 +37,9 @@ compress = false
 
 #数据库设置
 [[connections]]
-#数据库名称
+#数据库名称(必须唯一)
 name = ""
-#数据库类型
+#数据库类型支持mysql、pgsql、sqlsrv、clickhouse
 type = "mysql"
 #服务器地址
 hostname = "127.0.0.1"
@@ -53,6 +55,12 @@ database = ""
 params = "charset=utf8mb4&parseTime=True&loc=Local"
 #是否开启日志
 log = true
+#设置空闲连接池中的最大连接数
+max_idle_conns = 100
+#设置数据库的最大打开连接数。
+max_open_conns= 200
+#设置连接可能被重用的最大时间(秒)。
+conn_max_lifetime=300
 
 #阿里云配置
 [oss]
@@ -78,8 +86,11 @@ secret = ''
 
 #Json web token
 [jwt]
+#过期时间(秒)
+exp=168
+#私钥
 private_key = ""
-
+#公钥
 public_key = ""
 `
 }
