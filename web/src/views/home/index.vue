@@ -98,11 +98,9 @@ const columns = [
   }
 ];
 
-
 getDatabase().then(res => {
   dbnameList.value = res.data
 })
-
 //获取数据库表
 const onchangeDbName = () => {
   getTableList({table: form.dbname}).then(res => {
@@ -121,13 +119,11 @@ const handleSubmit = ({values, errors}) => {
     tableData.value = res.data
   })
 }
-
 const associationTable = () => {
   getTable({db: form.dbname, table: formField.value.join_table}).then(res => {
     relevanceFieldList.value = res.data
   })
 }
-
 </script>
 
 <template>
@@ -150,17 +146,22 @@ const associationTable = () => {
           </a-space>
         </a-form-item>
       </a-form>
-      <a-form-item>
-        <a-button type="primary" shape="round" @click="visible=true">
-          <template #icon>
-            <icon-plus/>
-          </template>
-          新建关联表
-        </a-button>
-      </a-form-item>
-      <a-table :columns="columns" :data="tableData" :virtual-list-props="{height:500}" :pagination="false">
+      <a-button type="primary" shape="round" @click="visible=true">
+        <template #icon>
+          <icon-plus/>
+        </template>
+        新建关联表
+      </a-button>
+      <!--表格-->
+      <a-table style="margin-top: 10px" :columns="columns" :data="tableData" :pagination="false">
         <template #required="{ rowIndex }">
           <a-select :style="{width:'150px'}" v-model="tableData[rowIndex].required" placeholder="请选择">
+            <a-option :value="1">是</a-option>
+            <a-option :value="0">否</a-option>
+          </a-select>
+        </template>
+        <template #isSearch="{ rowIndex }">
+          <a-select :style="{width:'150px'}" v-model="tableData[rowIndex].isSearch" placeholder="请选择">
             <a-option :value="1">是</a-option>
             <a-option :value="0">否</a-option>
           </a-select>
@@ -206,6 +207,20 @@ const associationTable = () => {
         </a-form>
       </div>
     </a-modal>
+    <div style="margin-top: 15px">
+      <a-button type="primary" shape="round" @click="visible=true">
+        <template #icon>
+          <icon-eye />
+        </template>
+        预览代码
+      </a-button>
+      <a-button type="primary" style="margin-left: 20px" shape="round" @click="visible=true">
+        <template #icon>
+          <icon-desktop />
+        </template>
+        生成代码
+      </a-button>
+    </div>
   </div>
 </template>
 <style scoped>
