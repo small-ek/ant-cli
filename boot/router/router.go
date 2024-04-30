@@ -12,6 +12,12 @@ import (
 	"net/http"
 )
 
+type Template struct {
+	TableName string                   `json:"table_name"`
+	Fields    []map[string]interface{} `json:"fields"`
+	Package   string                   `json:"package"`
+}
+
 func Router() *gin.Engine {
 	//开发者模式
 	if config.GetBool("system.debug") == false {
