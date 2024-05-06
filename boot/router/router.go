@@ -13,9 +13,9 @@ import (
 )
 
 type Template struct {
-	TableName string                   `json:"table_name"`
-	Fields    []map[string]interface{} `json:"fields"`
-	Package   string                   `json:"package"`
+	TableName string                   `json:"table_name"` //表名称
+	Fields    []map[string]interface{} `json:"fields"`     //字段
+	Package   string                   `json:"package"`    //包名
 }
 
 func Router() *gin.Engine {

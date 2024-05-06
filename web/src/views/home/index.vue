@@ -41,7 +41,8 @@ const formField = ref({
   is_join_table: false,
   column_name: "",
   join_table: "",
-  join_column_filed: ""
+  join_column_filed: "",
+  join_column_types: ""
 });
 
 const rulesForm = {
@@ -97,6 +98,9 @@ const columns = [
     slotName: 'isSearch'
   }
 ];
+
+//关联模型
+const correlationModel = [{name: "一对一", types: "oneToOne"}, {name: "一对多", types: "oneToMany"}, {name: "多对多", types: "manyToMany"}]
 
 getDatabase().then(res => {
   dbnameList.value = res.data
@@ -185,7 +189,12 @@ const associationTable = () => {
             <a-switch v-model="formField.is_join_table"/>
           </a-form-item>
           <template v-if="formField.is_join_table">
-            <a-form-item field="column_name" label="当前关联字段">
+            <a-form-item field="join_table" label="关联模型">
+              <a-select placeholder="请选择" v-model="formField.join_column_types" allow-clear allow-search>
+                <a-option :value="row.types" v-for="row in correlationModel">{{ row["name"] }}</a-option>
+              </a-select>
+            </a-form-item>
+            <a-form-item field="column_name" label="当前表字段">
               <a-select placeholder="请选择" v-model="formField.column_name" allow-clear allow-search>
                 <a-option :value="row.COLUMN_NAME" v-for="row in tableData">{{ row["COLUMN_NAME"] }}</a-option>
               </a-select>
@@ -210,13 +219,13 @@ const associationTable = () => {
     <div style="margin-top: 15px">
       <a-button type="primary" shape="round" @click="visible=true">
         <template #icon>
-          <icon-eye />
+          <icon-eye/>
         </template>
         预览代码
       </a-button>
       <a-button type="primary" style="margin-left: 20px" shape="round" @click="visible=true">
         <template #icon>
-          <icon-desktop />
+          <icon-desktop/>
         </template>
         生成代码
       </a-button>
