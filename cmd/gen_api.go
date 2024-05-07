@@ -29,11 +29,10 @@ func (b GenApi) Action(c *cli.Context) error {
 
 	var tableStructure []template.TableStructure
 	var sql = `SELECT 
-				COLUMN_NAME,
-				DATA_TYPE,
-				COLUMN_COMMENT,
-					COLUMN_TYPE,
-					COLUMN_KEY
+				COLUMN_NAME AS field_name,
+				DATA_TYPE AS field_type,
+				COLUMN_COMMENT AS comment,
+				COLUMN_KEY AS indexes
 				FROM 
 				INFORMATION_SCHEMA.COLUMNS 
 				WHERE 
@@ -46,22 +45,22 @@ func (b GenApi) Action(c *cli.Context) error {
 	if len(tableStructure) == 0 {
 		return errors.New("Database or data table does not exist")
 	}
-	//生成Model
+	// 生成Model
 	getModelStr := template.GenGormModel(tableStr[0], tableStr[1], tableStructure)
 	utils.WriteFile("./app/model/"+tableStr[1]+".go", getModelStr)
-	//生成Dao
+	// 生成Dao
 	getDaoStr := template.GenDao(tableStr[1])
 	utils.WriteFile("./app/dao/"+tableStr[1]+".go", getDaoStr)
-	//生成Service
+	// 生成Service
 	getServiceStr := template.GenService(tableStr[1])
 	utils.WriteFile("./app/service/"+tableStr[1]+".go", getServiceStr)
-	//生成request
+	// 生成request
 	getRequestStr := template.GenRequest(tableStr[1])
 	utils.WriteFile("./app/request/"+tableStr[1]+".go", getRequestStr)
-	//生成Controller
+	// 生成Controller
 	getControllerStr := template.GenController(tableStr[1])
 	utils.WriteFile("./app/http/index/"+tableStr[1]+".go", getControllerStr)
-	//生成Route
+	// 生成Route
 	getRouteStr := template.GenRoute(tableStr[1])
 	utils.WriteFile("./router/"+tableStr[1]+".go", getRouteStr)
 	return nil

@@ -3,6 +3,7 @@
         "generation": "代码生成",
         "databaseName": "数据库名称",
         "tableName": "表名称",
+        "packageName": "包名称",
         "select": "请选择",
         "verify": "确 认"
     },

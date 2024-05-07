@@ -1,7 +1,7 @@
 <script setup>
 import {reactive, ref} from "vue";
 import {useI18n} from "vue-i18n"
-import {getDatabase, getTable, getTableList} from "@/api/db/index.js"
+import {getDatabase, getTable, getTableList,previewCode} from "../../api/db/index.js";
 
 const {t} = useI18n()
 const dbnameList = ref([]);
@@ -21,18 +21,21 @@ const newField = ({values, errors}) => {
   }
 
   tableData.value.push({
-    COLUMN_COMMENT: formField.value.name,
-    COLUMN_NAME: formField.value.filed,
-    COLUMN_TYPE: "varchar",
+    comment: formField.value.name,
+    field_name: formField.value.filed,
+    field_type: "join",
+    join_type: formField.value.join_column_types,
+
     required: 0,
-    isSearch: 0
+    is_search: 0
   })
   visible.value = false
 }
 
 const form = reactive({
   dbname: '',
-  table: ''
+  table: '',
+  package_name: 'index'
 });
 
 const formField = ref({
@@ -68,22 +71,23 @@ const rules = {
     },
   ],
 }
+
 const columns = [
   {
     title: '中文名称',
-    dataIndex: 'COLUMN_COMMENT',
+    dataIndex: 'comment',
     ellipsis: true,
     tooltip: true,
   },
   {
     title: '数据库类型',
-    dataIndex: 'COLUMN_TYPE',
+    dataIndex: 'field_type',
     ellipsis: true,
     tooltip: true,
   },
   {
     title: '数据库字段名称',
-    dataIndex: 'COLUMN_NAME',
+    dataIndex: 'field_name',
     ellipsis: true,
     tooltip: true,
   },
@@ -94,17 +98,18 @@ const columns = [
   },
   {
     title: '是否搜索',
-    dataIndex: 'isSearch',
-    slotName: 'isSearch'
+    dataIndex: 'is_search',
+    slotName: 'is_search'
   }
 ];
 
 //关联模型
-const correlationModel = [{name: "一对一", types: "oneToOne"}, {name: "一对多", types: "oneToMany"}, {name: "多对多", types: "manyToMany"}]
+const correlationModel = [{name: "一对一", value: "oneToOne"}, {name: "一对多", value: "oneToMany"}, {name: "多对多", value: "manyToMany"}]
 
 getDatabase().then(res => {
   dbnameList.value = res.data
 })
+
 //获取数据库表
 const onchangeDbName = () => {
   getTableList({table: form.dbname}).then(res => {
@@ -115,18 +120,44 @@ const handleSubmit = ({values, errors}) => {
   if (errors !== undefined) {
     return
   }
+
   getTable({db: form.dbname, table: form.table}).then(res => {
+    const data = []
     for (let i = 0; i < res.data.length; i++) {
-      res.data[i].required = 0
-      res.data[i].isSearch = 0
+      data.push({
+        comment: res.data[i].comment,
+        field_name: res.data[i].field_name,
+        field_type: res.data[i].field_type,
+        indexes: res.data[i].indexes,
+        required: 0,
+        is_search: 0
+      })
     }
-    tableData.value = res.data
+    tableData.value = data
   })
 }
 const associationTable = () => {
   getTable({db: form.dbname, table: formField.value.join_table}).then(res => {
     relevanceFieldList.value = res.data
   })
+}
+
+const getPreviewCode = () => {
+  console.log({
+    table_name: form.table,
+    fields: tableData.value,
+    package: form.package_name,
+    is_create: false
+  })
+  previewCode({
+    table_name: form.table,
+    fields: tableData.value,
+    package: form.package_name,
+    is_create: false
+  }).then(res => {
+    console.log(res)
+  })
+
 }
 </script>
 
@@ -143,6 +174,9 @@ const associationTable = () => {
           <a-select v-model="form.table" :placeholder="$t('code.select')" allow-clear allow-search>
             <a-option :value="row.table_name" v-for="row in tableList">{{ row.table_name }}</a-option>
           </a-select>
+        </a-form-item>
+        <a-form-item field="package_name" :label="$t('code.packageName')" validate-trigger="blur">
+          <a-input v-model="form.package_name" placeholder="请输入包名"/>
         </a-form-item>
         <a-form-item>
           <a-space>
@@ -164,8 +198,8 @@ const associationTable = () => {
             <a-option :value="0">否</a-option>
           </a-select>
         </template>
-        <template #isSearch="{ rowIndex }">
-          <a-select :style="{width:'150px'}" v-model="tableData[rowIndex].isSearch" placeholder="请选择">
+        <template #is_search="{ rowIndex }">
+          <a-select :style="{width:'150px'}" v-model="tableData[rowIndex].is_search" placeholder="请选择">
             <a-option :value="1">是</a-option>
             <a-option :value="0">否</a-option>
           </a-select>
@@ -191,12 +225,12 @@ const associationTable = () => {
           <template v-if="formField.is_join_table">
             <a-form-item field="join_table" label="关联模型">
               <a-select placeholder="请选择" v-model="formField.join_column_types" allow-clear allow-search>
-                <a-option :value="row.types" v-for="row in correlationModel">{{ row["name"] }}</a-option>
+                <a-option :value="row.value" v-for="row in correlationModel">{{ row["name"] }}</a-option>
               </a-select>
             </a-form-item>
-            <a-form-item field="column_name" label="当前表字段">
-              <a-select placeholder="请选择" v-model="formField.column_name" allow-clear allow-search>
-                <a-option :value="row.COLUMN_NAME" v-for="row in tableData">{{ row["COLUMN_NAME"] }}</a-option>
+            <a-form-item field="field_name" label="当前表字段">
+              <a-select placeholder="请选择" v-model="formField.field_name" allow-clear allow-search>
+                <a-option :value="row.field_name" v-for="row in tableData">{{ row["field_name"] }}</a-option>
               </a-select>
             </a-form-item>
             <a-form-item field="join_table" label="关联表">
@@ -206,7 +240,7 @@ const associationTable = () => {
             </a-form-item>
             <a-form-item field="join_column_filed" label="关联表字段">
               <a-select placeholder="请选择" v-model="formField.join_column_filed" allow-clear allow-search>
-                <a-option :value="row.COLUMN_NAME" v-for="row in relevanceFieldList">{{ row["COLUMN_NAME"] }}</a-option>
+                <a-option :value="row.field_name" v-for="row in relevanceFieldList">{{ row["field_name"] }}</a-option>
               </a-select>
             </a-form-item>
           </template>
@@ -217,7 +251,7 @@ const associationTable = () => {
       </div>
     </a-modal>
     <div style="margin-top: 15px">
-      <a-button type="primary" shape="round" @click="visible=true">
+      <a-button type="primary" shape="round" @click="getPreviewCode">
         <template #icon>
           <icon-eye/>
         </template>

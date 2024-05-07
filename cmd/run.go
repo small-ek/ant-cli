@@ -29,7 +29,7 @@ func (e Run) Action(c *cli.Context) error {
 	if len(main) == 0 {
 		return errors.New("Please enter the executable file name")
 	}
-	//commandStr := "go build -o main.exe " + main + "&& main.exe"
+	// commandStr := "go build -o main.exe " + main + "&& main.exe"
 	commandStr := "go run " + main
 	err := runApp(commandStr)
 	if err != nil {

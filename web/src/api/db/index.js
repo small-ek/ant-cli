@@ -7,7 +7,7 @@ import http from '../http.js'
  */
 export const getDatabase = () => {
     return http().request({
-        url: 'api/get_database',
+        url: 'api/database',
         method: 'GET'
     })
 }
@@ -18,7 +18,7 @@ export const getDatabase = () => {
  */
 export const getTableList = (data) => {
     return http().request({
-        url: 'api/get_table_list',
+        url: 'api/table-list',
         method: 'GET',
         params: data
     })
@@ -30,8 +30,20 @@ export const getTableList = (data) => {
  */
 export const getTable = (data) => {
     return http().request({
-        url: 'api/get_table',
+        url: 'api/table-field',
         method: 'GET',
         params: data
+    })
+}
+
+/**
+ * getTable 预览代码
+ * @returns {Promise<axios.AxiosResponse<any>>}
+ */
+export const previewCode = (data) => {
+    return http().request({
+        url: 'api/code',
+        method: 'POST',
+        data: data
     })
 }

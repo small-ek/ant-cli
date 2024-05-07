@@ -2,6 +2,7 @@ package router
 
 import (
 	"embed"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/small-ek/antgo/frame/ant"
 	"github.com/small-ek/antgo/frame/middleware"
@@ -13,9 +14,19 @@ import (
 )
 
 type Template struct {
-	TableName string                   `json:"table_name"` //表名称
-	Fields    []map[string]interface{} `json:"fields"`     //字段
-	Package   string                   `json:"package"`    //包名
+	TableName string   `json:"table_name"` // 表名称
+	Fields    []Fields `json:"fields"`     // 表字段
+	Package   string   `json:"package"`    // 包名
+	IsCreate  bool     `json:"is_create"`  // 是否创建
+}
+
+type Fields struct {
+	Comment   string `json:"comment"`
+	FieldName string `json:"field_name"`
+	FieldType string `json:"field_type"`
+	Required  int    `json:"required"`
+	IsSearch  int    `json:"is_search"`
+	Indexes   string `json:"indexes"`
 }
 
 func Router() *gin.Engine {
@@ -55,14 +66,14 @@ func Load(f embed.FS) *gin.Engine {
 	})
 
 	//获取数据库
-	app.GET("api/get_database", func(c *gin.Context) {
+	app.GET("api/database", func(c *gin.Context) {
 		var result = []string{}
 		ant.Db().Raw("SHOW DATABASES;").Find(&result)
 		c.JSON(200, result)
 	})
 
 	//获取表列表
-	app.GET("api/get_table_list", func(c *gin.Context) {
+	app.GET("api/table-list", func(c *gin.Context) {
 		var table = c.Query("table")
 		var list = []map[string]interface{}{}
 		ant.Db().Raw("SELECT TABLE_NAME AS table_name,TABLE_ROWS AS table_rows,TABLE_COLLATION AS table_collation,TABLE_COMMENT AS table_comment FROM INFORMATION_SCHEMA.Tables WHERE table_schema = ?", table).Find(&list)
@@ -70,16 +81,15 @@ func Load(f embed.FS) *gin.Engine {
 	})
 
 	//获取表字段
-	app.GET("api/get_table", func(c *gin.Context) {
+	app.GET("api/table-field", func(c *gin.Context) {
 		var db = c.Query("db")
 		var table = c.Query("table")
 		var list = []map[string]interface{}{}
 		var sql = `SELECT 
-				COLUMN_NAME,
-				DATA_TYPE,
-				COLUMN_COMMENT,
-					COLUMN_TYPE,
-					COLUMN_KEY
+				COLUMN_NAME AS field_name,
+				DATA_TYPE AS field_type,
+				COLUMN_COMMENT AS comment,
+				COLUMN_KEY AS indexes
 				FROM 
 				INFORMATION_SCHEMA.COLUMNS 
 				WHERE 
@@ -92,8 +102,13 @@ func Load(f embed.FS) *gin.Engine {
 	})
 
 	//预览代码
-	app.GET("api/previewCode", func(c *gin.Context) {
-
+	app.POST("api/code", func(c *gin.Context) {
+		var template Template
+		err := c.BindJSON(&template)
+		if err != nil {
+			return
+		}
+		fmt.Println(template)
 		c.JSON(200, gin.H{})
 	})
 
