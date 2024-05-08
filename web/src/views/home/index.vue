@@ -1,7 +1,7 @@
 <script setup>
 import {reactive, ref} from "vue";
 import {useI18n} from "vue-i18n"
-import {getDatabase, getTable, getTableList,previewCode} from "../../api/db/index.js";
+import {getDatabase, getTable, getTableList, previewCode} from "../../api/db/index.js";
 
 const {t} = useI18n()
 const dbnameList = ref([]);
@@ -24,8 +24,9 @@ const newField = ({values, errors}) => {
     comment: formField.value.name,
     field_name: formField.value.filed,
     field_type: "join",
-    join_type: formField.value.join_column_types,
-
+    join_type: formField.value.join_types,
+    join_table: formField.value.join_table,
+    join_filed: formField.value.join_filed,
     required: 0,
     is_search: 0
   })
@@ -44,8 +45,8 @@ const formField = ref({
   is_join_table: false,
   column_name: "",
   join_table: "",
-  join_column_filed: "",
-  join_column_types: ""
+  join_filed: "",
+  join_types: ""
 });
 
 const rulesForm = {
@@ -153,7 +154,8 @@ const getPreviewCode = () => {
     table_name: form.table,
     fields: tableData.value,
     package: form.package_name,
-    is_create: false
+    is_create: false,
+    data_base: form.dbname
   }).then(res => {
     console.log(res)
   })
@@ -224,7 +226,7 @@ const getPreviewCode = () => {
           </a-form-item>
           <template v-if="formField.is_join_table">
             <a-form-item field="join_table" label="关联模型">
-              <a-select placeholder="请选择" v-model="formField.join_column_types" allow-clear allow-search>
+              <a-select placeholder="请选择" v-model="formField.join_types" allow-clear allow-search>
                 <a-option :value="row.value" v-for="row in correlationModel">{{ row["name"] }}</a-option>
               </a-select>
             </a-form-item>
@@ -238,8 +240,8 @@ const getPreviewCode = () => {
                 <a-option :value="row.table_name" v-for="row in tableList">{{ row["table_name"] }}</a-option>
               </a-select>
             </a-form-item>
-            <a-form-item field="join_column_filed" label="关联表字段">
-              <a-select placeholder="请选择" v-model="formField.join_column_filed" allow-clear allow-search>
+            <a-form-item field="join_filed" label="关联表字段">
+              <a-select placeholder="请选择" v-model="formField.join_filed" allow-clear allow-search>
                 <a-option :value="row.field_name" v-for="row in relevanceFieldList">{{ row["field_name"] }}</a-option>
               </a-select>
             </a-form-item>

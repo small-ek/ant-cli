@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/small-ek/ant-cli/template"
 	"github.com/small-ek/antgo/frame/ant"
 	"github.com/small-ek/antgo/frame/middleware"
 	"github.com/small-ek/antgo/os/config"
@@ -14,19 +15,11 @@ import (
 )
 
 type Template struct {
-	TableName string   `json:"table_name"` // 表名称
-	Fields    []Fields `json:"fields"`     // 表字段
-	Package   string   `json:"package"`    // 包名
-	IsCreate  bool     `json:"is_create"`  // 是否创建
-}
-
-type Fields struct {
-	Comment   string `json:"comment"`
-	FieldName string `json:"field_name"`
-	FieldType string `json:"field_type"`
-	Required  int    `json:"required"`
-	IsSearch  int    `json:"is_search"`
-	Indexes   string `json:"indexes"`
+	TableName string                    `json:"table_name"` // 表名称
+	Fields    []template.TableStructure `json:"fields"`     // 表字段
+	Package   string                    `json:"package"`    // 包名
+	IsCreate  bool                      `json:"is_create"`  // 是否创建
+	DataBase  string                    `json:"data_base"`  // 数据库
 }
 
 func Router() *gin.Engine {
@@ -103,12 +96,14 @@ func Load(f embed.FS) *gin.Engine {
 
 	//预览代码
 	app.POST("api/code", func(c *gin.Context) {
-		var template Template
-		err := c.BindJSON(&template)
+		var code Template
+		err := c.BindJSON(&code)
 		if err != nil {
 			return
 		}
-		fmt.Println(template)
+		fmt.Println(code)
+		getModelStr := template.GenGormModel(code.DataBase, code.TableName, code.Fields)
+		fmt.Println(getModelStr)
 		c.JSON(200, gin.H{})
 	})
 

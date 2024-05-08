@@ -29,11 +29,10 @@ func (b GenDao) Action(c *cli.Context) error {
 
 	var tableStructure []template.TableStructure
 	var sql = `SELECT 
-				COLUMN_NAME,
-				DATA_TYPE,
-				COLUMN_COMMENT,
-					COLUMN_TYPE,
-					COLUMN_KEY
+				COLUMN_NAME AS field_name,
+				DATA_TYPE AS field_type,
+				COLUMN_COMMENT AS comment,
+				COLUMN_KEY AS indexes
 				FROM 
 				INFORMATION_SCHEMA.COLUMNS 
 				WHERE 

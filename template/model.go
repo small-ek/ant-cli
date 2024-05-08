@@ -7,11 +7,15 @@ import (
 )
 
 type TableStructure struct {
-	COLUMN_NAME    string `json:"COLUMN_NAME"`
-	DATA_TYPE      string `json:"DATA_TYPE"`
-	COLUMN_COMMENT string `json:"COLUMN_COMMENT"`
-	COLUMN_TYPE    string `json:"COLUMN_TYPE"`
-	COLUMN_KEY     string `json:"COLUMN_KEY"`
+	Comment   string `json:"comment"`    // 字段注释
+	FieldName string `json:"field_name"` // 字段名称
+	FieldType string `json:"field_type"` // 字段类型
+	Required  int    `json:"required"`   // 是否必填
+	IsSearch  int    `json:"is_search"`  // 是否搜索
+	Indexes   string `json:"indexes"`    // 索引类型
+	JoinTable string `json:"join_table"` // 关联表
+	JoinField string `json:"join_field"` // 关联字段
+	JoinType  string `json:"join_type"`  // 关联类型
 }
 
 // database 数据库名称
@@ -26,11 +30,11 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 	isImportJson := false
 	isImportDeletedAt := false
 	for _, col := range tableStructure {
-		if col.COLUMN_NAME == "deleted_at" || col.COLUMN_NAME == "delete_time" {
+		if col.FieldName == "deleted_at" || col.FieldName == "delete_time" {
 			isImportDeletedAt = true
 		}
-		if col.COLUMN_NAME != "deleted_at" && col.COLUMN_NAME != "delete_time" {
-			switch col.DATA_TYPE {
+		if col.FieldName != "deleted_at" && col.FieldName != "delete_time" {
+			switch col.FieldType {
 			case "date", "datetime", "timestamp":
 				isImportDate = true
 			case "json":
@@ -65,10 +69,23 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 	structStr := fmt.Sprintf("type %s struct { \n", utils.ToCamelCase(table))
 	buffer.WriteString(structStr)
 	for _, col := range tableStructure {
-		if col.COLUMN_NAME == "id" {
-			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;primaryKey;autoIncrement;\" uri:\"%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.COLUMN_NAME), sqlToGoType(col.DATA_TYPE, col.COLUMN_NAME), col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_COMMENT))
+		if col.FieldName == "id" {
+			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;primaryKey;autoIncrement;\" uri:\"%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.FieldName), sqlToGoType(col.FieldType, col.FieldName), col.FieldName, col.FieldName, col.FieldName, col.FieldName, col.Comment))
+		} else if col.FieldType == "join" { //关联表
+			//一对一
+			if col.JoinType == "oneToOne" {
+				buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.FieldName), utils.ToCamelCase(col.JoinTable), col.FieldName, col.FieldName, col.FieldName, col.Comment))
+			}
+			//一对多
+			if col.JoinType == "oneToMany" {
+				buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.FieldName), utils.ToCamelCase(col.JoinTable), col.FieldName, col.FieldName, col.FieldName, col.Comment))
+			}
+			//多对多
+			if col.JoinType == "manyToMany" {
+				buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.FieldName), utils.ToCamelCase(col.JoinTable), col.FieldName, col.FieldName, col.FieldName, col.Comment))
+			}
 		} else {
-			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.COLUMN_NAME), sqlToGoType(col.DATA_TYPE, col.COLUMN_NAME), col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_NAME, col.COLUMN_COMMENT))
+			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.FieldName), sqlToGoType(col.FieldType, col.FieldName), col.FieldName, col.FieldName, col.FieldName, col.Comment))
 		}
 
 	}
