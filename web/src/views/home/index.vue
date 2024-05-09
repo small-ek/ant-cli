@@ -21,12 +21,12 @@ const newField = ({values, errors}) => {
   }
 
   tableData.value.push({
-    comment: formField.value.name,
+    comment: formField.value.comment,
     field_name: formField.value.filed,
     field_type: "join",
     join_type: formField.value.join_types,
     join_table: formField.value.join_table,
-    join_filed: formField.value.join_filed,
+    join_field: formField.value.join_field,
     required: 0,
     is_search: 0
   })
@@ -40,12 +40,12 @@ const form = reactive({
 });
 
 const formField = ref({
-  name: "",
+  comment: "",
   filed: "",
   is_join_table: false,
   column_name: "",
   join_table: "",
-  join_filed: "",
+  join_field: "",
   join_types: ""
 });
 
@@ -101,6 +101,11 @@ const columns = [
     title: '是否搜索',
     dataIndex: 'is_search',
     slotName: 'is_search'
+  },
+  {
+    title: '操作',
+    dataIndex: 'option',
+    slotName: 'option'
   }
 ];
 
@@ -144,12 +149,6 @@ const associationTable = () => {
 }
 
 const getPreviewCode = () => {
-  console.log({
-    table_name: form.table,
-    fields: tableData.value,
-    package: form.package_name,
-    is_create: false
-  })
   previewCode({
     table_name: form.table,
     fields: tableData.value,
@@ -159,7 +158,10 @@ const getPreviewCode = () => {
   }).then(res => {
     console.log(res)
   })
+}
 
+const editForm = (row) => {
+  console.log(row)
 }
 </script>
 
@@ -206,6 +208,16 @@ const getPreviewCode = () => {
             <a-option :value="0">否</a-option>
           </a-select>
         </template>
+        <template #option="{ rowIndex }">
+          <a-space v-if="tableData[rowIndex].field_type=='join'">
+            <a-button type="primary" shape="round" size="mini" @click="editForm(tableData[rowIndex])">
+              <template #icon>
+                <icon-eye/>
+              </template>
+              编辑
+            </a-button>
+          </a-space>
+        </template>
       </a-table>
     </a-card>
     <!--表单-->
@@ -216,36 +228,33 @@ const getPreviewCode = () => {
       <div>
         <a-form :model="formField" :rules="rulesForm" @submit="newField">
           <a-form-item field="name" label="中文名称">
-            <a-input v-model="formField.name"/>
+            <a-input v-model="formField.comment"/>
           </a-form-item>
-          <a-form-item field="filed" label="结构体变量">
-            <a-input v-model="formField.filed"/>
+<!--          <a-form-item field="filed" label="结构体变量">-->
+<!--            <a-input v-model="formField.filed"/>-->
+<!--          </a-form-item>-->
+
+          <a-form-item field="join_table" label="关联模型">
+            <a-select placeholder="请选择" v-model="formField.join_types" allow-clear allow-search>
+              <a-option :value="row.value" v-for="row in correlationModel">{{ row["name"] }}</a-option>
+            </a-select>
           </a-form-item>
-          <a-form-item field="is_join_table" label="是否关联表">
-            <a-switch v-model="formField.is_join_table"/>
+          <a-form-item field="field_name" label="当前表字段">
+            <a-select placeholder="请选择" v-model="formField.field_name" allow-clear allow-search>
+              <a-option :value="row.field_name" v-for="row in tableData">{{ row["field_name"] }}</a-option>
+            </a-select>
           </a-form-item>
-          <template v-if="formField.is_join_table">
-            <a-form-item field="join_table" label="关联模型">
-              <a-select placeholder="请选择" v-model="formField.join_types" allow-clear allow-search>
-                <a-option :value="row.value" v-for="row in correlationModel">{{ row["name"] }}</a-option>
-              </a-select>
-            </a-form-item>
-            <a-form-item field="field_name" label="当前表字段">
-              <a-select placeholder="请选择" v-model="formField.field_name" allow-clear allow-search>
-                <a-option :value="row.field_name" v-for="row in tableData">{{ row["field_name"] }}</a-option>
-              </a-select>
-            </a-form-item>
-            <a-form-item field="join_table" label="关联表">
-              <a-select placeholder="请选择" v-model="formField.join_table" allow-clear allow-search @change="associationTable">
-                <a-option :value="row.table_name" v-for="row in tableList">{{ row["table_name"] }}</a-option>
-              </a-select>
-            </a-form-item>
-            <a-form-item field="join_filed" label="关联表字段">
-              <a-select placeholder="请选择" v-model="formField.join_filed" allow-clear allow-search>
-                <a-option :value="row.field_name" v-for="row in relevanceFieldList">{{ row["field_name"] }}</a-option>
-              </a-select>
-            </a-form-item>
-          </template>
+          <a-form-item field="join_table" label="关联表">
+            <a-select placeholder="请选择" v-model="formField.join_table" allow-clear allow-search @change="associationTable">
+              <a-option :value="row.table_name" v-for="row in tableList">{{ row["table_name"] }}</a-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item field="join_field" label="关联表字段">
+            <a-select placeholder="请选择" v-model="formField.join_field" allow-clear allow-search>
+              <a-option :value="row.field_name" v-for="row in relevanceFieldList">{{ row["field_name"] }}</a-option>
+            </a-select>
+          </a-form-item>
+
           <a-form-item>
             <a-button html-type="submit" type="primary" shape="round">{{ $t("code.verify") }}</a-button>
           </a-form-item>
