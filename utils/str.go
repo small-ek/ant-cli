@@ -10,3 +10,8 @@ func ToCamelCase(s string) string {
 	}
 	return strings.Join(parts, "")
 }
+
+// Many2Many 多对多表名
+func Many2Many(table1, table2 string) string {
+	return table1 + "_" + table2
+}

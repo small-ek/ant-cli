@@ -2,6 +2,7 @@
 import {reactive, ref} from "vue";
 import {useI18n} from "vue-i18n"
 import {getDatabase, getTable, getTableList, previewCode} from "../../api/db/index.js";
+import autoCode from "../../components/autoCode/index.vue";
 
 const {t} = useI18n()
 const dbnameList = ref([]);
@@ -9,6 +10,7 @@ const tableList = ref([]);
 const tableData = ref([]);
 const relevanceFieldList = ref([]);
 const visible = ref(false);
+const preCodeStatus = ref(false)
 
 /**
  * 追加字段
@@ -19,17 +21,30 @@ const newField = ({values, errors}) => {
   if (errors !== undefined) {
     return
   }
+  if (formField.value.update_index == 0) {
+    tableData.value.push({
+      comment: formField.value.comment,
+      field_name: formField.value.field_name,
+      field_type: "join",
+      join_type: formField.value.join_type,
+      join_table: formField.value.join_table,
+      join_field: formField.value.join_field,
+      required: 0,
+      is_search: 0
+    })
+  } else {
+    tableData.value[formField.value.update_index] = {
+      comment: formField.value.comment,
+      field_name: formField.value.field_name,
+      field_type: "join",
+      join_type: formField.value.join_type,
+      join_table: formField.value.join_table,
+      join_field: formField.value.join_field,
+      required: 0,
+      is_search: 0
+    }
+  }
 
-  tableData.value.push({
-    comment: formField.value.comment,
-    field_name: formField.value.filed,
-    field_type: "join",
-    join_type: formField.value.join_types,
-    join_table: formField.value.join_table,
-    join_field: formField.value.join_field,
-    required: 0,
-    is_search: 0
-  })
   visible.value = false
 }
 
@@ -41,16 +56,16 @@ const form = reactive({
 
 const formField = ref({
   comment: "",
-  filed: "",
-  is_join_table: false,
-  column_name: "",
+  field_name: "",
+  field_type: "",
   join_table: "",
   join_field: "",
-  join_types: ""
+  join_type: "",
+  update_index: 0
 });
 
 const rulesForm = {
-  name: [
+  comment: [
     {
       required: true,
       message: t('verify.databaseName'),
@@ -79,33 +94,39 @@ const columns = [
     dataIndex: 'comment',
     ellipsis: true,
     tooltip: true,
+    width: 150
   },
   {
     title: '数据库类型',
     dataIndex: 'field_type',
     ellipsis: true,
     tooltip: true,
+    width: 120
   },
   {
     title: '数据库字段名称',
     dataIndex: 'field_name',
     ellipsis: true,
     tooltip: true,
+    width: 180
   },
   {
     title: '是否必填',
     dataIndex: 'required',
-    slotName: 'required'
+    slotName: 'required',
+    width: 150
   },
   {
     title: '是否搜索',
     dataIndex: 'is_search',
-    slotName: 'is_search'
+    slotName: 'is_search',
+    width: 150
   },
   {
     title: '操作',
     dataIndex: 'option',
-    slotName: 'option'
+    slotName: 'option',
+    width: 180
   }
 ];
 
@@ -148,6 +169,7 @@ const associationTable = () => {
   })
 }
 
+// getPreviewCode 获取预览代码
 const getPreviewCode = () => {
   previewCode({
     table_name: form.table,
@@ -157,17 +179,33 @@ const getPreviewCode = () => {
     data_base: form.dbname
   }).then(res => {
     console.log(res)
+    preCodeStatus.value = true
   })
 }
 
-const editForm = (row) => {
-  console.log(row)
+// editForm 编辑表格
+const editForm = (row, index) => {
+  formField.value = {
+    comment: row.comment,
+    field_name: row.field_name,
+    field_type: row.field_type,
+    join_table: row.join_table,
+    join_field: row.join_field,
+    join_type: row.join_type,
+    update_index: index
+  }
+  visible.value = true
+}
+
+// delTable 删除表格
+const delTable = (index) => {
+  tableData.value.splice(index, 1)
 }
 </script>
 
 <template>
   <div class="container">
-    <a-card :style="{ width: '860px',marginTop:'50px' }" :title="$t('code.generation')" hoverable>
+    <a-card :style="{ width: '1000px',marginTop:'50px' }" :title="$t('code.generation')" hoverable>
       <a-form :rules="rules" :model="form" :style="{width:'600px'}" @submit="handleSubmit">
         <a-form-item field="dbname" :label="$t('code.databaseName')" validate-trigger="blur">
           <a-select v-model="form.dbname" :placeholder="$t('code.select')" allow-clear allow-search @change="onchangeDbName">
@@ -197,24 +235,30 @@ const editForm = (row) => {
       <!--表格-->
       <a-table style="margin-top: 10px" :columns="columns" :data="tableData" :pagination="false">
         <template #required="{ rowIndex }">
-          <a-select :style="{width:'150px'}" v-model="tableData[rowIndex].required" placeholder="请选择">
+          <a-select :style="{width:'100px'}" v-model="tableData[rowIndex].required" placeholder="请选择">
             <a-option :value="1">是</a-option>
             <a-option :value="0">否</a-option>
           </a-select>
         </template>
         <template #is_search="{ rowIndex }">
-          <a-select :style="{width:'150px'}" v-model="tableData[rowIndex].is_search" placeholder="请选择">
+          <a-select :style="{width:'100px'}" v-model="tableData[rowIndex].is_search" placeholder="请选择">
             <a-option :value="1">是</a-option>
             <a-option :value="0">否</a-option>
           </a-select>
         </template>
         <template #option="{ rowIndex }">
           <a-space v-if="tableData[rowIndex].field_type=='join'">
-            <a-button type="primary" shape="round" size="mini" @click="editForm(tableData[rowIndex])">
+            <a-button type="text" style="margin-left: 10px" shape="round" size="mini" @click="editForm(tableData[rowIndex],rowIndex)">
               <template #icon>
                 <icon-eye/>
               </template>
               编辑
+            </a-button>
+            <a-button type="text" status="danger" style="margin-left: 10px" shape="round" size="mini" @click="delTable(rowIndex)">
+              <template #icon>
+                <icon-delete/>
+              </template>
+              删除
             </a-button>
           </a-space>
         </template>
@@ -227,15 +271,11 @@ const editForm = (row) => {
       </template>
       <div>
         <a-form :model="formField" :rules="rulesForm" @submit="newField">
-          <a-form-item field="name" label="中文名称">
+          <a-form-item field="comment" label="中文名称">
             <a-input v-model="formField.comment"/>
           </a-form-item>
-<!--          <a-form-item field="filed" label="结构体变量">-->
-<!--            <a-input v-model="formField.filed"/>-->
-<!--          </a-form-item>-->
-
-          <a-form-item field="join_table" label="关联模型">
-            <a-select placeholder="请选择" v-model="formField.join_types" allow-clear allow-search>
+          <a-form-item field="join_type" label="关联模型">
+            <a-select placeholder="请选择" v-model="formField.join_type" allow-clear allow-search>
               <a-option :value="row.value" v-for="row in correlationModel">{{ row["name"] }}</a-option>
             </a-select>
           </a-form-item>
@@ -275,6 +315,11 @@ const editForm = (row) => {
         生成代码
       </a-button>
     </div>
+    <!--预览代码-->
+    <template v-if="preCodeStatus">
+      <div>1212</div>
+      <autoCode></autoCode>
+    </template>
   </div>
 </template>
 <style scoped>

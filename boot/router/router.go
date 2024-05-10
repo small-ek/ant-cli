@@ -2,7 +2,6 @@ package router
 
 import (
 	"embed"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/small-ek/ant-cli/template"
 	"github.com/small-ek/antgo/frame/ant"
@@ -101,10 +100,20 @@ func Load(f embed.FS) *gin.Engine {
 		if err != nil {
 			return
 		}
-		fmt.Println(code)
-		getModelStr := template.GenGormModel(code.DataBase, code.TableName, code.Fields)
-		fmt.Println(getModelStr)
-		c.JSON(200, gin.H{})
+
+		modelStr := template.GenGormModel(code.DataBase, code.TableName, code.Fields)
+		daoStr := template.GenDao(code.TableName)
+		serviceStr := template.GenService(code.TableName)
+		controllerStr := template.GenController(code.TableName)
+		routeStr := template.GenRoute(code.TableName)
+
+		c.JSON(200, map[string]interface{}{
+			"model":      modelStr,
+			"dao":        daoStr,
+			"service":    serviceStr,
+			"controller": controllerStr,
+			"route":      routeStr,
+		})
 	})
 
 	return app

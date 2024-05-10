@@ -72,18 +72,16 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 		if col.FieldName == "id" {
 			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;primaryKey;autoIncrement;\" uri:\"%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.FieldName), sqlToGoType(col.FieldType, col.FieldName), col.FieldName, col.FieldName, col.FieldName, col.FieldName, col.Comment))
 		} else if col.FieldType == "join" { //关联表
-			//一对一
-			if col.JoinType == "oneToOne" {
-				buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.FieldName), utils.ToCamelCase(col.JoinTable), col.FieldName, col.JoinField, col.FieldName, col.FieldName, col.FieldName, col.Comment))
+
+			switch col.JoinType {
+			case "oneToOne":
+				buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.JoinTable), utils.ToCamelCase(col.JoinTable), col.JoinTable, utils.ToCamelCase(col.JoinField), utils.ToCamelCase(col.FieldName), col.FieldName, col.FieldName, col.Comment))
+			case "oneToMany":
+				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.JoinTable), utils.ToCamelCase(col.JoinTable), col.JoinTable, utils.ToCamelCase(col.JoinField), utils.ToCamelCase(col.FieldName), col.FieldName, col.FieldName, col.Comment))
+			case "manyToMany":
+				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"column:%s;many2many:%s;foreignKey:%s;References:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.JoinTable), utils.ToCamelCase(col.JoinTable), col.JoinTable, utils.Many2Many(table, col.JoinTable), utils.ToCamelCase(col.FieldName), utils.ToCamelCase(col.JoinField), col.FieldName, col.FieldName, col.Comment))
 			}
-			//一对多
-			if col.JoinType == "oneToMany" {
-				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"column:%sforeignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.FieldName), utils.ToCamelCase(col.JoinTable), col.FieldName, col.JoinField, col.FieldName, col.FieldName, col.FieldName, col.Comment))
-			}
-			//多对多
-			if col.JoinType == "manyToMany" {
-				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.FieldName), utils.ToCamelCase(col.JoinTable), col.FieldName, col.FieldName, col.FieldName, col.Comment))
-			}
+
 		} else {
 			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.FieldName), sqlToGoType(col.FieldType, col.FieldName), col.FieldName, col.FieldName, col.FieldName, col.Comment))
 		}
