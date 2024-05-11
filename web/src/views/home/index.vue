@@ -11,6 +11,7 @@ const tableData = ref([]);
 const relevanceFieldList = ref([]);
 const visible = ref(false);
 const preCodeStatus = ref(false)
+const preCode = ref({})
 
 /**
  * 追加字段
@@ -178,8 +179,8 @@ const getPreviewCode = () => {
     is_create: false,
     data_base: form.dbname
   }).then(res => {
-    console.log(res)
     preCodeStatus.value = true
+    preCode.value = res.data
   })
 }
 
@@ -317,8 +318,7 @@ const delTable = (index) => {
     </div>
     <!--预览代码-->
     <template v-if="preCodeStatus">
-      <div>1212</div>
-      <autoCode></autoCode>
+      <autoCode v-model:visible="preCodeStatus" v-model:preCode="preCode"></autoCode>
     </template>
   </div>
 </template>
