@@ -30,6 +30,10 @@ const handleCancel = () => {
     </template>
     <a-tabs default-active-key="2">
       <a-tab-pane key="1" title="Controller">
+        <highlightjs
+            language="js"
+            code="console.log('Hello World');"
+        />
         {{preCode["controller"]}}
       </a-tab-pane>
       <a-tab-pane key="2" title="Tab 2">
