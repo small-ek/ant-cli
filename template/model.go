@@ -45,7 +45,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 
 	}
 	buffer.WriteString(packageStr)
-	importStr := fmt.Sprintf("import (\n")
+	importStr := fmt.Sprintf("import (")
 	buffer.WriteString(importStr)
 
 	//是否导入JSON

@@ -11,14 +11,14 @@ func GenDao(table string, tableStructure []TableStructure) string {
 	humpTable := utils.ToCamelCase(table)
 	preload := ""
 	preloadImport := ""
-	wherestr := ""
+	whereStr := ""
 	for _, col := range tableStructure {
 		if col.FieldType == "join" {
 			preload = "Preload(clause.Associations)."
 			preloadImport = `"gorm.io/gorm/clause"`
 		}
 		if col.IsSearch == 1 && col.Conditions != "" {
-			wherestr += `sql.Where("` + col.FieldName + `", "` + col.Conditions + `", ` + table + `.` + utils.ToCamelCase(col.FieldName) + "),"
+			whereStr += `sql.Where("` + col.FieldName + `", "` + col.Conditions + `", ` + table + `.` + utils.ToCamelCase(col.FieldName) + "),"
 		}
 	}
 
@@ -66,7 +66,7 @@ func (dao *` + humpTable + `Dao) GetList() (list []model.` + humpTable + `) {
 // GetPage
 func (dao *` + humpTable + `Dao) GetPage(page page.PageParam, ` + table + ` model.` + humpTable + `) (list []model.` + humpTable + `, total int64, err error) {
 	err = dao.db.Model(&dao.model).Scopes(
-		` + wherestr + `
+		` + whereStr + `
 		sql.Filters(page.Filter),
 		sql.Order(page.Order),
 		sql.Paginate(page.PageSize, page.CurrentPage),
