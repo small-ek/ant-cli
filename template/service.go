@@ -8,6 +8,7 @@ import (
 func GenService(table string) string {
 	getFileName := utils.GetFileName()
 	humpTable := utils.ToCamelCase(table)
+
 	return `package service
 
 import (

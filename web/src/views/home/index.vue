@@ -3,6 +3,7 @@ import {reactive, ref} from "vue";
 import {useI18n} from "vue-i18n"
 import {getDatabase, getTable, getTableList, previewCode} from "../../api/db/index.js";
 import autoCode from "../../components/autoCode/index.vue";
+import {Message} from "@arco-design/web-vue";
 
 const {t} = useI18n()
 const dbnameList = ref([]);
@@ -31,7 +32,8 @@ const newField = ({values, errors}) => {
       join_table: formField.value.join_table,
       join_field: formField.value.join_field,
       required: 0,
-      is_search: 0
+      is_search: 0,
+      conditions: ""
     })
   } else {
     tableData.value[formField.value.update_index] = {
@@ -42,7 +44,8 @@ const newField = ({values, errors}) => {
       join_table: formField.value.join_table,
       join_field: formField.value.join_field,
       required: 0,
-      is_search: 0
+      is_search: 0,
+      conditions: ""
     }
   }
 
@@ -72,6 +75,30 @@ const rulesForm = {
       message: t('verify.databaseName'),
     },
   ],
+  join_type: [
+    {
+      required: true,
+      message: "请选择关联类型",
+    },
+  ],
+  field_name: [
+    {
+      required: true,
+      message: "请选择当前表字段",
+    },
+  ],
+  join_table: [
+    {
+      required: true,
+      message: "请选择关联表",
+    },
+  ],
+  join_field: [
+    {
+      required: true,
+      message: "请选择关联表字段",
+    },
+  ]
 }
 
 const rules = {
@@ -124,6 +151,12 @@ const columns = [
     width: 150
   },
   {
+    title: '查询条件',
+    dataIndex: 'conditions',
+    slotName: 'conditions',
+    width: 150
+  },
+  {
     title: '操作',
     dataIndex: 'option',
     slotName: 'option',
@@ -171,15 +204,19 @@ const associationTable = () => {
 }
 
 // getPreviewCode 获取预览代码
-const getPreviewCode = () => {
+const getPreviewCode = (is_create) => {
   previewCode({
     table_name: form.table,
     fields: tableData.value,
     package: form.package_name,
-    is_create: false,
+    is_create: is_create,
     data_base: form.dbname
   }).then(res => {
-    preCodeStatus.value = true
+    if (is_create == false) {
+      preCodeStatus.value = true
+    } else {
+      Message.info("生成成功")
+    }
     preCode.value = res.data
   })
 }
@@ -197,7 +234,7 @@ const editForm = (row, index) => {
   }
   visible.value = true
 }
-
+const conditionsList = ["=", "!=", "<", ">", "<=", ">=", "like", "not like", "in", "not in", "between", "not between", "is null", "is not null"];
 // delTable 删除表格
 const delTable = (index) => {
   tableData.value.splice(index, 1)
@@ -236,15 +273,20 @@ const delTable = (index) => {
       <!--表格-->
       <a-table style="margin-top: 10px" :columns="columns" :data="tableData" :pagination="false">
         <template #required="{ rowIndex }">
-          <a-select :style="{width:'100px'}" v-model="tableData[rowIndex].required" placeholder="请选择">
+          <a-select v-if="tableData[rowIndex].field_type!='join'" :style="{width:'100px'}" v-model="tableData[rowIndex].required" placeholder="请选择">
             <a-option :value="1">是</a-option>
             <a-option :value="0">否</a-option>
           </a-select>
         </template>
         <template #is_search="{ rowIndex }">
-          <a-select :style="{width:'100px'}" v-model="tableData[rowIndex].is_search" placeholder="请选择">
+          <a-select v-if="tableData[rowIndex].field_type!='join'" :style="{width:'100px'}" v-model="tableData[rowIndex].is_search" placeholder="请选择">
             <a-option :value="1">是</a-option>
             <a-option :value="0">否</a-option>
+          </a-select>
+        </template>
+        <template #conditions="{ rowIndex }">
+          <a-select v-if="tableData[rowIndex].is_search==1" :style="{width:'100px'}" v-model="tableData[rowIndex].conditions" placeholder="请选择">
+            <a-option v-for="row in conditionsList" :value="row">{{ row }}</a-option>
           </a-select>
         </template>
         <template #option="{ rowIndex }">
@@ -275,7 +317,7 @@ const delTable = (index) => {
           <a-form-item field="comment" label="中文名称">
             <a-input v-model="formField.comment"/>
           </a-form-item>
-          <a-form-item field="join_type" label="关联模型">
+          <a-form-item field="join_type" label="关联模型" help="多对多模型,中间表要求表名+字段名称拼接，必须驼峰命名,例如(user_refer_id)，user_refer是表名称">
             <a-select placeholder="请选择" v-model="formField.join_type" allow-clear allow-search>
               <a-option :value="row.value" v-for="row in correlationModel">{{ row["name"] }}</a-option>
             </a-select>
@@ -303,13 +345,13 @@ const delTable = (index) => {
       </div>
     </a-modal>
     <div style="margin-top: 15px">
-      <a-button type="primary" shape="round" @click="getPreviewCode">
+      <a-button type="primary" shape="round" @click="getPreviewCode(false)">
         <template #icon>
           <icon-eye/>
         </template>
         预览代码
       </a-button>
-      <a-button type="primary" style="margin-left: 20px" shape="round" @click="visible=true">
+      <a-button type="primary" style="margin-left: 20px" shape="round" @click="getPreviewCode(true)">
         <template #icon>
           <icon-desktop/>
         </template>

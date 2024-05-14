@@ -7,15 +7,16 @@ import (
 )
 
 type TableStructure struct {
-	Comment   string `json:"comment"`    // 字段注释
-	FieldName string `json:"field_name"` // 字段名称
-	FieldType string `json:"field_type"` // 字段类型
-	Required  int    `json:"required"`   // 是否必填
-	IsSearch  int    `json:"is_search"`  // 是否搜索
-	Indexes   string `json:"indexes"`    // 索引类型
-	JoinTable string `json:"join_table"` // 关联表
-	JoinField string `json:"join_field"` // 关联字段
-	JoinType  string `json:"join_type"`  // 关联类型
+	Comment    string `json:"comment"`    // 字段注释
+	FieldName  string `json:"field_name"` // 字段名称
+	FieldType  string `json:"field_type"` // 字段类型
+	Required   int    `json:"required"`   // 是否必填
+	IsSearch   int    `json:"is_search"`  // 是否搜索
+	Conditions string `json:"conditions"` // 查询条件
+	Indexes    string `json:"indexes"`    // 索引类型
+	JoinTable  string `json:"join_table"` // 关联表
+	JoinField  string `json:"join_field"` // 关联字段
+	JoinType   string `json:"join_type"`  // 关联类型
 }
 
 // database 数据库名称
@@ -75,15 +76,47 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 
 			switch col.JoinType {
 			case "oneToOne":
-				buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.JoinTable), utils.ToCamelCase(col.JoinTable), col.JoinTable, utils.ToCamelCase(col.JoinField), utils.ToCamelCase(col.FieldName), col.FieldName, col.FieldName, col.Comment))
+				buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n",
+					utils.ToCamelCase(col.JoinTable),
+					utils.ToCamelCase(col.JoinTable),
+					col.JoinTable,
+					utils.ToCamelCase(col.JoinField),
+					utils.ToCamelCase(col.FieldName),
+					col.JoinTable,
+					col.JoinTable,
+					col.Comment))
 			case "oneToMany":
-				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.JoinTable), utils.ToCamelCase(col.JoinTable), col.JoinTable, utils.ToCamelCase(col.JoinField), utils.ToCamelCase(col.FieldName), col.FieldName, col.FieldName, col.Comment))
+				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n",
+					utils.ToCamelCase(col.JoinTable),
+					utils.ToCamelCase(col.JoinTable),
+					col.JoinTable,
+					utils.ToCamelCase(col.JoinField),
+					utils.ToCamelCase(col.FieldName),
+					col.JoinTable,
+					col.JoinTable,
+					col.Comment))
 			case "manyToMany":
-				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"column:%s;many2many:%s;foreignKey:%s;References:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.JoinTable), utils.ToCamelCase(col.JoinTable), col.JoinTable, utils.Many2Many(table, col.JoinTable), utils.ToCamelCase(col.FieldName), utils.ToCamelCase(col.JoinField), col.FieldName, col.FieldName, col.Comment))
+				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"column:%s;many2many:%s;foreignKey:%s;References:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n",
+					utils.ToCamelCase(col.JoinTable),
+					utils.ToCamelCase(col.JoinTable),
+					col.JoinTable,
+					utils.Many2Many(table, col.JoinTable),
+					utils.ToCamelCase(col.FieldName),
+					utils.ToCamelCase(col.JoinField),
+					col.JoinTable,
+					col.JoinTable,
+					col.Comment))
 			}
 
 		} else {
-			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.FieldName), sqlToGoType(col.FieldType, col.FieldName), col.FieldName, col.FieldName, col.FieldName, col.Comment))
+			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" %s comment:\"%s\"`\n",
+				utils.ToCamelCase(col.FieldName),
+				sqlToGoType(col.FieldType, col.FieldName),
+				col.FieldName,
+				col.FieldName,
+				col.FieldName,
+				utils.GetTag(col.Required),
+				col.Comment))
 		}
 
 	}

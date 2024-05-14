@@ -15,3 +15,11 @@ func ToCamelCase(s string) string {
 func Many2Many(table1, table2 string) string {
 	return table1 + "_" + table2
 }
+
+func GetTag(Required int) string {
+	if Required == 1 {
+		return `binding:"required"`
+	}
+	return ""
+
+}

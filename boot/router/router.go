@@ -4,6 +4,7 @@ import (
 	"embed"
 	"github.com/gin-gonic/gin"
 	"github.com/small-ek/ant-cli/template"
+	"github.com/small-ek/ant-cli/utils"
 	"github.com/small-ek/antgo/frame/ant"
 	"github.com/small-ek/antgo/frame/middleware"
 	"github.com/small-ek/antgo/os/config"
@@ -102,17 +103,27 @@ func Load(f embed.FS) *gin.Engine {
 		}
 
 		modelStr := template.GenGormModel(code.DataBase, code.TableName, code.Fields)
-		daoStr := template.GenDao(code.TableName)
+		daoStr := template.GenDao(code.TableName, code.Fields)
 		serviceStr := template.GenService(code.TableName)
 		controllerStr := template.GenController(code.TableName)
 		routeStr := template.GenRoute(code.TableName)
+		requestStr := template.GenRequest(code.TableName)
 
-		c.JSON(200, map[string]interface{}{
-			"model":      modelStr,
-			"dao":        daoStr,
-			"service":    serviceStr,
-			"controller": controllerStr,
-			"route":      routeStr,
+		if code.IsCreate == true {
+			utils.WriteFile("./app/model/"+code.TableName+".go", modelStr)
+			utils.WriteFile("./app/dao/"+code.TableName+".go", daoStr)
+			utils.WriteFile("./app/service/"+code.TableName+".go", serviceStr)
+			utils.WriteFile("./app/request/"+code.TableName+".go", requestStr)
+			utils.WriteFile("./app/http/index/"+code.TableName+".go", controllerStr)
+			utils.WriteFile("./router/"+code.TableName+".go", routeStr)
+		}
+		c.JSON(200, []map[string]interface{}{
+			{"name": "Route", "code": routeStr},
+			{"name": "Controller", "code": controllerStr},
+			{"name": "Request", "code": requestStr},
+			{"name": "Service", "code": serviceStr},
+			{"name": "Dao", "code": daoStr},
+			{"name": "Model", "code": modelStr},
 		})
 	})
 

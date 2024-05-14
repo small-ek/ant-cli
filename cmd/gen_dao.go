@@ -49,7 +49,7 @@ func (b GenDao) Action(c *cli.Context) error {
 	getModelStr := template.GenGormModel(tableStr[0], tableStr[1], tableStructure)
 	utils.WriteFile("./app/model/"+tableStr[1]+".go", getModelStr)
 	//生成Dao
-	getDaoStr := template.GenDao(tableStr[1])
+	getDaoStr := template.GenDao(tableStr[1], tableStructure)
 	utils.WriteFile("./app/dao/"+tableStr[1]+".go", getDaoStr)
 
 	return nil
