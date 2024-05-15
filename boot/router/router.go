@@ -12,6 +12,7 @@ import (
 	"io/fs"
 	"io/ioutil"
 	"net/http"
+	"path/filepath"
 )
 
 type Template struct {
@@ -55,7 +56,27 @@ func Load(f embed.FS) *gin.Engine {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		c.Data(http.StatusOK, "text/html; charset=utf-8", data)
+		rawURL := c.Request.URL.String()
+		ext := filepath.Ext(rawURL)
+		if ext == ".js" {
+			c.Header("Content-Type", "application/javascript")
+		}
+		if ext == ".wasm" {
+			c.Header("Content-Type", "application/wasm")
+		}
+		if ext == ".css" {
+			c.Header("Content-Type", "text/css")
+		}
+		if ext == ".svg" {
+			c.Header("Content-Type", "image/svg+xml")
+		}
+		if ext == ".html" {
+			c.Header("Content-Type", "text/html; charset=utf-8")
+		}
+		if ext == ".lani" || ext == ".lmat" || ext == ".lm" || ext == ".lh" || ext == ".ls" {
+			c.Header("Content-Type", "application/octet-stream")
+		}
+		c.String(http.StatusOK, string(data))
 	})
 
 	//获取数据库

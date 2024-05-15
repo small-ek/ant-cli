@@ -234,7 +234,7 @@ const editForm = (row, index) => {
   }
   visible.value = true
 }
-const conditionsList = ["=", "!=", "<", ">", "<=", ">=", "like", "not like", "in", "not in", "between", "not between", "is null", "is not null"];
+const conditionsList = ["=", "!=", "<", ">", "<=", ">=", "LIKE", "IN", "NOT IN", "BETWEEN", "NOT BETWEEN"];
 // delTable 删除表格
 const delTable = (index) => {
   tableData.value.splice(index, 1)

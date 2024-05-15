@@ -76,7 +76,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 
 			switch col.JoinType {
 			case "oneToOne":
-				buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n",
+				buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"<-:false;column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n",
 					utils.ToCamelCase(col.JoinTable),
 					utils.ToCamelCase(col.JoinTable),
 					col.JoinTable,
@@ -86,7 +86,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 					col.JoinTable,
 					col.Comment))
 			case "oneToMany":
-				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n",
+				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"<-:false;column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n",
 					utils.ToCamelCase(col.JoinTable),
 					utils.ToCamelCase(col.JoinTable),
 					col.JoinTable,
@@ -96,7 +96,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 					col.JoinTable,
 					col.Comment))
 			case "manyToMany":
-				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"column:%s;many2many:%s;foreignKey:%s;References:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n",
+				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"<-:false;column:%s;many2many:%s;foreignKey:%s;References:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n",
 					utils.ToCamelCase(col.JoinTable),
 					utils.ToCamelCase(col.JoinTable),
 					col.JoinTable,
