@@ -55,7 +55,8 @@ const newField = ({values, errors}) => {
 const form = reactive({
   dbname: '',
   table: '',
-  package_name: 'index'
+  package_name: 'index',
+  table_comment: ''
 });
 
 const formField = ref({
@@ -167,9 +168,19 @@ const columns = [
 //关联模型
 const correlationModel = [{name: "一对一", value: "oneToOne"}, {name: "一对多", value: "oneToMany"}, {name: "多对多", value: "manyToMany"}]
 
+//获取数据库
 getDatabase().then(res => {
   dbnameList.value = res.data
 })
+
+//设置表注释
+const setTableComment = (value) => {
+  tableList.value.forEach(item => {
+    if (item.table_name == value) {
+      form.table_comment = item.table_comment
+    }
+  })
+}
 
 //获取数据库表
 const onchangeDbName = () => {
@@ -210,7 +221,8 @@ const getPreviewCode = (is_create) => {
     fields: tableData.value,
     package: form.package_name,
     is_create: is_create,
-    data_base: form.dbname
+    data_base: form.dbname,
+    table_comment: form.table_comment
   }).then(res => {
     if (is_create == false) {
       preCodeStatus.value = true
@@ -251,7 +263,7 @@ const delTable = (index) => {
           </a-select>
         </a-form-item>
         <a-form-item field="table" :label="$t('code.tableName')" validate-trigger="blur">
-          <a-select v-model="form.table" :placeholder="$t('code.select')" allow-clear allow-search>
+          <a-select v-model="form.table" :placeholder="$t('code.select')" allow-clear allow-search @change="setTableComment">
             <a-option :value="row.table_name" v-for="row in tableList">{{ row.table_name }}</a-option>
           </a-select>
         </a-form-item>

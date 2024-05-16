@@ -1,14 +1,25 @@
 package template
 
 import (
+	"fmt"
 	"github.com/small-ek/ant-cli/utils"
 )
 
 // GenService 生成服务端
-func GenService(table string) string {
+func GenService(table string, tableStructure []TableStructure) string {
 	getFileName := utils.GetFileName()
 	humpTable := utils.ToCamelCase(table)
+	requestStr := ""
+	for _, col := range tableStructure {
+		if col.Required == 1 {
+			requestStr += fmt.Sprintf("req.%s.%s = req.%s",
+				utils.ToCamelCase(table),
+				utils.ToCamelCase(col.FieldName),
+				utils.ToCamelCase(col.FieldName),
+			)
+		}
 
+	}
 	return `package service
 
 import (
@@ -28,6 +39,13 @@ func New` + humpTable + `Service() *` + humpTable + ` {
 //SetReq 设置参数
 func (s *` + humpTable + `) SetReq(req request.` + humpTable + `Request) *` + humpTable + ` {
 	s.req = req
+	return s
+}
+
+// SetReqForm 设置参数
+func (s *TestName) SetReqForm(req request.` + humpTable + `RequestForm) *TestName {
+	` + requestStr + `
+	s.reqCreate = req
 	return s
 }
 

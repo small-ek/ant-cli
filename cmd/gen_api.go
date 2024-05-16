@@ -45,6 +45,8 @@ func (b GenApi) Action(c *cli.Context) error {
 	if len(tableStructure) == 0 {
 		return errors.New("Database or data table does not exist")
 	}
+	var getTable = map[string]interface{}{}
+	ant.Db().Raw("SELECT TABLE_NAME AS table_name,TABLE_ROWS AS table_rows,TABLE_COLLATION AS table_collation,TABLE_COMMENT AS table_comment FROM INFORMATION_SCHEMA.Tables WHERE table_schema = ? AND table_name=?", tableStr[0], tableStr[1]).Find(&getTable)
 	// 生成Model
 	getModelStr := template.GenGormModel(tableStr[0], tableStr[1], tableStructure)
 	utils.WriteFile("./app/model/"+tableStr[1]+".go", getModelStr)
@@ -52,13 +54,13 @@ func (b GenApi) Action(c *cli.Context) error {
 	getDaoStr := template.GenDao(tableStr[1], tableStructure)
 	utils.WriteFile("./app/dao/"+tableStr[1]+".go", getDaoStr)
 	// 生成Service
-	getServiceStr := template.GenService(tableStr[1])
+	getServiceStr := template.GenService(tableStr[1], tableStructure)
 	utils.WriteFile("./app/service/"+tableStr[1]+".go", getServiceStr)
 	// 生成request
-	getRequestStr := template.GenRequest(tableStr[1])
+	getRequestStr := template.GenRequest(tableStr[1], tableStructure)
 	utils.WriteFile("./app/request/"+tableStr[1]+".go", getRequestStr)
 	// 生成Controller
-	getControllerStr := template.GenController(tableStr[1])
+	getControllerStr := template.GenController(tableStr[1], getTable["table_comment"].(string))
 	utils.WriteFile("./app/http/index/"+tableStr[1]+".go", getControllerStr)
 	// 生成Route
 	getRouteStr := template.GenRoute(tableStr[1])

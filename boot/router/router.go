@@ -16,11 +16,12 @@ import (
 )
 
 type Template struct {
-	TableName string                    `json:"table_name"` // 表名称
-	Fields    []template.TableStructure `json:"fields"`     // 表字段
-	Package   string                    `json:"package"`    // 包名
-	IsCreate  bool                      `json:"is_create"`  // 是否创建
-	DataBase  string                    `json:"data_base"`  // 数据库
+	TableName    string                    `json:"table_name"`    // 表名称
+	TableComment string                    `json:"table_comment"` // 表注释
+	Fields       []template.TableStructure `json:"fields"`        // 表字段
+	Package      string                    `json:"package"`       // 包名
+	IsCreate     bool                      `json:"is_create"`     // 是否创建
+	DataBase     string                    `json:"data_base"`     // 数据库
 }
 
 func Router() *gin.Engine {
@@ -125,10 +126,10 @@ func Load(f embed.FS) *gin.Engine {
 
 		modelStr := template.GenGormModel(code.DataBase, code.TableName, code.Fields)
 		daoStr := template.GenDao(code.TableName, code.Fields)
-		serviceStr := template.GenService(code.TableName)
-		controllerStr := template.GenController(code.TableName)
+		serviceStr := template.GenService(code.TableName, code.Fields)
+		controllerStr := template.GenController(code.TableName, code.TableComment)
 		routeStr := template.GenRoute(code.TableName)
-		requestStr := template.GenRequest(code.TableName)
+		requestStr := template.GenRequest(code.TableName, code.Fields)
 
 		if code.IsCreate == true {
 			utils.WriteFile("./app/model/"+code.TableName+".go", modelStr)

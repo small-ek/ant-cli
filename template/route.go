@@ -4,28 +4,32 @@ func Router(name string) string {
 	return `package router
 
 import (
-	"` + name + `/router"
 	"github.com/gin-gonic/gin"
+	"github.com/small-ek/antgo/frame/middleware"
 	"github.com/small-ek/antgo/os/config"
 	"github.com/small-ek/antgo/utils/gin_cors"
-	"github.com/small-ek/antgo/frame/middleware"
+	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 	"io/ioutil"
+	_ "` + name + `/docs"
+	"` + name + `/router"
 )
 
 func Router() *gin.Engine {
+	var app = gin.New()
 	//开发者模式
 	if config.GetBool("system.debug") == false {
 		gin.SetMode(gin.ReleaseMode)
 		gin.DefaultWriter = ioutil.Discard
+	} else {
+		app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
-	
-	var app = gin.New()
+
 	app.Use(gin.Logger()).Use(middleware.Recovery())
 	//跨域处理
 	if config.GetBool("system.cors") == true {
 		app.Use(gin_cors.Cors)
 	}
-
 	return app
 }
 
