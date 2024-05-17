@@ -30,6 +30,7 @@ import (
 
 type ` + humpTable + ` struct {
 	req request.` + humpTable + `Request
+	reqForm request.` + humpTable + `RequestForm
 }
 
 func New` + humpTable + `Service() *` + humpTable + ` {
@@ -45,7 +46,7 @@ func (s *` + humpTable + `) SetReq(req request.` + humpTable + `Request) *` + hu
 // SetReqForm 设置参数
 func (s *TestName) SetReqForm(req request.` + humpTable + `RequestForm) *TestName {
 	` + requestStr + `
-	s.reqCreate = req
+	s.reqForm = req
 	return s
 }
 
@@ -61,12 +62,12 @@ func (s *` + humpTable + `) Show() model.` + humpTable + ` {
 
 // Store 添加
 func (s *` + humpTable + `) Store() error {
-	return dao.New` + humpTable + `Dao().Create(&s.req.` + humpTable + `)
+	return dao.New` + humpTable + `Dao().Create(&s.reqForm.` + humpTable + `)
 }
 
 // Update 修改
 func (s *` + humpTable + `) Update() error {
-	return dao.New` + humpTable + `Dao().Update(s.req.` + humpTable + `)
+	return dao.New` + humpTable + `Dao().Update(s.reqForm.` + humpTable + `)
 }
 
 // Delete 删除

@@ -64,6 +64,15 @@ func GenGo(app string) {
 				},
 			},
 			{
+				Name: "docs",
+				Child: []TreePath{
+					{
+						Name:     "docs.go",
+						Template: template.Docs(app),
+					},
+				},
+			},
+			{
 				Name: "log",
 				Child: []TreePath{
 					{

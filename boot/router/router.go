@@ -2,6 +2,7 @@ package router
 
 import (
 	"embed"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/small-ek/ant-cli/template"
 	"github.com/small-ek/ant-cli/utils"
@@ -58,6 +59,7 @@ func Load(f embed.FS) *gin.Engine {
 			return
 		}
 		rawURL := c.Request.URL.String()
+		fmt.Println(rawURL)
 		ext := filepath.Ext(rawURL)
 		if ext == ".js" {
 			c.Header("Content-Type", "application/javascript")
@@ -71,7 +73,7 @@ func Load(f embed.FS) *gin.Engine {
 		if ext == ".svg" {
 			c.Header("Content-Type", "image/svg+xml")
 		}
-		if ext == ".html" {
+		if ext == ".html" || rawURL == "/" {
 			c.Header("Content-Type", "text/html; charset=utf-8")
 		}
 		if ext == ".lani" || ext == ".lmat" || ext == ".lm" || ext == ".lh" || ext == ".ls" {

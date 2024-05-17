@@ -17,7 +17,6 @@ func LoadSrv(f embed.FS) {
 
 	flag.Parse()
 
-	eng := ant.New(*configPath).Serve(router.Load(f))
-
+	eng := ant.New(*configPath).SetPort("49000").Serve(router.Load(f))
 	defer eng.Close()
 }

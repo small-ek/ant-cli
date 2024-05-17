@@ -68,7 +68,7 @@ func (dao *` + humpTable + `Dao) GetPage(page page.PageParam, ` + table + ` mode
 	err = dao.db.Model(&dao.model).Scopes(
 		` + whereStr + `
 		sql.Filters(page.Filter),
-		sql.Order(page.Order),
+		sql.Order(page.Order, page.Sort),
 		sql.Paginate(page.PageSize, page.CurrentPage),
 	).` + preload + `Find(&list).Offset(0).Count(&total).Error
 	return list, total, err

@@ -73,7 +73,7 @@ func (ctrl *` + humpTable + `Controller) Index(c *gin.Context) {
 //
 // Show 详情
 func (ctrl *` + humpTable + `Controller) Show(c *gin.Context) {
-	var req request.` + humpTable + `Request{}
+	var req request.` + humpTable + `Request
 	if err := c.ShouldBindUri(&req); err != nil {
 		c.SecureJSON(200, response.Fail("参数错误", err.Error()))
 		return

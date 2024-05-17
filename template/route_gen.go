@@ -16,10 +16,10 @@ func ` + humpTable + `Route(Router *gin.RouterGroup) {
 	` + humpTable + `Controller := index.New` + humpTable + `Controller()
 	v1 := Router.Group("/v1/` + table + `")
 	{
-		v1.GET("/", ` + humpTable + `Controller.Index)
+		v1.GET("", ` + humpTable + `Controller.Index)
 		v1.GET("/:id", ` + humpTable + `Controller.Show)
 		v1.DELETE("/:id", ` + humpTable + `Controller.Delete)
-		v1.POST("/", ` + humpTable + `Controller.Create)
+		v1.POST("", ` + humpTable + `Controller.Create)
 		v1.PUT("/:id", ` + humpTable + `Controller.Update)
 	}
 }
