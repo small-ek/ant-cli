@@ -21,6 +21,7 @@ func GenGo(app string) {
 		Child: []TreePath{
 			{Name: "main.go", Template: template.Main(app)},
 			{Name: "go.mod", Template: template.Mod(app)},
+			{Name: "README.md", Template: template.Readme()},
 			{
 				Name: "app",
 				Child: []TreePath{
@@ -96,8 +97,8 @@ func GenGo(app string) {
 	createProjectTree(projectTree, ".")
 	fmt.Println("Successful creation " + app)
 	fmt.Println("cd " + app)
-	fmt.Println("ant install")
-	fmt.Println("ant run main.go")
+	fmt.Println("ant-cli install")
+	fmt.Println("ant-cli run main.go")
 }
 
 func createProjectTree(node TreePath, parentPath string) {
