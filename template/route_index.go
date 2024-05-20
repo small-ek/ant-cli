@@ -4,12 +4,12 @@ func RouterIndex(name string) string {
 	return `package router
 
 import (
-	"` + name + `/app/http/index"
+	"` + name + `/app/http/api"
 	"github.com/gin-gonic/gin"
 )
 
 func IndexRoute(Router *gin.RouterGroup) {
-	IndexController := new(index.IndexController)
+	IndexController := new(api.IndexController)
 	Router.GET("/", IndexController.Index)
 }
 

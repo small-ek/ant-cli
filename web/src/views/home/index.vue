@@ -55,7 +55,7 @@ const newField = ({values, errors}) => {
 const form = reactive({
   dbname: '',
   table: '',
-  package_name: 'index',
+  package_name: 'api',
   table_comment: ''
 });
 
@@ -113,6 +113,12 @@ const rules = {
     {
       required: true,
       message: t('verify.tableName'),
+    },
+  ],
+  package_name: [
+    {
+      required: true,
+      message: t('verify.packageName'),
     },
   ],
 }
@@ -268,7 +274,7 @@ const delTable = (index) => {
           </a-select>
         </a-form-item>
         <a-form-item field="package_name" :label="$t('code.packageName')" validate-trigger="blur">
-          <a-input v-model="form.package_name" placeholder="请输入包名"/>
+          <a-input v-model="form.package_name" :placeholder="$t('code.input')"/>
         </a-form-item>
         <a-form-item>
           <a-space>
@@ -280,24 +286,24 @@ const delTable = (index) => {
         <template #icon>
           <icon-plus/>
         </template>
-        新建关联表
+        {{ $t("form.addField") }}
       </a-button>
       <!--表格-->
       <a-table style="margin-top: 10px" :columns="columns" :data="tableData" :pagination="false">
         <template #required="{ rowIndex }">
-          <a-select v-if="tableData[rowIndex].field_type!='join'" :style="{width:'100px'}" v-model="tableData[rowIndex].required" placeholder="请选择">
+          <a-select v-if="tableData[rowIndex].field_type!='join'" :style="{width:'100px'}" v-model="tableData[rowIndex].required" :placeholder="$t('code.select')">
             <a-option :value="1">是</a-option>
             <a-option :value="0">否</a-option>
           </a-select>
         </template>
         <template #is_search="{ rowIndex }">
-          <a-select v-if="tableData[rowIndex].field_type!='join'" :style="{width:'100px'}" v-model="tableData[rowIndex].is_search" placeholder="请选择">
+          <a-select v-if="tableData[rowIndex].field_type!='join'" :style="{width:'100px'}" v-model="tableData[rowIndex].is_search" :placeholder="$t('code.select')">
             <a-option :value="1">是</a-option>
             <a-option :value="0">否</a-option>
           </a-select>
         </template>
         <template #conditions="{ rowIndex }">
-          <a-select v-if="tableData[rowIndex].is_search==1" :style="{width:'100px'}" v-model="tableData[rowIndex].conditions" placeholder="请选择">
+          <a-select v-if="tableData[rowIndex].is_search==1" :style="{width:'100px'}" v-model="tableData[rowIndex].conditions" :placeholder="$t('code.select')">
             <a-option v-for="row in conditionsList" :value="row">{{ row }}</a-option>
           </a-select>
         </template>

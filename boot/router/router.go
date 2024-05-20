@@ -138,7 +138,7 @@ func Load(f embed.FS) *gin.Engine {
 			utils.WriteFile("./app/dao/"+code.TableName+".go", daoStr)
 			utils.WriteFile("./app/service/"+code.TableName+".go", serviceStr)
 			utils.WriteFile("./app/request/"+code.TableName+".go", requestStr)
-			utils.WriteFile("./app/http/index/"+code.TableName+".go", controllerStr)
+			utils.WriteFile("./app/http/"+code.Package+"/"+code.TableName+".go", controllerStr)
 			utils.WriteFile("./router/"+code.TableName+".go", routeStr)
 		}
 		c.JSON(200, []map[string]interface{}{

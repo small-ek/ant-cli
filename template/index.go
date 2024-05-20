@@ -1,7 +1,7 @@
 package template
 
 func Index(name string) string {
-	return `package index
+	return `package api
 
 import (
 	"` + name + `/app/http"

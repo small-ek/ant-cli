@@ -9,11 +9,11 @@ func GenRoute(table string) string {
 
 import (
 	"github.com/gin-gonic/gin"
-	"` + getFileName + `/app/http/index"
+	"` + getFileName + `/app/http/api"
 )
 
 func ` + humpTable + `Route(Router *gin.RouterGroup) {
-	` + humpTable + `Controller := index.New` + humpTable + `Controller()
+	` + humpTable + `Controller := api.New` + humpTable + `Controller()
 	v1 := Router.Group("/v1/` + table + `")
 	{
 		v1.GET("", ` + humpTable + `Controller.Index)

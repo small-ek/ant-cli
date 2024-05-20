@@ -3,12 +3,22 @@
         "generation": "代码生成",
         "databaseName": "数据库名称",
         "tableName": "表名称",
-        "packageName": "包名称",
+        "packageName": "控制器包名称",
         "select": "请选择",
+        "input": "请输入",
         "verify": "确 认"
     },
     "verify": {
         "databaseName": "数据库名称是必填项",
-        "tableName": "表名称是必填项"
+        "tableName": "表名称是必填项",
+        "packageName": "包名称是必填项"
+    },
+    "form": {
+        "addField": "新建关联表",
+        "databaseName": "数据库名称",
+        "tableName": "表名称",
+        "packageName": "包名称",
+        "generate": "生成代码",
+        "reset": "重置"
     }
 }
