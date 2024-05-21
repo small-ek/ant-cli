@@ -60,7 +60,7 @@ func (b GenApi) Action(c *cli.Context) error {
 	getRequestStr := template.GenRequest(tableStr[1], tableStructure)
 	utils.WriteFile("./app/request/"+tableStr[1]+".go", getRequestStr)
 	// 生成Controller
-	getControllerStr := template.GenController(tableStr[1], getTable["table_comment"].(string))
+	getControllerStr := template.GenController(tableStr[1], getTable["table_comment"].(string), "api")
 	utils.WriteFile("./app/http/api/"+tableStr[1]+".go", getControllerStr)
 	// 生成Route
 	getRouteStr := template.GenRoute(tableStr[1])

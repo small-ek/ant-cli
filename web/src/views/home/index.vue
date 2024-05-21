@@ -237,7 +237,7 @@ const getPreviewCode = (is_create) => {
     if (is_create == false) {
       preCodeStatus.value = true
     } else {
-      Message.info(t('tips.success'))
+      Message.info(t('tips.generateSuccess'))
     }
     preCode.value = res.data
   })

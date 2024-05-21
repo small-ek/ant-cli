@@ -5,10 +5,10 @@ import (
 )
 
 // GenController 生成控制器
-func GenController(table, comment string) string {
+func GenController(table, comment, packages string) string {
 	getFileName := utils.GetFileName()
 	humpTable := utils.ToCamelCase(table)
-	return `package index
+	return `package ` + packages + `
 
 import (
 	"github.com/gin-gonic/gin"

@@ -129,7 +129,7 @@ func Load(f embed.FS) *gin.Engine {
 		modelStr := template.GenGormModel(code.DataBase, code.TableName, code.Fields)
 		daoStr := template.GenDao(code.TableName, code.Fields)
 		serviceStr := template.GenService(code.TableName, code.Fields)
-		controllerStr := template.GenController(code.TableName, code.TableComment)
+		controllerStr := template.GenController(code.TableName, code.TableComment, code.Package)
 		routeStr := template.GenRoute(code.TableName)
 		requestStr := template.GenRequest(code.TableName, code.Fields)
 

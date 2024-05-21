@@ -14,7 +14,7 @@ import (
 
 func ` + humpTable + `Route(Router *gin.RouterGroup) {
 	` + humpTable + `Controller := api.New` + humpTable + `Controller()
-	v1 := Router.Group("/v1/` + table + `")
+	v1 := Router.Group("/api/` + table + `")
 	{
 		v1.GET("", ` + humpTable + `Controller.Index)
 		v1.GET("/:id", ` + humpTable + `Controller.Show)
