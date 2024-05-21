@@ -8,7 +8,7 @@ address = "9001"
 #是否开启跨域
 cors = false
 #是否开发调试模式
-debug = false
+debug = true
 #项目名称
 app_name="antgo"
 
@@ -62,13 +62,6 @@ max_open_conns= 200
 #设置连接可能被重用的最大时间(秒)。
 conn_max_lifetime=300
 
-#阿里云配置
-[oss]
-key_id = ""
-key_secret = ""
-endpoint = ""
-bucket = ""
-
 #Redis配置
 [[redis]]
 name=""
@@ -77,7 +70,7 @@ password = ""
 db = 0
 
 #邮箱
-[emaill]
+[email]
 switch = true
 to = ['']
 from = ''

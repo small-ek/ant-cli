@@ -11,20 +11,31 @@ type Install struct {
 }
 
 func (e Install) Action(c *cli.Context) error {
-	commandStr := "go mod tidy && go mod vendor"
-	var cmd *exec.Cmd
+	var cmd1 *exec.Cmd
+	var cmd2 *exec.Cmd
+	tidy := "go mod tidy"
 
 	if runtime.GOOS == "windows" {
-		cmd = exec.Command("cmd.exe", "/C", commandStr)
+		cmd1 = exec.Command("cmd.exe", "/C", tidy)
 	} else {
-		cmd = exec.Command("sh", "-c", commandStr)
+		cmd1 = exec.Command("sh", "-c", tidy)
 	}
-
-	_, err := cmd.CombinedOutput()
+	_, err := cmd1.CombinedOutput()
 	if err != nil {
 		panic(err)
 	}
 
+	vendor := "go mod vendor"
+	if runtime.GOOS == "windows" {
+		cmd2 = exec.Command("cmd.exe", "/C", vendor)
+
+	} else {
+		cmd2 = exec.Command("sh", "-c", vendor)
+	}
+	_, err2 := cmd2.CombinedOutput()
+	if err2 != nil {
+		panic(err2)
+	}
 	fmt.Println("Successful installation")
 
 	return nil

@@ -49,7 +49,9 @@
     "manyToMany": "多对多"
   },
   "tips": {
-    "generateSuccess": "生成成功"
+    "generateSuccess": "生成成功",
+    "fail": "生成失败,请填写数据",
+    "is_gen_code":"是否确认生成代码"
   },
   "tableSelect": {
     "ok": "是",

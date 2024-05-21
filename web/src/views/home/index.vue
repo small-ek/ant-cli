@@ -222,6 +222,10 @@ const associationTable = () => {
 
 // getPreviewCode 获取预览代码
 const getPreviewCode = (is_create) => {
+  if (form.table === "" || tableData.value.length === 0 || form.package_name === "") {
+    Message.error(t('tips.fail'))
+    return
+  }
   previewCode({
     table_name: form.table,
     fields: tableData.value,
@@ -369,12 +373,15 @@ const delTable = (index) => {
         </template>
         {{ $t('tableOption.preview') }}
       </a-button>
-      <a-button type="primary" style="margin-left: 20px" shape="round" @click="getPreviewCode(true)">
-        <template #icon>
-          <icon-desktop/>
-        </template>
-        {{ $t("tableOption.gen_code") }}
-      </a-button>
+      <a-popconfirm :content="t('tips.is_gen_code')" type="info" @ok="getPreviewCode(true)">
+        <a-button type="primary" style="margin-left: 20px" shape="round">
+          <template #icon>
+            <icon-desktop/>
+          </template>
+          {{ $t("tableOption.gen_code") }}
+        </a-button>
+      </a-popconfirm>
+
     </div>
     <!--预览代码-->
     <template v-if="preCodeStatus">

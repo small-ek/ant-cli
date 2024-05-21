@@ -49,7 +49,9 @@
     "manyToMany": "Many to Many"
   },
   "tips": {
-    "generateSuccess": "Generation Successful"
+    "generateSuccess": "Generation Successful",
+    "fail": "Failed to generate, please fill in the data",
+    "is_gen_code":"Whether to confirm the generated code"
   },
   "tableSelect": {
     "ok": "Yes",

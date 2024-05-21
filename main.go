@@ -40,8 +40,6 @@ func main() {
 		Version: "1.0.0",
 		Flags:   []cli.Flag{},
 		Action: func(c *cli.Context) error {
-			//fmt.Println(c.String("lang"))
-			//fmt.Println(c.String("aaa"))
 			return nil
 		},
 		Commands: []*cli.Command{

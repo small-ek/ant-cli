@@ -44,7 +44,7 @@ func (s *` + humpTable + `) SetReq(req request.` + humpTable + `Request) *` + hu
 }
 
 // SetReqForm 设置参数
-func (s *TestName) SetReqForm(req request.` + humpTable + `RequestForm) *TestName {
+func (s *` + humpTable + `) SetReqForm(req request.` + humpTable + `RequestForm) *` + humpTable + ` {
 	` + requestStr + `
 	s.reqForm = req
 	return s
