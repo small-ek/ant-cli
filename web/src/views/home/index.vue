@@ -73,31 +73,31 @@ const rulesForm = {
   comment: [
     {
       required: true,
-      message: t('verify.databaseName'),
+      message: t('verify.comment'),
     },
   ],
   join_type: [
     {
       required: true,
-      message: "请选择关联类型",
+      message: t('verify.join_type'),
     },
   ],
   field_name: [
     {
       required: true,
-      message: "请选择当前表字段",
+      message: t('verify.field_name'),
     },
   ],
   join_table: [
     {
       required: true,
-      message: "请选择关联表",
+      message: t('verify.join_table'),
     },
   ],
   join_field: [
     {
       required: true,
-      message: "请选择关联表字段",
+      message: t('verify.join_field'),
     },
   ]
 }
@@ -125,54 +125,54 @@ const rules = {
 
 const columns = [
   {
-    title: '中文名称',
+    title: t('table_columns.comment'),
     dataIndex: 'comment',
     ellipsis: true,
     tooltip: true,
-    width: 150
+    width: 140
   },
   {
-    title: '数据库类型',
+    title: t('table_columns.field_type'),
     dataIndex: 'field_type',
     ellipsis: true,
     tooltip: true,
-    width: 120
+    width: 100
   },
   {
-    title: '数据库字段名称',
+    title: t('table_columns.field_name'),
     dataIndex: 'field_name',
     ellipsis: true,
     tooltip: true,
-    width: 180
+    width: 130
   },
   {
-    title: '是否必填',
+    title: t('table_columns.required'),
     dataIndex: 'required',
     slotName: 'required',
-    width: 150
+    width: 155
   },
   {
-    title: '是否搜索',
+    title: t('table_columns.is_search'),
     dataIndex: 'is_search',
     slotName: 'is_search',
-    width: 150
+    width: 155
   },
   {
-    title: '查询条件',
+    title: t('table_columns.conditions'),
     dataIndex: 'conditions',
     slotName: 'conditions',
-    width: 150
+    width: 130
   },
   {
-    title: '操作',
+    title: t('table_columns.option'),
     dataIndex: 'option',
     slotName: 'option',
-    width: 180
+    width: 160
   }
 ];
 
 //关联模型
-const correlationModel = [{name: "一对一", value: "oneToOne"}, {name: "一对多", value: "oneToMany"}, {name: "多对多", value: "manyToMany"}]
+const correlationModel = [{name: t('correlationModel.oneToOne'), value: "oneToOne"}, {name: t('correlationModel.oneToMany'), value: "oneToMany"}, {name: t('correlationModel.manyToMany'), value: "manyToMany"}]
 
 //获取数据库
 getDatabase().then(res => {
@@ -233,7 +233,7 @@ const getPreviewCode = (is_create) => {
     if (is_create == false) {
       preCodeStatus.value = true
     } else {
-      Message.info("生成成功")
+      Message.info(t('tips.success'))
     }
     preCode.value = res.data
   })
@@ -262,7 +262,7 @@ const delTable = (index) => {
 <template>
   <div class="container">
     <a-card :style="{ width: '1000px',marginTop:'50px' }" :title="$t('code.generation')" hoverable>
-      <a-form :rules="rules" :model="form" :style="{width:'600px'}" @submit="handleSubmit">
+      <a-form :rules="rules" :model="form" :style="{width:'850px'}" @submit="handleSubmit">
         <a-form-item field="dbname" :label="$t('code.databaseName')" validate-trigger="blur">
           <a-select v-model="form.dbname" :placeholder="$t('code.select')" allow-clear allow-search @change="onchangeDbName">
             <a-option :value="row" v-for="row in dbnameList">{{ row }}</a-option>
@@ -289,18 +289,18 @@ const delTable = (index) => {
         {{ $t("form.addField") }}
       </a-button>
       <!--表格-->
-      <a-table style="margin-top: 10px" :columns="columns" :data="tableData" :pagination="false">
+      <a-table style="margin-top: 10px" :stripe="true" :hoverable="true" :columns="columns" :data="tableData" :pagination="false">
         <template #required="{ rowIndex }">
-          <a-select v-if="tableData[rowIndex].field_type!='join'" :style="{width:'100px'}" v-model="tableData[rowIndex].required" :placeholder="$t('code.select')">
-            <a-option :value="1">是</a-option>
-            <a-option :value="0">否</a-option>
-          </a-select>
+          <a-radio-group v-if="tableData[rowIndex].field_type!='join'" v-model="tableData[rowIndex].required">
+            <a-radio :value="1">{{ $t('tableSelect.ok') }}</a-radio>
+            <a-radio :value="0">{{ $t('tableSelect.no') }}</a-radio>
+          </a-radio-group>
         </template>
         <template #is_search="{ rowIndex }">
-          <a-select v-if="tableData[rowIndex].field_type!='join'" :style="{width:'100px'}" v-model="tableData[rowIndex].is_search" :placeholder="$t('code.select')">
-            <a-option :value="1">是</a-option>
-            <a-option :value="0">否</a-option>
-          </a-select>
+          <a-radio-group v-if="tableData[rowIndex].field_type!='join'" v-model="tableData[rowIndex].is_search">
+            <a-radio :value="1">{{ $t('tableSelect.ok') }}</a-radio>
+            <a-radio :value="0">{{ $t('tableSelect.no') }}</a-radio>
+          </a-radio-group>
         </template>
         <template #conditions="{ rowIndex }">
           <a-select v-if="tableData[rowIndex].is_search==1" :style="{width:'100px'}" v-model="tableData[rowIndex].conditions" :placeholder="$t('code.select')">
@@ -313,13 +313,13 @@ const delTable = (index) => {
               <template #icon>
                 <icon-eye/>
               </template>
-              编辑
+              {{ $t('tableOption.edit') }}
             </a-button>
-            <a-button type="text" status="danger" style="margin-left: 10px" shape="round" size="mini" @click="delTable(rowIndex)">
+            <a-button type="text" status="danger" shape="round" size="mini" @click="delTable(rowIndex)">
               <template #icon>
                 <icon-delete/>
               </template>
-              删除
+              {{ $t('tableOption.delete') }}
             </a-button>
           </a-space>
         </template>
@@ -332,26 +332,26 @@ const delTable = (index) => {
       </template>
       <div>
         <a-form :model="formField" :rules="rulesForm" @submit="newField">
-          <a-form-item field="comment" label="中文名称">
+          <a-form-item field="comment" :label="$t('form2.chinese_name')">
             <a-input v-model="formField.comment"/>
           </a-form-item>
-          <a-form-item field="join_type" label="关联模型" help="多对多模型,中间表要求表名+字段名称拼接，必须驼峰命名,例如(user_refer_id)，user_refer是表名称">
-            <a-select placeholder="请选择" v-model="formField.join_type" allow-clear allow-search>
+          <a-form-item field="join_type" :label="$t('form2.join_type')" :help="$t('form2.help')">
+            <a-select :placeholder="$t('code.select')" v-model="formField.join_type" allow-clear allow-search>
               <a-option :value="row.value" v-for="row in correlationModel">{{ row["name"] }}</a-option>
             </a-select>
           </a-form-item>
-          <a-form-item field="field_name" label="当前表字段">
-            <a-select placeholder="请选择" v-model="formField.field_name" allow-clear allow-search>
+          <a-form-item field="field_name" :label="$t('form2.field_name')">
+            <a-select :placeholder="$t('code.select')" v-model="formField.field_name" allow-clear allow-search>
               <a-option :value="row.field_name" v-for="row in tableData">{{ row["field_name"] }}</a-option>
             </a-select>
           </a-form-item>
-          <a-form-item field="join_table" label="关联表">
-            <a-select placeholder="请选择" v-model="formField.join_table" allow-clear allow-search @change="associationTable">
+          <a-form-item field="join_table" :label="$t('form2.join_table')">
+            <a-select :placeholder="$t('code.select')" v-model="formField.join_table" allow-clear allow-search @change="associationTable">
               <a-option :value="row.table_name" v-for="row in tableList">{{ row["table_name"] }}</a-option>
             </a-select>
           </a-form-item>
-          <a-form-item field="join_field" label="关联表字段">
-            <a-select placeholder="请选择" v-model="formField.join_field" allow-clear allow-search>
+          <a-form-item field="join_field" :label="$t('form2.join_field')">
+            <a-select :placeholder="$t('code.select')" v-model="formField.join_field" allow-clear allow-search>
               <a-option :value="row.field_name" v-for="row in relevanceFieldList">{{ row["field_name"] }}</a-option>
             </a-select>
           </a-form-item>
@@ -367,13 +367,13 @@ const delTable = (index) => {
         <template #icon>
           <icon-eye/>
         </template>
-        预览代码
+        {{ $t('tableOption.preview') }}
       </a-button>
       <a-button type="primary" style="margin-left: 20px" shape="round" @click="getPreviewCode(true)">
         <template #icon>
           <icon-desktop/>
         </template>
-        生成代码
+        {{ $t("tableOption.gen_code") }}
       </a-button>
     </div>
     <!--预览代码-->
@@ -384,7 +384,7 @@ const delTable = (index) => {
 </template>
 <style scoped>
 .container {
-  width: 800px;
+  width: 1100px;
   margin: 0 auto;
 }
 </style>

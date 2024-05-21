@@ -1,5 +1,5 @@
 <script setup>
-import Menu from "@/components/menu/index.vue"
+import Menu from "../src/components/menu/index.vue"
 </script>
 <template>
   <div class="bodys">

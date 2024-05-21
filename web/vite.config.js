@@ -6,8 +6,6 @@ import Components from 'unplugin-vue-components/vite';
 import {ArcoResolver} from 'unplugin-vue-components/resolvers';
 import {vitePluginForArco} from '@arco-plugins/vite-vue'
 
-import viteCompression from 'vite-plugin-compression'
-
 // https://vitejs.dev/config/
 export default defineConfig({
     resolve: {
@@ -26,14 +24,16 @@ export default defineConfig({
         vitePluginForArco({
             style: 'css'
         }),
-        viteCompression({
-            verbose: true, // 默认即可
-            disable: false, // 开启压缩(不禁用)，默认即可
-            deleteOriginFile: false, // 删除源文件
-            threshold: 5120, // 压缩前最小文件大小
-            algorithm: 'gzip', // 压缩算法
-            ext: '.gz' // 文件类型
-        })],
+        // 压缩插件
+        // viteCompression({
+        //     verbose: true, // 默认即可
+        //     disable: false, // 开启压缩(不禁用)，默认即可
+        //     deleteOriginFile: false, // 删除源文件
+        //     threshold: 5120, // 压缩前最小文件大小
+        //     algorithm: 'gzip', // 压缩算法
+        //     ext: '.gz' // 文件类型
+        // })
+    ],
     server: {
         // 服务器主机名，如果允许外部访问，可设置为 "0.0.0.0"
         host: "0.0.0.0",

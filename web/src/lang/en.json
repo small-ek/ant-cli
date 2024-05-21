@@ -3,6 +3,62 @@
     "generation": "Code Generation",
     "databaseName": "Database Name",
     "tableName": "Table Name",
-    "select": "Please Select"
+    "packageName": "Controller Package Name",
+    "select": "Please Select",
+    "input": "Please Input",
+    "verify": "Confirm"
+  },
+  "verify": {
+    "databaseName": "Database Name is required",
+    "tableName": "Table Name is required",
+    "packageName": "Package Name is required",
+    "comment": "Comment is required",
+    "join_type": "Please select the association type",
+    "field_name": "Please select the current table field",
+    "join_table": "Please select the associated table",
+    "join_field": "Please select the associated table field"
+  },
+  "form": {
+    "addField": "Add New Associated Table",
+    "databaseName": "Database Name",
+    "tableName": "Table Name",
+    "packageName": "Package Name",
+    "generate": "Generate Code",
+    "reset": "Reset"
+  },
+  "form2": {
+    "chinese_name": "Comment",
+    "join_type": "Association Type",
+    "field_name": "Current Table Field",
+    "join_table": "Associated Table",
+    "join_field": "Associated Table Field",
+    "help":"For many-to-many model, the intermediate table requires table name + field name concatenation, must be camel case, for example(user_refer_id), user_refer is the table name"
+  },
+  "table_columns": {
+    "comment": "Comment",
+    "field_type": "Database Type",
+    "field_name": "Database Field Name",
+    "required": "Is Required",
+    "is_search": "Is Searchable",
+    "conditions": "Query Conditions",
+    "option": "Operation"
+  },
+  "correlationModel": {
+    "oneToOne": "One to One",
+    "oneToMany": "One to Many",
+    "manyToMany": "Many to Many"
+  },
+  "tips": {
+    "generateSuccess": "Generation Successful"
+  },
+  "tableSelect": {
+    "ok": "Yes",
+    "no": "No"
+  },
+  "tableOption": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "preview":"Preview Code",
+    "gen_code":"Generate Code"
   }
 }
