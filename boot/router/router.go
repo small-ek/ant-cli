@@ -3,13 +3,13 @@ package router
 import (
 	"embed"
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/small-ek/ant-cli/template"
 	"github.com/small-ek/ant-cli/utils"
 	"github.com/small-ek/antgo/frame/ant"
 	"github.com/small-ek/antgo/frame/middleware"
 	"github.com/small-ek/antgo/os/config"
-	"github.com/small-ek/antgo/utils/gin_cors"
 	"io/fs"
 	"io/ioutil"
 	"net/http"
@@ -35,7 +35,12 @@ func Router() *gin.Engine {
 	var app = gin.New()
 	app.Use(gin.Logger()).Use(middleware.Recovery())
 	//跨域处理
-	app.Use(gin_cors.Cors)
+	if config.GetBool("system.cors") == true {
+		corsConfig := cors.DefaultConfig()
+		corsConfig.AllowOrigins = []string{"*"}
+		corsConfig.AllowHeaders = []string{"*"}
+		app.Use(cors.New(corsConfig))
+	}
 
 	return app
 }

@@ -4,10 +4,11 @@ func Router(name string) string {
 	return `package router
 
 import (
+	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/requestid"
 	"github.com/gin-gonic/gin"
 	"github.com/small-ek/antgo/frame/middleware"
 	"github.com/small-ek/antgo/os/config"
-	"github.com/small-ek/antgo/utils/gin_cors"
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	"io/ioutil"
@@ -25,10 +26,13 @@ func Router() *gin.Engine {
 		app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
-	app.Use(gin.Logger()).Use(middleware.Recovery())
+	app.Use(requestid.New()).Use(middleware.Recovery()).Use(middleware.Logger())
 	//跨域处理
 	if config.GetBool("system.cors") == true {
-		app.Use(gin_cors.Cors)
+		corsConfig := cors.DefaultConfig()
+		corsConfig.AllowOrigins = []string{"*"}
+		corsConfig.AllowHeaders = []string{"*"}
+		app.Use(cors.New(corsConfig))
 	}
 	return app
 }

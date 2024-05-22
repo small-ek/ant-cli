@@ -4,8 +4,9 @@ go 1.18
 
 require (
 	github.com/fsnotify/fsnotify v1.7.0
+	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
-	github.com/small-ek/antgo v1.6.5
+	github.com/small-ek/antgo v1.6.6
 	github.com/urfave/cli/v2 v2.27.1
 )
 
