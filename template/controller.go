@@ -13,7 +13,6 @@ func GenController(table, comment, packages string) string {
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/small-ek/antgo/utils/page"
-	"github.com/small-ek/antgo/utils/response"
 	"` + getFileName + `/app/http"
 	"` + getFileName + `/app/request"
 	"` + getFileName + `/app/service"
@@ -46,20 +45,16 @@ func (ctrl *` + humpTable + `Controller) Index(c *gin.Context) {
 		PageParam: page.New(),
 	}
 	if err := c.ShouldBindQuery(&req); err != nil {
-		c.SecureJSON(200, response.Fail("参数错误", err.Error()))
+		ctrl.Fail(c, "参数错误", err.Error())
 		return
 	}
 
 	list, total, err := ctrl.` + humpTable + `Service.SetReq(req).Index()
 	if err != nil {
-		c.SecureJSON(200, response.Fail("异常错误", err.Error()))
+		ctrl.Fail(c, "异常错误", err.Error())
 		return
 	}
-
-	c.SecureJSON(200, response.Success("success", response.Page{
-		Total: total,
-		List:  list,
-	}))
+	ctrl.Success(c, "success", ctrl.Page(total, list))
 }
 
 //	@Summary		获取` + comment + `单条数据
@@ -75,13 +70,12 @@ func (ctrl *` + humpTable + `Controller) Index(c *gin.Context) {
 func (ctrl *` + humpTable + `Controller) Show(c *gin.Context) {
 	var req request.` + humpTable + `Request
 	if err := c.ShouldBindUri(&req); err != nil {
-		c.SecureJSON(200, response.Fail("参数错误", err.Error()))
+		ctrl.Fail(c, "参数错误", err.Error())
 		return
 	}
 
 	row := ctrl.` + humpTable + `Service.SetReq(req).Show()
-
-	c.SecureJSON(200, response.Success("success", row))
+	ctrl.Success(c, "success", row)
 }
 
 //	@Summary		创建` + comment + `数据
@@ -98,16 +92,15 @@ func (ctrl *` + humpTable + `Controller) Show(c *gin.Context) {
 func (ctrl *` + humpTable + `Controller) Create(c *gin.Context) {
 	var req request.` + humpTable + `RequestForm
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.SecureJSON(200, response.Fail("参数错误", err.Error()))
+		ctrl.Fail(c, "参数错误", err.Error())
 		return
 	}
 
 	if err := ctrl.` + humpTable + `Service.SetReqForm(req).Store(); err != nil {
-		c.SecureJSON(200, response.Fail("创建失败", err.Error()))
+		ctrl.Fail(c, "创建失败", err.Error())
 		return
 	}
-
-	c.SecureJSON(200, response.Success("success"))
+	ctrl.Success(c, "success")
 }
 
 //	@Summary		修改` + comment + `数据
@@ -124,15 +117,14 @@ func (ctrl *` + humpTable + `Controller) Create(c *gin.Context) {
 func (ctrl *` + humpTable + `Controller) Update(c *gin.Context) {
 	var req request.` + humpTable + `RequestForm
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.SecureJSON(200, response.Fail("参数错误", err.Error()))
+		ctrl.Fail(c, "参数错误", err.Error())
 		return
 	}
 
 	if err := ctrl.` + humpTable + `Service.SetReqForm(req).Update();err!=nil{
-		c.SecureJSON(200, response.Fail("更新失败", err.Error()))
+		ctrl.Fail(c, "参数错误", err.Error())
 	}
-
-	c.SecureJSON(200, response.Success("success"))
+	ctrl.Success(c, "success")
 }
 
 //	@Summary		删除` + comment + `数据
@@ -148,16 +140,16 @@ func (ctrl *` + humpTable + `Controller) Update(c *gin.Context) {
 func (ctrl *` + humpTable + `Controller) Delete(c *gin.Context) {
 	var req request.` + humpTable + `Request
 	if err := c.ShouldBindUri(&req); err != nil {
-		c.SecureJSON(200, response.Fail("参数错误", err.Error()))
+		ctrl.Fail(c, "参数错误", err.Error())
 		return
 	}
 
 	if err := ctrl.` + humpTable + `Service.SetReq(req).Delete(); err != nil {
-		c.SecureJSON(200, response.Fail("删除失败", err.Error()))
+		ctrl.Fail(c, "删除失败", err.Error())
 		return
 	}
 
-	c.SecureJSON(200, response.Success("success"))
+	ctrl.Success(c, "success")
 }
 
 `

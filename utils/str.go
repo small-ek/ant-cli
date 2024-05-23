@@ -23,3 +23,10 @@ func GetTag(Required int) string {
 	return ""
 
 }
+func GetComment(comment string) string {
+	if comment != "" {
+		return "//" + comment
+	}
+	return ""
+
+}

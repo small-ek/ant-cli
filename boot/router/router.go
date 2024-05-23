@@ -33,7 +33,7 @@ func Router() *gin.Engine {
 	}
 
 	var app = gin.New()
-	app.Use(middleware.Logger()).Use(middleware.Recovery())
+	app.Use(middleware.Recovery())
 	//跨域处理
 	if config.GetBool("system.cors") == true {
 		corsConfig := cors.DefaultConfig()

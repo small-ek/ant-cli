@@ -38,41 +38,41 @@ func New` + humpTable + `Service() *` + humpTable + ` {
 }
 
 //SetReq 设置参数
-func (s *` + humpTable + `) SetReq(req request.` + humpTable + `Request) *` + humpTable + ` {
-	s.req = req
-	return s
+func (svc *` + humpTable + `) SetReq(req request.` + humpTable + `Request) *` + humpTable + ` {
+	svc.req = req
+	return svc
 }
 
 // SetReqForm 设置参数
-func (s *` + humpTable + `) SetReqForm(req request.` + humpTable + `RequestForm) *` + humpTable + ` {
+func (svc *` + humpTable + `) SetReqForm(req request.` + humpTable + `RequestForm) *` + humpTable + ` {
 	` + requestStr + `
-	s.reqForm = req
-	return s
+	svc.reqForm = req
+	return svc
 }
 
 // Index 分页
-func (s *` + humpTable + `) Index() ([]model.` + humpTable + `, int64, error) {
-	return dao.New` + humpTable + `Dao().GetPage(s.req.PageParam, s.req.` + humpTable + `)
+func (svc *` + humpTable + `) Index() ([]model.` + humpTable + `, int64, error) {
+	return dao.New` + humpTable + `Dao().GetPage(svc.req.PageParam, svc.req.` + humpTable + `)
 }
 
 // Show 查询单个
-func (s *` + humpTable + `) Show() model.` + humpTable + ` {
-	return dao.New` + humpTable + `Dao().GetById(s.req.` + humpTable + `.Id)
+func (svc *` + humpTable + `) Show() model.` + humpTable + ` {
+	return dao.New` + humpTable + `Dao().GetById(svc.req.` + humpTable + `.Id)
 }
 
 // Store 添加
-func (s *` + humpTable + `) Store() error {
-	return dao.New` + humpTable + `Dao().Create(&s.reqForm.` + humpTable + `)
+func (svc *` + humpTable + `) Store() error {
+	return dao.New` + humpTable + `Dao().Create(&svc.reqForm.` + humpTable + `)
 }
 
 // Update 修改
-func (s *` + humpTable + `) Update() error {
-	return dao.New` + humpTable + `Dao().Update(s.reqForm.` + humpTable + `)
+func (svc *` + humpTable + `) Update() error {
+	return dao.New` + humpTable + `Dao().Update(svc.reqForm.` + humpTable + `)
 }
 
 // Delete 删除
-func (s *` + humpTable + `) Delete() error {
-	return dao.New` + humpTable + `Dao().DeleteById(s.req.` + humpTable + `.Id)
+func (svc *` + humpTable + `) Delete() error {
+	return dao.New` + humpTable + `Dao().DeleteById(svc.req.` + humpTable + `.Id)
 }
 
 `

@@ -71,12 +71,28 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 	buffer.WriteString(structStr)
 	for _, col := range tableStructure {
 		if col.FieldName == "id" {
-			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;primaryKey;autoIncrement;\" uri:\"%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n", utils.ToCamelCase(col.FieldName), sqlToGoType(col.FieldType, col.FieldName), col.FieldName, col.FieldName, col.FieldName, col.FieldName, col.Comment))
+			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;primaryKey;autoIncrement;\" uri:\"%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
+				utils.ToCamelCase(col.FieldName),
+				sqlToGoType(col.FieldType, col.FieldName),
+				col.FieldName,
+				col.FieldName,
+				col.FieldName,
+				col.FieldName,
+				col.Comment,
+				utils.GetComment(col.Comment)))
+		} else if col.FieldName == "created_at" || col.FieldName == "updated_at" || col.FieldName == "deleted_at" {
+			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"-\" form:\"%s\" comment:\"%s\"`%s\n",
+				utils.ToCamelCase(col.FieldName),
+				sqlToGoType(col.FieldType, col.FieldName),
+				col.FieldName,
+				col.FieldName,
+				col.Comment,
+				utils.GetComment(col.Comment)))
 		} else if col.FieldType == "join" { //关联表
 
 			switch col.JoinType {
 			case "oneToOne":
-				buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"<-:false;column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n",
+				buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"<-:false;column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
 					utils.ToCamelCase(col.JoinTable),
 					utils.ToCamelCase(col.JoinTable),
 					col.JoinTable,
@@ -84,9 +100,10 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 					utils.ToCamelCase(col.FieldName),
 					col.JoinTable,
 					col.JoinTable,
-					col.Comment))
+					col.Comment,
+					utils.GetComment(col.Comment)))
 			case "oneToMany":
-				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"<-:false;column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n",
+				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"<-:false;column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
 					utils.ToCamelCase(col.JoinTable),
 					utils.ToCamelCase(col.JoinTable),
 					col.JoinTable,
@@ -94,9 +111,10 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 					utils.ToCamelCase(col.FieldName),
 					col.JoinTable,
 					col.JoinTable,
-					col.Comment))
+					col.Comment,
+					utils.GetComment(col.Comment)))
 			case "manyToMany":
-				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"<-:false;column:%s;many2many:%s;foreignKey:%s;References:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`\n",
+				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"<-:false;column:%s;many2many:%s;foreignKey:%s;References:%s\" json:\"%s\" form:\"%s\" comment:\"%s\" `%s\n",
 					utils.ToCamelCase(col.JoinTable),
 					utils.ToCamelCase(col.JoinTable),
 					col.JoinTable,
@@ -105,18 +123,19 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 					utils.ToCamelCase(col.JoinField),
 					col.JoinTable,
 					col.JoinTable,
-					col.Comment))
+					col.Comment,
+					utils.GetComment(col.Comment)))
 			}
 
 		} else {
-			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" %s comment:\"%s\"`\n",
+			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
 				utils.ToCamelCase(col.FieldName),
 				sqlToGoType(col.FieldType, col.FieldName),
 				col.FieldName,
 				col.FieldName,
 				col.FieldName,
-				utils.GetTag(col.Required),
-				col.Comment))
+				col.Comment,
+				utils.GetComment(col.Comment)))
 		}
 
 	}
