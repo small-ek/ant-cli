@@ -92,6 +92,9 @@ func GenGo(app string) {
 					},
 				},
 			},
+			{
+				Name: "utils",
+			},
 		},
 	}
 
