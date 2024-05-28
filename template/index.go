@@ -4,12 +4,12 @@ func Index(name string) string {
 	return `package api
 
 import (
-	"` + name + `/app/http"
+	"` + name + `/app/entity/vo"
 	"github.com/gin-gonic/gin"
 )
 
 type IndexController struct {
-	http.Base
+	vo.Base
 }
 
 // Index

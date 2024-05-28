@@ -13,7 +13,7 @@ import (
 	"github.com/swaggo/gin-swagger"
 	"io/ioutil"
 	_ "` + name + `/docs"
-	"` + name + `/router"
+	"` + name + `/routes"
 )
 
 func Router() *gin.Engine {
@@ -43,7 +43,7 @@ func Load() *gin.Engine {
 	//添加路由组前缀
 	Group := app.Group("")
 	//注册路由
-	router.IndexRoute(Group)
+	routes.IndexRoute(Group)
 
 	return app
 }

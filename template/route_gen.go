@@ -5,16 +5,16 @@ import "github.com/small-ek/ant-cli/utils"
 func GenRoute(table string) string {
 	getFileName := utils.GetFileName()
 	humpTable := utils.ToCamelCase(table)
-	return `package router
+	return `package routes
 
 import (
 	"github.com/gin-gonic/gin"
 	"` + getFileName + `/app/http/api"
 )
 
-func ` + humpTable + `Route(Router *gin.RouterGroup) {
+func ` + humpTable + `Route(route *gin.RouterGroup) {
 	` + humpTable + `Controller := api.New` + humpTable + `Controller()
-	v1 := Router.Group("/api/` + table + `")
+	v1 := route.Group("/api/` + table + `")
 	{
 		v1.GET("", ` + humpTable + `Controller.Index)
 		v1.GET("/:id", ` + humpTable + `Controller.Show)

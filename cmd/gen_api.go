@@ -49,7 +49,7 @@ func (b GenApi) Action(c *cli.Context) error {
 	ant.Db().Raw("SELECT TABLE_NAME AS table_name,TABLE_ROWS AS table_rows,TABLE_COLLATION AS table_collation,TABLE_COMMENT AS table_comment FROM INFORMATION_SCHEMA.Tables WHERE table_schema = ? AND table_name=?", tableStr[0], tableStr[1]).Find(&getTable)
 	// 生成Model
 	getModelStr := template.GenGormModel(tableStr[0], tableStr[1], tableStructure)
-	utils.WriteFile("./app/model/"+tableStr[1]+".go", getModelStr)
+	utils.WriteFile("./app/models/"+tableStr[1]+".go", getModelStr)
 	// 生成Dao
 	getDaoStr := template.GenDao(tableStr[1], tableStructure)
 	utils.WriteFile("./app/dao/"+tableStr[1]+".go", getDaoStr)
@@ -58,12 +58,12 @@ func (b GenApi) Action(c *cli.Context) error {
 	utils.WriteFile("./app/service/"+tableStr[1]+".go", getServiceStr)
 	// 生成request
 	getRequestStr := template.GenRequest(tableStr[1], tableStructure)
-	utils.WriteFile("./app/request/"+tableStr[1]+".go", getRequestStr)
+	utils.WriteFile("./app/entity/request/"+tableStr[1]+".go", getRequestStr)
 	// 生成Controller
 	getControllerStr := template.GenController(tableStr[1], getTable["table_comment"].(string), "api")
 	utils.WriteFile("./app/http/api/"+tableStr[1]+".go", getControllerStr)
 	// 生成Route
 	getRouteStr := template.GenRoute(tableStr[1])
-	utils.WriteFile("./router/"+tableStr[1]+".go", getRouteStr)
+	utils.WriteFile("./routes/"+tableStr[1]+".go", getRouteStr)
 	return nil
 }

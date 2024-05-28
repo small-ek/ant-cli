@@ -27,16 +27,19 @@ func GenGo(app string) {
 				Child: []TreePath{
 					{Name: "dao"},
 					{Name: "http", Child: []TreePath{
-						{Name: "base.go", Template: template.Base(app)},
 						{Name: "api", Child: []TreePath{
 							{Name: "index.go", Template: template.Index(app)},
 						}},
 						{Name: "middleware"},
 					}},
-					{Name: "model"},
-					{Name: "request"},
+					{Name: "models"},
+					{Name: "entity", Child: []TreePath{
+						{Name: "request"},
+						{Name: "vo", Child: []TreePath{
+							{Name: "base.go", Template: template.Base(app)},
+						}},
+					}},
 					{Name: "service"},
-					{Name: "vo"},
 				},
 			},
 			{
@@ -84,7 +87,7 @@ func GenGo(app string) {
 				},
 			},
 			{
-				Name: "router",
+				Name: "routes",
 				Child: []TreePath{
 					{
 						Name:     "index.go",

@@ -1,16 +1,16 @@
 package template
 
 func RouterIndex(name string) string {
-	return `package router
+	return `package routes
 
 import (
 	"` + name + `/app/http/api"
 	"github.com/gin-gonic/gin"
 )
 
-func IndexRoute(Router *gin.RouterGroup) {
+func IndexRoute(route *gin.RouterGroup) {
 	IndexController := new(api.IndexController)
-	Router.GET("/", IndexController.Index)
+	route.GET("/", IndexController.Index)
 }
 
 `

@@ -25,7 +25,7 @@ type TableStructure struct {
 // GenGormModel 生成gorm模型
 func GenGormModel(database, table string, tableStructure []TableStructure) string {
 	var buffer bytes.Buffer
-	packageStr := fmt.Sprintf("package model \n\n")
+	packageStr := fmt.Sprintf("package models \n\n")
 
 	isImportDate := false
 	isImportJson := false

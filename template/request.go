@@ -26,16 +26,16 @@ func GenRequest(table string, tableStructure []TableStructure) string {
 
 import (
 	"github.com/small-ek/antgo/utils/page"
-	"` + getFileName + `/app/model"
+	"` + getFileName + `/app/models"
 )
 
 type ` + humpTable + `Request struct {
-	model.` + humpTable + `
+	models.` + humpTable + `
 	page.PageParam
 }
 
 type ` + humpTable + `RequestForm struct {
-	model.` + humpTable + `
+	models.` + humpTable + `
     ` + requestStr + `
 }
 `

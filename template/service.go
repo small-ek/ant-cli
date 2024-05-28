@@ -24,8 +24,8 @@ func GenService(table string, tableStructure []TableStructure) string {
 
 import (
 	"` + getFileName + `/app/dao"
-	"` + getFileName + `/app/model"
-	"` + getFileName + `/app/request"
+	"` + getFileName + `/app/models"
+	"` + getFileName + `/app/entity/request"
 )
 
 type ` + humpTable + ` struct {
@@ -51,12 +51,12 @@ func (svc *` + humpTable + `) SetReqForm(req request.` + humpTable + `RequestFor
 }
 
 // Index 分页
-func (svc *` + humpTable + `) Index() ([]model.` + humpTable + `, int64, error) {
+func (svc *` + humpTable + `) Index() ([]models.` + humpTable + `, int64, error) {
 	return dao.New` + humpTable + `Dao().GetPage(svc.req.PageParam, svc.req.` + humpTable + `)
 }
 
 // Show 查询单个
-func (svc *` + humpTable + `) Show() model.` + humpTable + ` {
+func (svc *` + humpTable + `) Show() models.` + humpTable + ` {
 	return dao.New` + humpTable + `Dao().GetById(svc.req.` + humpTable + `.Id)
 }
 

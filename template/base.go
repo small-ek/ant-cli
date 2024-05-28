@@ -1,7 +1,7 @@
 package template
 
 func Base(name string) string {
-	return `package http
+	return `package vo
 
 import (
 	"github.com/gin-gonic/gin"

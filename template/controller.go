@@ -13,13 +13,13 @@ func GenController(table, comment, packages string) string {
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/small-ek/antgo/utils/page"
-	"` + getFileName + `/app/http"
-	"` + getFileName + `/app/request"
+	"` + getFileName + `/app/entity/vo"
+	"` + getFileName + `/app/entity/request"
 	"` + getFileName + `/app/service"
 )
 
 type ` + humpTable + `Controller struct {
-	http.Base
+	vo.Base
 	` + humpTable + `Service *service.` + humpTable + `
 }
 
