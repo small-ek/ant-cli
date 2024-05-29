@@ -13,7 +13,7 @@ type IndexController struct {
 }
 
 // Index
-func (index *IndexController) Index(c *gin.Context) {
+func (ctrl *IndexController) Index(c *gin.Context) {
 	c.String(200, "Hello AntGo")
 }
 
