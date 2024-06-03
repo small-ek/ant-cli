@@ -12,13 +12,14 @@ func GenRequest(table string, tableStructure []TableStructure) string {
 	requestStr := ""
 	for _, col := range tableStructure {
 		if col.Required == 1 {
-			requestStr += fmt.Sprintf("    %s %s `json:\"%s\" form:\"%s\" %s comment:\"%s\"`\n",
+			requestStr += fmt.Sprintf("    %s %s `json:\"%s\" form:\"%s\" %s comment:\"%s\"`%s\n",
 				utils.ToCamelCase(col.FieldName),
 				sqlToGoType(col.FieldType, col.FieldName),
 				col.FieldName,
 				col.FieldName,
 				utils.GetTag(col.Required),
-				col.Comment)
+				col.Comment,
+				utils.GetComment(col.Comment))
 		}
 
 	}
