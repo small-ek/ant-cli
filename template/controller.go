@@ -29,14 +29,13 @@ func New` + humpTable + `Controller() *` + humpTable + `Controller {
 	}
 }
 
+//	@Tags			` + comment + `
 //	@Summary		获取` + comment + `分页数据
-//	@Description	获取` + comment + `分页
-//	@Tags			` + humpTable + `
 //	@Accept			json
 //	@Produce		json
-//	@Param		    data query request.` + humpTable + `Request true "分页获取列表"
-//	@Success		200	{array}		response.Write
-//	@Failure		500	{object}	response.Write
+//	@Param		    data query request.` + humpTable + `Request true "分页参数"
+//	@Success		200	{object}	response.Write{data=response.Page{items=[]models.` + humpTable + `}}
+//	@Failure		422	{object}	response.Write
 //	@Router			/` + table + ` [get] 路由
 //
 // Index 分页列表
@@ -45,111 +44,107 @@ func (ctrl *` + humpTable + `Controller) Index(c *gin.Context) {
 		PageParam: page.New(),
 	}
 	if err := c.ShouldBindQuery(&req); err != nil {
-		ctrl.Fail(c, "参数错误", err.Error())
+		ctrl.Fail(c, "INVALID_REQUEST_PARAMETERS", err.Error())
 		return
 	}
 
 	list, total, err := ctrl.` + humpTable + `Service.SetReq(req).Index()
 	if err != nil {
-		ctrl.Fail(c, "异常错误", err.Error())
+		ctrl.Fail(c, "INVALID_REQUEST_PARAMETERS", err.Error())
 		return
 	}
-	ctrl.Success(c, "success", ctrl.Page(total, list))
+	ctrl.Success(c, "SUCCESS", ctrl.Page(total, list))
 }
 
-//	@Summary		获取` + comment + `单条数据
-//	@Description	获取` + comment + `详情
-//	@Tags			` + humpTable + `
+//	@Tags			` + comment + `
+//	@Summary		获取` + comment + `详情数据
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}		response.Write
-//	@Failure		500	{object}	response.Write
+//	@Success		200	{object}	response.Write{data=models.` + humpTable + `}
+//	@Failure		422	{object}	response.Write
 //	@Router			/` + table + `/:id [get]
 //
 // Show 详情
 func (ctrl *` + humpTable + `Controller) Show(c *gin.Context) {
 	var req request.` + humpTable + `Request
 	if err := c.ShouldBindUri(&req); err != nil {
-		ctrl.Fail(c, "参数错误", err.Error())
+		ctrl.Fail(c, "INVALID_REQUEST_PARAMETERS", err.Error())
 		return
 	}
 
 	row := ctrl.` + humpTable + `Service.SetReq(req).Show()
-	ctrl.Success(c, "success", row)
+	ctrl.Success(c, "SUCCESS", row)
 }
 
+//	@Tags			` + comment + `
 //	@Summary		创建` + comment + `数据
-//	@Description	创建` + comment + `数据
-//	@Tags			` + humpTable + `
 //	@Accept			json
 //	@Produce		json
-//	@Param		    data body request.` + humpTable + `RequestForm true "创建"
-//	@Success		200	{array}		response.Write
-//	@Failure		500	{object}	response.Write
+//	@Param		    data body request.` + humpTable + `RequestForm true "创建参数"
+//	@Success		200	{object}	response.Write
+//	@Failure		422	{object}	response.Write
 //	@Router			/` + table + ` [post]
 //
 // Create 创建
 func (ctrl *` + humpTable + `Controller) Create(c *gin.Context) {
 	var req request.` + humpTable + `RequestForm
 	if err := c.ShouldBindJSON(&req); err != nil {
-		ctrl.Fail(c, "参数错误", err.Error())
+		ctrl.Fail(c, "INVALID_REQUEST_PARAMETERS", err.Error())
 		return
 	}
 
 	if err := ctrl.` + humpTable + `Service.SetReqForm(req).Store(); err != nil {
-		ctrl.Fail(c, "创建失败", err.Error())
+		ctrl.Fail(c, "CREATION_FAILED", err.Error())
 		return
 	}
-	ctrl.Success(c, "success")
+	ctrl.Success(c, "SUCCESS")
 }
 
+//	@Tags			` + comment + `
 //	@Summary		修改` + comment + `数据
-//	@Description	修改` + comment + `数据
-//	@Tags			` + humpTable + `
 //	@Accept			json
 //	@Produce		json
-//	@Param		    data body request.` + humpTable + `RequestForm true "更新"
-//	@Success		200	{array}		response.Write
-//	@Failure		500	{object}	response.Write
+//	@Param		    data body request.` + humpTable + `RequestForm true "更新参数"
+//	@Success		200	{object}	response.Write
+//	@Failure		422	{object}	response.Write
 //	@Router			/` + table + `/:id [put]
 //
 // Update 修改
 func (ctrl *` + humpTable + `Controller) Update(c *gin.Context) {
 	var req request.` + humpTable + `RequestForm
 	if err := c.ShouldBindJSON(&req); err != nil {
-		ctrl.Fail(c, "参数错误", err.Error())
+		ctrl.Fail(c, "INVALID_REQUEST_PARAMETERS", err.Error())
 		return
 	}
 
 	if err := ctrl.` + humpTable + `Service.SetReqForm(req).Update();err!=nil{
-		ctrl.Fail(c, "参数错误", err.Error())
+		ctrl.Fail(c, "UPDATE_FAILED", err.Error())
 	}
-	ctrl.Success(c, "success")
+	ctrl.Success(c, "SUCCESS")
 }
 
+//	@Tags			` + comment + `
 //	@Summary		删除` + comment + `数据
-//	@Description	删除` + comment + `数据
-//	@Tags			` + humpTable + `
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}		response.Write
-//	@Failure		500	{object}	response.Write
+//	@Success		200	{object}	response.Write
+//	@Failure		422	{object}	response.Write
 //	@Router			/` + table + `/:id [delete]
 //
 // Delete 删除
 func (ctrl *` + humpTable + `Controller) Delete(c *gin.Context) {
 	var req request.` + humpTable + `Request
 	if err := c.ShouldBindUri(&req); err != nil {
-		ctrl.Fail(c, "参数错误", err.Error())
+		ctrl.Fail(c, "INVALID_REQUEST_PARAMETERS", err.Error())
 		return
 	}
 
 	if err := ctrl.` + humpTable + `Service.SetReq(req).Delete(); err != nil {
-		ctrl.Fail(c, "删除失败", err.Error())
+		ctrl.Fail(c, "DELETE_FAILED", err.Error())
 		return
 	}
 
-	ctrl.Success(c, "success")
+	ctrl.Success(c, "SUCCESS")
 }
 
 `
