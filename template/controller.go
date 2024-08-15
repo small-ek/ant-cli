@@ -8,6 +8,7 @@ import (
 func GenController(table, comment, packages string) string {
 	getFileName := utils.GetFileName()
 	humpTable := utils.ToCamelCase(table)
+	toKebabCase := utils.ToKebabCase(table)
 	return `package ` + packages + `
 
 import (
@@ -36,7 +37,7 @@ func New` + humpTable + `Controller() *` + humpTable + `Controller {
 //	@Param		    data query request.` + humpTable + `Request true "分页参数"
 //	@Success		200	{object}	response.Write{data=response.Page{items=[]models.` + humpTable + `}}
 //	@Failure		422	{object}	response.Write
-//	@Router			/` + table + ` [get] 路由
+//	@Router			/` + toKebabCase + ` [get] 路由
 //
 // Index 分页列表
 func (ctrl *` + humpTable + `Controller) Index(c *gin.Context) {
@@ -62,7 +63,7 @@ func (ctrl *` + humpTable + `Controller) Index(c *gin.Context) {
 //	@Produce		json
 //	@Success		200	{object}	response.Write{data=models.` + humpTable + `}
 //	@Failure		422	{object}	response.Write
-//	@Router			/` + table + `/:id [get]
+//	@Router			/` + toKebabCase + `/:id [get]
 //
 // Show 详情
 func (ctrl *` + humpTable + `Controller) Show(c *gin.Context) {
@@ -72,8 +73,8 @@ func (ctrl *` + humpTable + `Controller) Show(c *gin.Context) {
 		return
 	}
 
-	row := ctrl.` + humpTable + `Service.SetReq(req).Show()
-	ctrl.Success(c, "SUCCESS", row)
+	result := ctrl.` + humpTable + `Service.SetReq(req).Show()
+	ctrl.Success(c, "SUCCESS", result)
 }
 
 //	@Tags			` + comment + `
@@ -83,7 +84,7 @@ func (ctrl *` + humpTable + `Controller) Show(c *gin.Context) {
 //	@Param		    data body request.` + humpTable + `RequestForm true "创建参数"
 //	@Success		200	{object}	response.Write
 //	@Failure		422	{object}	response.Write
-//	@Router			/` + table + ` [post]
+//	@Router			/` + toKebabCase + ` [post]
 //
 // Create 创建
 func (ctrl *` + humpTable + `Controller) Create(c *gin.Context) {
@@ -107,7 +108,7 @@ func (ctrl *` + humpTable + `Controller) Create(c *gin.Context) {
 //	@Param		    data body request.` + humpTable + `RequestForm true "更新参数"
 //	@Success		200	{object}	response.Write
 //	@Failure		422	{object}	response.Write
-//	@Router			/` + table + `/:id [put]
+//	@Router			/` + toKebabCase + `/:id [put]
 //
 // Update 修改
 func (ctrl *` + humpTable + `Controller) Update(c *gin.Context) {
@@ -129,7 +130,7 @@ func (ctrl *` + humpTable + `Controller) Update(c *gin.Context) {
 //	@Produce		json
 //	@Success		200	{object}	response.Write
 //	@Failure		422	{object}	response.Write
-//	@Router			/` + table + `/:id [delete]
+//	@Router			/` + toKebabCase + `/:id [delete]
 //
 // Delete 删除
 func (ctrl *` + humpTable + `Controller) Delete(c *gin.Context) {

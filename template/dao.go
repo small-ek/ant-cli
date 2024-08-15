@@ -9,6 +9,7 @@ import (
 func GenDao(table string, tableStructure []TableStructure) string {
 	getFileName := utils.GetFileName()
 	humpTable := utils.ToCamelCase(table)
+	smallHumpTable := utils.ToCamelCaseLower(table)
 	preload := ""
 	preloadImport := ""
 	whereStr := ""
@@ -18,7 +19,7 @@ func GenDao(table string, tableStructure []TableStructure) string {
 			preloadImport = `"gorm.io/gorm/clause"`
 		}
 		if col.IsSearch == 1 && col.Conditions != "" {
-			whereStr += `sql.Where("` + col.FieldName + `", "` + col.Conditions + `", ` + table + `.` + utils.ToCamelCase(col.FieldName) + "),"
+			whereStr += `sql.Where("` + col.FieldName + `", "` + col.Conditions + `", filter.` + utils.ToCamelCase(col.FieldName) + "),"
 		}
 	}
 
@@ -43,8 +44,8 @@ func New` + humpTable + `Dao() *` + humpTable + `Dao {
 }
 
 // Create
-func (dao *` + humpTable + `Dao) Create(` + table + ` *models.` + utils.ToCamelCase(table) + `) error {
-	return dao.db.Create(&` + table + `).Error
+func (dao *` + humpTable + `Dao) Create(` + smallHumpTable + ` *models.` + utils.ToCamelCase(table) + `) error {
+	return dao.db.Create(&` + smallHumpTable + `).Error
 }
 
 // DeleteById
@@ -53,8 +54,8 @@ func (dao *` + humpTable + `Dao) DeleteById(id int) error {
 }
 
 // Update
-func (dao *` + humpTable + `Dao) Update(` + table + ` models.` + humpTable + `) error {
-	return dao.db.Updates(&` + table + `).Error
+func (dao *` + humpTable + `Dao) Update(` + smallHumpTable + ` models.` + humpTable + `) error {
+	return dao.db.Updates(&` + smallHumpTable + `).Error
 }
 
 // GetList
@@ -64,7 +65,7 @@ func (dao *` + humpTable + `Dao) GetList() (list []models.` + humpTable + `) {
 }
 
 // GetPage
-func (dao *` + humpTable + `Dao) GetPage(page page.PageParam, ` + table + ` models.` + humpTable + `) (list []models.` + humpTable + `, total int64, err error) {
+func (dao *` + humpTable + `Dao) GetPage(page page.PageParam, filter models.` + humpTable + `) (list []models.` + humpTable + `, total int64, err error) {
 	err = dao.db.Model(&dao.models).Scopes(
 		` + whereStr + `
 		sql.Filters(page.Filter),

@@ -12,7 +12,7 @@ func GenService(table string, tableStructure []TableStructure) string {
 	requestStr := ""
 	for _, col := range tableStructure {
 		if col.Required == 1 {
-			requestStr += fmt.Sprintf("req.%s.%s = req.%s",
+			requestStr += fmt.Sprintf("req.%s.%s = req.%s\n",
 				utils.ToCamelCase(table),
 				utils.ToCamelCase(col.FieldName),
 				utils.ToCamelCase(col.FieldName),
