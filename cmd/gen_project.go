@@ -81,7 +81,7 @@ func GenGo(app string) {
 				Name: "log",
 				Child: []TreePath{
 					{
-						Name:     "ant.log",
+						Name:     "app.log",
 						Template: "",
 					},
 				},

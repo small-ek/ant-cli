@@ -15,7 +15,7 @@ app_name="antgo"
 #接口请求日志
 [log]
 #路径
-path = "./log/ant.log"
+path = "./log/app.log"
 #输出格式 支持(json、console)
 format = "console"
 #日志服务名称
