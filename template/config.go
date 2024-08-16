@@ -61,6 +61,10 @@ max_idle_conns = 100
 max_open_conns= 200
 #设置连接可能被重用的最大时间(秒)。
 conn_max_lifetime=300
+#设置连接最大生命周期(小时)。
+conn_max_idleTime = 2
+#日志等级,1=静默;2=错误;3=警告;4=信息
+level = 4
 
 #Redis配置
 [[redis]]
@@ -76,6 +80,15 @@ to = ['']
 from = ''
 host = ''
 secret = ''
+
+#图片验证码
+[captcha]
+#验证码长度
+length = 4
+#验证码宽度
+width = 240
+#验证码高度
+height = 80
 
 #Json web token
 [jwt]
