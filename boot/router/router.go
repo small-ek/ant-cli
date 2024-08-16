@@ -139,7 +139,7 @@ func Load(f embed.FS) *gin.Engine {
 		requestStr := template.GenRequest(code.TableName, code.Fields)
 
 		if code.IsCreate == true {
-			utils.WriteFile("./app/models/"+code.TableName+".go", modelStr)
+			utils.WriteFile("./app/entity/models/"+code.TableName+".go", modelStr)
 			utils.WriteFile("./app/dao/"+code.TableName+".go", daoStr)
 			utils.WriteFile("./app/service/"+code.TableName+".go", serviceStr)
 			utils.WriteFile("./app/entity/request/"+code.TableName+".go", requestStr)

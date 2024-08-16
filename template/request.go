@@ -27,7 +27,7 @@ func GenRequest(table string, tableStructure []TableStructure) string {
 
 import (
 	"github.com/small-ek/antgo/utils/page"
-	"` + getFileName + `/app/models"
+	"` + getFileName + `/app/entity/models"
 )
 
 type ` + humpTable + `Request struct {

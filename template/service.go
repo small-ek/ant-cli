@@ -24,7 +24,7 @@ func GenService(table string, tableStructure []TableStructure) string {
 
 import (
 	"` + getFileName + `/app/dao"
-	"` + getFileName + `/app/models"
+	"` + getFileName + `/app/entity/models"
 	"` + getFileName + `/app/entity/request"
 )
 

@@ -30,7 +30,7 @@ import (
 	"github.com/small-ek/antgo/frame/ant"
 	"github.com/small-ek/antgo/utils/page"
 	"gorm.io/gorm"
-	"` + getFileName + `/app/models"
+	"` + getFileName + `/app/entity/models"
 	` + preloadImport + `
 )
 

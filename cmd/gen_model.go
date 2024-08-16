@@ -48,7 +48,7 @@ func (b GenModel) Action(c *cli.Context) error {
 	}
 	//生成Model
 	getModelStr := template.GenGormModel(tableStr[0], tableStr[1], tableStructure)
-	utils.WriteFile("./app/models/"+tableStr[1]+".go", getModelStr)
+	utils.WriteFile("./app/entity/models/"+tableStr[1]+".go", getModelStr)
 
 	return nil
 }

@@ -49,7 +49,7 @@ func (b GenApi) Action(c *cli.Context) error {
 	ant.Db().Raw("SELECT TABLE_NAME AS table_name,TABLE_ROWS AS table_rows,TABLE_COLLATION AS table_collation,TABLE_COMMENT AS table_comment FROM INFORMATION_SCHEMA.Tables WHERE table_schema = ? AND table_name=?", tableStr[0], tableStr[1]).Find(&getTable)
 	// 生成Model
 	getModelStr := template.GenGormModel(tableStr[0], tableStr[1], tableStructure)
-	utils.WriteFile("./app/models/"+tableStr[1]+".go", getModelStr)
+	utils.WriteFile("./app/entity/models/"+tableStr[1]+".go", getModelStr)
 	// 生成Dao
 	getDaoStr := template.GenDao(tableStr[1], tableStructure)
 	utils.WriteFile("./app/dao/"+tableStr[1]+".go", getDaoStr)
