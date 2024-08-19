@@ -45,16 +45,16 @@ func (ctrl *` + humpTable + `Controller) Index(c *gin.Context) {
 		PageParam: page.New(),
 	}
 	if err := c.ShouldBindQuery(&req); err != nil {
-		ctrl.Fail(c, "INVALID_REQUEST_PARAMETERS", err.Error())
+		ctrl.Fail(c, vo.INVALID_REQUEST_PARAMETERS, err.Error())
 		return
 	}
 
 	list, total, err := ctrl.` + humpTable + `Service.SetReq(req).Index()
 	if err != nil {
-		ctrl.Fail(c, "INVALID_REQUEST_PARAMETERS", err.Error())
+		ctrl.Fail(c, vo.FAILED, err.Error())
 		return
 	}
-	ctrl.Success(c, "SUCCESS", ctrl.Page(total, list))
+	ctrl.Success(c, vo.SUCCESS, ctrl.Page(total, list))
 }
 
 //	@Tags			` + comment + `
@@ -69,12 +69,12 @@ func (ctrl *` + humpTable + `Controller) Index(c *gin.Context) {
 func (ctrl *` + humpTable + `Controller) Show(c *gin.Context) {
 	var req request.` + humpTable + `Request
 	if err := c.ShouldBindUri(&req); err != nil {
-		ctrl.Fail(c, "INVALID_REQUEST_PARAMETERS", err.Error())
+		ctrl.Fail(c, vo.INVALID_REQUEST_PARAMETERS, err.Error())
 		return
 	}
 
 	result := ctrl.` + humpTable + `Service.SetReq(req).Show()
-	ctrl.Success(c, "SUCCESS", result)
+	ctrl.Success(c, vo.SUCCESS, result)
 }
 
 //	@Tags			` + comment + `
@@ -90,15 +90,15 @@ func (ctrl *` + humpTable + `Controller) Show(c *gin.Context) {
 func (ctrl *` + humpTable + `Controller) Create(c *gin.Context) {
 	var req request.` + humpTable + `RequestForm
 	if err := c.ShouldBindJSON(&req); err != nil {
-		ctrl.Fail(c, "INVALID_REQUEST_PARAMETERS", err.Error())
+		ctrl.Fail(c, vo.INVALID_REQUEST_PARAMETERS, err.Error())
 		return
 	}
 
 	if err := ctrl.` + humpTable + `Service.SetReqForm(req).Store(); err != nil {
-		ctrl.Fail(c, "CREATION_FAILED", err.Error())
+		ctrl.Fail(c, vo.CREATION_FAILED, err.Error())
 		return
 	}
-	ctrl.Success(c, "SUCCESS")
+	ctrl.Success(c, vo.CREATION_SUCCESS)
 }
 
 //	@Tags			` + comment + `
@@ -114,14 +114,14 @@ func (ctrl *` + humpTable + `Controller) Create(c *gin.Context) {
 func (ctrl *` + humpTable + `Controller) Update(c *gin.Context) {
 	var req request.` + humpTable + `RequestForm
 	if err := c.ShouldBindJSON(&req); err != nil {
-		ctrl.Fail(c, "INVALID_REQUEST_PARAMETERS", err.Error())
+		ctrl.Fail(c, vo.INVALID_REQUEST_PARAMETERS, err.Error())
 		return
 	}
 
 	if err := ctrl.` + humpTable + `Service.SetReqForm(req).Update();err!=nil{
-		ctrl.Fail(c, "UPDATE_FAILED", err.Error())
+		ctrl.Fail(c, vo.UPDATE_FAILED, err.Error())
 	}
-	ctrl.Success(c, "SUCCESS")
+	ctrl.Success(c, vo.UPDATE_SUCCESS)
 }
 
 //	@Tags			` + comment + `
@@ -136,16 +136,16 @@ func (ctrl *` + humpTable + `Controller) Update(c *gin.Context) {
 func (ctrl *` + humpTable + `Controller) Delete(c *gin.Context) {
 	var req request.` + humpTable + `Request
 	if err := c.ShouldBindUri(&req); err != nil {
-		ctrl.Fail(c, "INVALID_REQUEST_PARAMETERS", err.Error())
+		ctrl.Fail(c, vo.INVALID_REQUEST_PARAMETERS, err.Error())
 		return
 	}
 
 	if err := ctrl.` + humpTable + `Service.SetReq(req).Delete(); err != nil {
-		ctrl.Fail(c, "DELETE_FAILED", err.Error())
+		ctrl.Fail(c, vo.DELETE_FAILED, err.Error())
 		return
 	}
 
-	ctrl.Success(c, "SUCCESS")
+	ctrl.Success(c, vo.DELETE_SUCCESS)
 }
 
 `
