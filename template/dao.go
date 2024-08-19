@@ -53,6 +53,11 @@ func (dao *` + humpTable + `Dao) DeleteById(id int) error {
 	return dao.db.Delete(&dao.models, id).Error
 }
 
+// DeleteByIds
+func (dao *` + humpTable + `Dao) DeleteByIds(id []int) error {
+	return dao.db.Delete(&dao.models, id).Error
+}
+
 // Update
 func (dao *` + humpTable + `Dao) Update(` + smallHumpTable + ` models.` + humpTable + `) error {
 	return dao.db.Updates(&` + smallHumpTable + `).Error
