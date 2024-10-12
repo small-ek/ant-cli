@@ -78,7 +78,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 				col.FieldName,
 				col.FieldName,
 				col.FieldName,
-				col.Comment,
+				utils.RemoveNewlines(col.Comment),
 				utils.GetComment(col.Comment)))
 		} else if col.FieldName == "created_at" || col.FieldName == "updated_at" || col.FieldName == "deleted_at" {
 			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"-\" form:\"%s\" comment:\"%s\"`%s\n",
@@ -86,7 +86,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 				sqlToGoType(col.FieldType, col.FieldName),
 				col.FieldName,
 				col.FieldName,
-				col.Comment,
+				utils.RemoveNewlines(col.Comment),
 				utils.GetComment(col.Comment)))
 		} else if col.FieldType == "join" { //关联表
 
@@ -100,7 +100,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 					utils.ToCamelCase(col.FieldName),
 					col.JoinTable,
 					col.JoinTable,
-					col.Comment,
+					utils.RemoveNewlines(col.Comment),
 					utils.GetComment(col.Comment)))
 			case "oneToMany":
 				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"<-:false;column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
@@ -111,7 +111,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 					utils.ToCamelCase(col.FieldName),
 					col.JoinTable,
 					col.JoinTable,
-					col.Comment,
+					utils.RemoveNewlines(col.Comment),
 					utils.GetComment(col.Comment)))
 			case "manyToMany":
 				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"<-:false;column:%s;many2many:%s;foreignKey:%s;References:%s\" json:\"%s\" form:\"%s\" comment:\"%s\" `%s\n",
@@ -123,7 +123,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 					utils.ToCamelCase(col.JoinField),
 					col.JoinTable,
 					col.JoinTable,
-					col.Comment,
+					utils.RemoveNewlines(col.Comment),
 					utils.GetComment(col.Comment)))
 			}
 
@@ -134,7 +134,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 				col.FieldName,
 				col.FieldName,
 				col.FieldName,
-				col.Comment,
+				utils.RemoveNewlines(col.Comment),
 				utils.GetComment(col.Comment)))
 		}
 

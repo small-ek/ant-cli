@@ -27,10 +27,13 @@ func GetTag(Required int) string {
 }
 func GetComment(comment string) string {
 	if comment != "" {
-		return "//" + comment
+		return "//" + RemoveNewlines(comment)
 	}
 	return ""
 
+}
+func RemoveNewlines(s string) string {
+	return strings.ReplaceAll(strings.ReplaceAll(s, "\r\n", ""), "\n", "")
 }
 
 // ToCamelCaseLower 驼峰转换，开头小写
