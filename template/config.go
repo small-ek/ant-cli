@@ -34,6 +34,8 @@ max_size = 10
 max_backups = 5000
 #是否需要压缩
 compress = false
+#请求头白名单
+header_whitelist = []
 
 #数据库设置
 [[connections]]
