@@ -31,7 +31,7 @@ max_age = 180
 #分割大小(MB)
 max_size = 10
 #保留30个备份(个)
-max_backups = 5000
+max_backups = 2000
 #是否需要压缩
 compress = false
 #请求头白名单
