@@ -120,6 +120,7 @@ func (ctrl *` + humpTable + `Controller) Update(c *gin.Context) {
 
 	if err := ctrl.` + humpTable + `Service.SetReqForm(req).Update();err!=nil{
 		ctrl.Fail(c, vo.UPDATE_FAILED, err.Error())
+		return
 	}
 	ctrl.Success(c, vo.UPDATE_SUCCESS)
 }
