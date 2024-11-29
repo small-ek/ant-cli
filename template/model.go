@@ -80,16 +80,23 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 				col.FieldName,
 				utils.RemoveNewlines(col.Comment),
 				utils.GetComment(col.Comment)))
-		} else if col.FieldName == "created_at" || col.FieldName == "updated_at" || col.FieldName == "deleted_at" {
-			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"-\" form:\"%s\" comment:\"%s\"`%s\n",
+		} else if col.FieldName == "created_at" || col.FieldName == "updated_at" || col.FieldName == "create_time" || col.FieldName == "update_time" {
+			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
 				utils.ToCamelCase(col.FieldName),
 				sqlToGoType(col.FieldType, col.FieldName),
+				col.FieldName,
+				col.FieldName,
+				col.FieldName,
+				utils.RemoveNewlines(col.Comment),
+				utils.GetComment(col.Comment)))
+		} else if col.FieldName == "deleted_at" || col.FieldName == "delete_time" {
+			buffer.WriteString(fmt.Sprintf("    %s gorm.DeletedAt `gorm:\"column:%s\" json:\"-\" form:\"%s\" comment:\"%s\"`%s\n",
+				utils.ToCamelCase(col.FieldName),
 				col.FieldName,
 				col.FieldName,
 				utils.RemoveNewlines(col.Comment),
 				utils.GetComment(col.Comment)))
 		} else if col.FieldType == "join" { //关联表
-
 			switch col.JoinType {
 			case "oneToOne":
 				buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"<-:false;column:%s;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",

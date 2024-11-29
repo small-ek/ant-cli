@@ -39,14 +39,15 @@ func New` + humpTable + `Service() *` + humpTable + ` {
 
 //SetReq 设置参数
 func (svc *` + humpTable + `) SetReq(req request.` + humpTable + `Request) *` + humpTable + ` {
-	svc.req = req
-	return svc
-}
-
-// SetReqForm 设置参数
-func (svc *` + humpTable + `) SetReqForm(req request.` + humpTable + `RequestForm) *` + humpTable + ` {
-	` + requestStr + `
-	svc.reqForm = req
+	switch value := req.(type) {
+		case request.` + humpTable + `Request:
+			svc.req = value
+		case request.` + humpTable + `RequestForm:
+			` + requestStr + `
+			svc.reqForm = req
+		default:
+			alog.Write.Error("SetReq", zap.Any("Unsupported request type", reflect.TypeOf(value)))
+	}
 	return svc
 }
 
