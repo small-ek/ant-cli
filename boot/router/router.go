@@ -8,7 +8,7 @@ import (
 	"github.com/small-ek/ant-cli/template"
 	"github.com/small-ek/ant-cli/utils"
 	"github.com/small-ek/antgo/frame/ant"
-	"github.com/small-ek/antgo/frame/middleware"
+	"github.com/small-ek/antgo/frame/gin_middleware"
 	"github.com/small-ek/antgo/os/config"
 	"io/fs"
 	"io/ioutil"
@@ -33,7 +33,7 @@ func Router() *gin.Engine {
 	}
 
 	var app = gin.New()
-	app.Use(middleware.Recovery())
+	app.Use(gin_middleware.Recovery())
 	//跨域处理
 	if config.GetBool("system.cors") == true {
 		corsConfig := cors.DefaultConfig()

@@ -106,7 +106,7 @@ func GenGo(app string) {
 	fmt.Println("Successful creation " + app)
 	fmt.Println("cd " + app)
 	fmt.Println("ant-cli install")
-	fmt.Println("ant-cli run main.go")
+	fmt.Println("go run main.go")
 }
 
 func createProjectTree(node TreePath, parentPath string) {
