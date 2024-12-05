@@ -159,20 +159,22 @@ func sqlToGoType(sqlType, columnName string) string {
 		return "gorm.DeletedAt"
 	}
 	switch sqlType {
-	case "int", "tinyint", "smallint", "mediumint", "bigint":
+	case "int", "tinyint", "smallint", "mediumint", "bigint", "serial", "bigserial", "int2", "int4", "int8", "integer", "smallserial", "serial2", "serial4", "serial8", "bigserial2", "bigserial4", "bigserial8", "oid":
 		return "int"
-	case "bit":
+	case "bit", "varbit":
 		return "uint8"
-	case "varchar", "char", "text", "mediumtext", "longtext", "enum", "set":
+	case "varchar", "char", "text", "mediumtext", "longtext", "enum", "set", "character varying", "character", "uuid":
 		return "string"
-	case "binary", "varbinary", "blob", "tinyblob", "mediumblob", "longblob":
+	case "binary", "varbinary", "blob", "tinyblob", "mediumblob", "longblob", "bytea":
 		return "[]byte"
-	case "date", "datetime", "timestamp":
+	case "date", "datetime", "timestamp", "timestamptz", "time", "timetz":
 		return "time.Time"
-	case "decimal", "float", "double":
+	case "decimal", "float", "double", "numeric", "real", "double precision":
 		return "float64"
-	case "json":
+	case "json", "jsonb":
 		return "sql.Json"
+	case "boolean":
+		return "bool"
 	default:
 		return "interface{}"
 	}

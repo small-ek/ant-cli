@@ -23,6 +23,7 @@ func GenService(table string, tableStructure []TableStructure) string {
 	return `package service
 
 import (
+	"github.com/small-ek/antgo/os/alog"
 	"` + getFileName + `/app/dao"
 	"` + getFileName + `/app/entity/models"
 	"` + getFileName + `/app/entity/request"
@@ -38,13 +39,13 @@ func New` + humpTable + `Service() *` + humpTable + ` {
 }
 
 //SetReq 设置参数
-func (svc *` + humpTable + `) SetReq(req request.` + humpTable + `Request) *` + humpTable + ` {
+func (svc *` + humpTable + `) SetReq(req interface{}) *` + humpTable + ` {
 	switch value := req.(type) {
 		case request.` + humpTable + `Request:
 			svc.req = value
 		case request.` + humpTable + `RequestForm:
 			` + requestStr + `
-			svc.reqForm = req
+			svc.reqForm = value
 		default:
 			alog.Write.Error("SetReq", zap.Any("Unsupported request type", reflect.TypeOf(value)))
 	}

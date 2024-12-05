@@ -90,7 +90,12 @@ func Load(f embed.FS) *gin.Engine {
 	//获取数据库
 	app.GET("api/database", func(c *gin.Context) {
 		var result = []string{}
-		ant.Db().Raw("SHOW DATABASES;").Find(&result)
+		if ant.GetConfig("connections.0.type") == "pgsql" {
+			ant.Db().Raw("SELECT datname FROM pg_database WHERE datistemplate = false;").Find(&result)
+		}
+		if ant.GetConfig("connections.0.type") == "mysql" {
+			ant.Db().Raw("SHOW DATABASES;").Find(&result)
+		}
 		c.JSON(200, result)
 	})
 
@@ -98,7 +103,12 @@ func Load(f embed.FS) *gin.Engine {
 	app.GET("api/table-list", func(c *gin.Context) {
 		var table = c.Query("table")
 		var list = []map[string]interface{}{}
-		ant.Db().Raw("SELECT TABLE_NAME AS table_name,TABLE_ROWS AS table_rows,TABLE_COLLATION AS table_collation,TABLE_COMMENT AS table_comment FROM INFORMATION_SCHEMA.Tables WHERE table_schema = ?", table).Find(&list)
+		if ant.GetConfig("connections.0.type") == "pgsql" {
+			ant.Db().Raw("SELECT table_name,table_schema,obj_description((table_schema || '.' || table_name)::regclass, 'pg_class') AS table_comment FROM information_schema.tables WHERE table_schema = ? AND table_type = 'BASE TABLE';", table).Find(&list)
+		}
+		if ant.GetConfig("connections.0.type") == "mysql" {
+			ant.Db().Raw("SELECT TABLE_NAME AS table_name,TABLE_ROWS AS table_rows,TABLE_COLLATION AS table_collation,TABLE_COMMENT AS table_comment FROM INFORMATION_SCHEMA.Tables WHERE table_schema = ?", table).Find(&list)
+		}
 		c.JSON(200, list)
 	})
 
@@ -107,7 +117,45 @@ func Load(f embed.FS) *gin.Engine {
 		var db = c.Query("db")
 		var table = c.Query("table")
 		var list = []map[string]interface{}{}
-		var sql = `SELECT 
+		var sql string
+		if ant.GetConfig("connections.0.type") == "pgsql" {
+			sql = `SELECT 
+					cols.column_name AS field_name,
+					cols.data_type AS field_type,
+					pgd.description AS comment,
+					CASE 
+						WHEN EXISTS (
+							SELECT 1 
+							FROM pg_index i
+							JOIN pg_attribute a ON a.attnum = ANY(i.indkey) 
+							WHERE i.indrelid = (cols.table_schema || '.' || cols.table_name)::regclass
+							  AND a.attname = cols.column_name
+							  AND i.indisprimary
+						) THEN 'PRIMARY KEY'
+						WHEN EXISTS (
+							SELECT 1 
+							FROM pg_index i
+							JOIN pg_attribute a ON a.attnum = ANY(i.indkey) 
+							WHERE i.indrelid = (cols.table_schema || '.' || cols.table_name)::regclass
+							  AND a.attname = cols.column_name
+							  AND i.indisunique
+						) THEN 'UNIQUE'
+						ELSE NULL
+					END AS indexes
+					FROM 
+					information_schema.columns cols
+					LEFT JOIN 
+					pg_description pgd 
+					ON (pgd.objoid = (cols.table_schema || '.' || cols.table_name)::regclass 
+						AND pgd.objsubid = cols.ordinal_position)
+					WHERE 
+					cols.table_schema = ?  -- 替换为你的 schema
+					AND cols.table_name = ? -- 替换为你的表名
+					ORDER BY 
+					cols.ordinal_position;`
+		}
+		if ant.GetConfig("connections.0.type") == "mysql" {
+			sql = `SELECT 
 				COLUMN_NAME AS field_name,
 				DATA_TYPE AS field_type,
 				COLUMN_COMMENT AS comment,
@@ -119,6 +167,7 @@ func Load(f embed.FS) *gin.Engine {
 				AND 
 				TABLE_NAME = ?
                 ORDER BY ORDINAL_POSITION;`
+		}
 		ant.Db().Raw(sql, db, table).Find(&list)
 		c.JSON(200, list)
 	})
