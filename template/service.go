@@ -54,7 +54,7 @@ func (svc *` + humpTable + `) SetReq(req interface{}) *` + humpTable + ` {
 
 // Index 分页
 func (svc *` + humpTable + `) Index() ([]models.` + humpTable + `, int64, error) {
-	return dao.New` + humpTable + `Dao().GetPage(svc.req.PageParam, svc.req.` + humpTable + `)
+	return dao.New` + humpTable + `Dao().GetPage(svc.req.PageParam)
 }
 
 // Show 查询单个

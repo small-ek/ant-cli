@@ -70,7 +70,7 @@ func (dao *` + humpTable + `Dao) GetList() (list []models.` + humpTable + `) {
 }
 
 // GetPage
-func (dao *` + humpTable + `Dao) GetPage(page page.PageParam, filter models.` + humpTable + `) (list []models.` + humpTable + `, total int64, err error) {
+func (dao *` + humpTable + `Dao) GetPage(page page.PageParam) (list []models.` + humpTable + `, total int64, err error) {
 	err = dao.db.Model(&dao.models).Scopes(
 		` + whereStr + `
 		sql.Filters(page.Filter),
