@@ -36,7 +36,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 		}
 		if col.FieldName != "deleted_at" && col.FieldName != "delete_time" {
 			switch col.FieldType {
-			case "date", "datetime", "timestamp":
+			case "date", "datetime", "timestamp", "time":
 				isImportDate = true
 			case "json":
 				isImportJson = true

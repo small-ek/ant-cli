@@ -19,7 +19,7 @@ func GenDao(table string, tableStructure []TableStructure) string {
 			preloadImport = `"gorm.io/gorm/clause"`
 		}
 		if col.IsSearch == 1 && col.Conditions != "" {
-			whereStr += `sql.Where("` + col.FieldName + `", "` + col.Conditions + `", filter.` + utils.ToCamelCase(col.FieldName) + "),"
+			whereStr += `sql.Where("` + col.FieldName + `", "` + col.Conditions + `", page.FilterMap["` + col.FieldName + `"]` + `),`
 		}
 	}
 
@@ -39,8 +39,11 @@ type ` + humpTable + `Dao struct {
 	models *models.` + humpTable + `
 }
 
-func New` + humpTable + `Dao() *` + humpTable + `Dao {
-	return &` + humpTable + `Dao{db: ant.Db()}
+func New` + humpTable + `Dao(db *gorm.DB) *` + humpTable + `Dao {
+	if db == nil {
+		db = ant.Db()
+	}
+	return &` + humpTable + `Dao{db: db}
 }
 
 // Create
