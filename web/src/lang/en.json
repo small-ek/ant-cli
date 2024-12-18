@@ -1,7 +1,7 @@
 {
   "code": {
     "generation": "Code Generation",
-    "databaseName": "Database Name",
+    "databaseName": "Database or Schema",
     "tableName": "Table Name",
     "packageName": "Controller Package Name",
     "select": "Please Select",

@@ -91,7 +91,8 @@ func Load(f embed.FS) *gin.Engine {
 	app.GET("api/database", func(c *gin.Context) {
 		var result = []string{}
 		if ant.GetConfig("connections.0.type") == "pgsql" {
-			ant.Db().Raw("SELECT datname FROM pg_database WHERE datistemplate = false;").Find(&result)
+			//ant.Db().Raw("SELECT datname FROM pg_database WHERE datistemplate = false;").Find(&result)
+			ant.Db().Raw("SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT LIKE 'pg_%' AND schema_name <> 'information_schema';").Find(&result)
 		}
 		if ant.GetConfig("connections.0.type") == "mysql" {
 			ant.Db().Raw("SHOW DATABASES;").Find(&result)

@@ -1,7 +1,7 @@
 {
   "code": {
     "generation": "代码生成",
-    "databaseName": "数据库名称",
+    "databaseName": "数据库或者模式",
     "tableName": "表名称",
     "packageName": "控制器包名称",
     "select": "请选择",
