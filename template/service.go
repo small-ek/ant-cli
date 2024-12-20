@@ -29,6 +29,7 @@ import (
 	"` + getFileName + `/app/dao"
 	"` + getFileName + `/app/entity/models"
 	"` + getFileName + `/app/entity/request"
+	"github.com/small-ek/antgo/utils/conv"
 )
 
 type ` + humpTable + ` struct {
@@ -46,8 +47,7 @@ func (svc *` + humpTable + `) SetReq(req interface{}) *` + humpTable + ` {
 		case request.` + humpTable + `Request:
 			svc.req = value
 		case request.` + humpTable + `RequestForm:
-			` + requestStr + `
-			svc.reqForm = value
+			conv.ToStruct(value, &svc.reqForm.` + humpTable + `)
 		default:
 			alog.Write.Error("SetReq", zap.Any("Unsupported request type", reflect.TypeOf(value)))
 	}

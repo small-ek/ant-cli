@@ -234,12 +234,14 @@ const getPreviewCode = (is_create) => {
     data_base: form.dbname,
     table_comment: form.table_comment
   }).then(res => {
-    if (is_create == false) {
+    if (is_create === false) {
       preCodeStatus.value = true
     } else {
       Message.info(t('tips.generateSuccess'))
     }
     preCode.value = res.data
+  }).catch(() => {
+    Message.error(t('tips.generateFail'))
   })
 }
 

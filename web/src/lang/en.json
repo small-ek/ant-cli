@@ -51,7 +51,8 @@
   "tips": {
     "generateSuccess": "Generation Successful",
     "fail": "Failed to generate, please fill in the data",
-    "is_gen_code":"Whether to confirm the generated code"
+    "is_gen_code":"Whether to confirm the generated code",
+    "generateFail": "Generation failed, please check if the code has been generated"
   },
   "tableSelect": {
     "ok": "Yes",

@@ -32,7 +32,7 @@
     "field_name": "当前表字段",
     "join_table": "关联表",
     "join_field": "关联表字段",
-    "help":"多对多模型,中间表要求表名+字段名称拼接，必须驼峰命名,例如(user_refer_id)，user_refer是表名称"
+    "help": "多对多模型,中间表要求表名+字段名称拼接，必须驼峰命名,例如(user_refer_id)，user_refer是表名称"
   },
   "table_columns": {
     "comment": "注释",
@@ -51,7 +51,8 @@
   "tips": {
     "generateSuccess": "生成成功",
     "fail": "生成失败,请填写数据",
-    "is_gen_code":"是否确认生成代码"
+    "is_gen_code": "是否确认生成代码",
+    "generateFail": "生成失败,请检查是否已生成过代码"
   },
   "tableSelect": {
     "ok": "是",
@@ -60,7 +61,7 @@
   "tableOption": {
     "edit": "编辑",
     "delete": "删除",
-    "preview":"预览代码",
-    "gen_code":"生成代码"
+    "preview": "预览代码",
+    "gen_code": "生成代码"
   }
 }

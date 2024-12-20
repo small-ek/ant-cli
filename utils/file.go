@@ -21,6 +21,12 @@ func WriteFile(filePath, content string) error {
 	return nil
 }
 
+// Exists 判断路径是否存在文件
+func Exists(filePath string) bool {
+	_, err := os.Stat(filePath)
+	return !os.IsNotExist(err)
+}
+
 // GetFileName
 func GetFileName() string {
 	// 获取当前工作目录的路径

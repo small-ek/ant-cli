@@ -91,7 +91,6 @@ func Load(f embed.FS) *gin.Engine {
 	app.GET("api/database", func(c *gin.Context) {
 		var result = []string{}
 		if ant.GetConfig("connections.0.type") == "pgsql" {
-			//ant.Db().Raw("SELECT datname FROM pg_database WHERE datistemplate = false;").Find(&result)
 			ant.Db().Raw("SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT LIKE 'pg_%' AND schema_name <> 'information_schema';").Find(&result)
 		}
 		if ant.GetConfig("connections.0.type") == "mysql" {
@@ -189,6 +188,10 @@ func Load(f embed.FS) *gin.Engine {
 		requestStr := template.GenRequest(code.TableName, code.Fields)
 
 		if code.IsCreate == true {
+			if utils.Exists("./app/dao/"+code.TableName+".go") || utils.Exists("./app/service/"+code.TableName+".go") || utils.Exists("./app/entity/request/"+code.TableName+".go") || utils.Exists("./app/http/"+code.Package+"/"+code.TableName+".go") || utils.Exists("./routes/"+code.TableName+".go") {
+				c.JSON(409, gin.H{"message": "The file already exists"})
+				return
+			}
 			utils.WriteFile("./app/entity/models/"+code.TableName+".go", modelStr)
 			utils.WriteFile("./app/dao/"+code.TableName+".go", daoStr)
 			utils.WriteFile("./app/service/"+code.TableName+".go", serviceStr)
