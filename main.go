@@ -37,7 +37,7 @@ func main() {
 	app := &cli.App{
 		Name:    "ant-cli",
 		Usage:   "Used to build antgo projects",
-		Version: "1.0.2",
+		Version: "1.0.3",
 		Flags:   []cli.Flag{},
 		Action: func(c *cli.Context) error {
 			return nil
