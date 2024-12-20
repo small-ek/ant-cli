@@ -34,7 +34,9 @@ func New` + humpTable + `Controller() *` + humpTable + `Controller {
 //	@Summary		获取` + comment + `分页数据
 //	@Accept			json
 //	@Produce		json
-//	@Param		    data query request.` + humpTable + `Request true "分页参数"
+//	@Param		    data query page.PageParam true "分页参数"
+//	@Param		    filter_map		query	string		false	"JSON格式的过滤字段" example("{\"key1\":\"value1\",\"key2\": 1}")
+//	@Param		    extra			query	string		false	"其他参数" example("{\"key1\":\"value1\",\"key2\": 1}")
 //	@Success		0	{object}	response.Write{data=response.Page{items=[]models.` + humpTable + `}}
 //	@Failure		1	{object}	response.Write
 //	@Router			/` + toKebabCase + ` [get] 路由
