@@ -79,7 +79,7 @@ func (dao *` + humpTable + `Dao) GetPage(page page.PageParam) (list []models.` +
 		sql.Filters(page.Filter),
 		sql.Order(page.Order, page.Desc),
 		sql.Paginate(page.PageSize, page.CurrentPage),
-	).` + preload + `Find(&list).Offset(0).Count(&total).Error
+	).` + preload + `Find(&list).Offset(-1).Limit(1).Count(&total).Error
 	return list, total, err
 }
 
