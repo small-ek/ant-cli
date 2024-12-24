@@ -47,7 +47,7 @@ func New` + humpTable + `Dao(db *gorm.DB) *` + humpTable + `Dao {
 }
 
 // Create
-func (dao *` + humpTable + `Dao) Create(` + smallHumpTable + ` *models.` + utils.ToCamelCase(table) + `) error {
+func (dao *` + humpTable + `Dao) Create(` + smallHumpTable + ` models.` + utils.ToCamelCase(table) + `) error {
 	return dao.db.Create(&` + smallHumpTable + `).Error
 }
 

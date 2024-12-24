@@ -66,7 +66,7 @@ func (svc *` + humpTable + `) Show() models.` + humpTable + ` {
 
 // Store 添加
 func (svc *` + humpTable + `) Store() error {
-	return dao.New` + humpTable + `Dao(nil).Create(&svc.reqForm.` + humpTable + `)
+	return dao.New` + humpTable + `Dao(nil).Create(svc.reqForm.` + humpTable + `)
 }
 
 // Update 修改
