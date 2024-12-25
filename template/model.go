@@ -29,15 +29,12 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 
 	isImportDate := false
 	isImportJson := false
-	isImportNullString := false
 	isImportDeletedAt := false
 	for _, col := range tableStructure {
 		if col.FieldName == "deleted_at" || col.FieldName == "delete_time" {
 			isImportDeletedAt = true
 		}
-		if col.FieldType == "enum" {
-			isImportNullString = true
-		}
+
 		if col.FieldName != "deleted_at" && col.FieldName != "delete_time" {
 			switch col.FieldType {
 			case "date", "datetime", "timestamp", "time":
@@ -57,10 +54,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 		importSqlStr := fmt.Sprintf(`"github.com/small-ek/antgo/db/adb/asql"`)
 		buffer.WriteString(importSqlStr)
 	}
-	if isImportNullString == true {
-		importNullStringStr := fmt.Sprintf(`"database/sql"`)
-		buffer.WriteString(importNullStringStr)
-	}
+
 	//是否导软删除
 	if isImportDeletedAt == true {
 		importTimeStr := fmt.Sprintf(`
@@ -143,10 +137,11 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 			}
 
 		} else {
-			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
+			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
 				utils.ToCamelCase(col.FieldName),
 				sqlToGoType(col.FieldType, col.FieldName),
 				col.FieldName,
+				sqlDefault(col.FieldType),
 				col.FieldName,
 				col.FieldName,
 				utils.RemoveNewlines(col.Comment),
@@ -171,10 +166,8 @@ func sqlToGoType(sqlType, columnName string) string {
 		return "int"
 	case "bit", "varbit":
 		return "uint8"
-	case "varchar", "char", "text", "mediumtext", "longtext", "set", "character varying", "character", "uuid":
+	case "varchar", "char", "text", "mediumtext", "longtext", "set", "character varying", "character", "uuid", "enum":
 		return "string"
-	case "enum":
-		return "sql.NullString"
 	case "binary", "varbinary", "blob", "tinyblob", "mediumblob", "longblob", "bytea":
 		return "[]byte"
 	case "date", "datetime", "timestamp", "timestamptz", "time", "timetz":
@@ -187,5 +180,15 @@ func sqlToGoType(sqlType, columnName string) string {
 		return "bool"
 	default:
 		return "interface{}"
+	}
+}
+
+// sqlDefault sql默认值
+func sqlDefault(sqlType string) string {
+	switch sqlType {
+	case "enum":
+		return ";default:null"
+	default:
+		return ""
 	}
 }

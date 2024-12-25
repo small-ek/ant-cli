@@ -35,6 +35,7 @@ import (
 type ` + humpTable + ` struct {
 	req request.` + humpTable + `Request
 	reqForm request.` + humpTable + `RequestForm
+	reqIds  request.IdsRequest
 }
 
 func New` + humpTable + `Service() *` + humpTable + ` {
@@ -44,6 +45,8 @@ func New` + humpTable + `Service() *` + humpTable + ` {
 //SetReq 设置参数
 func (svc *` + humpTable + `) SetReq(req interface{}) *` + humpTable + ` {
 	switch value := req.(type) {
+		case request.IdsRequest:
+			svc.reqIds = value
 		case request.` + humpTable + `Request:
 			svc.req = value
 		case request.` + humpTable + `RequestForm:
@@ -79,5 +82,9 @@ func (svc *` + humpTable + `) Delete() error {
 	return dao.New` + humpTable + `Dao(nil).DeleteById(svc.req.` + humpTable + `.Id)
 }
 
+// Deletes 批量删除
+func (svc *` + humpTable + `) Deletes() error {
+	return dao.New` + humpTable + `Dao(nil).DeleteByIds(svc.reqIds.Ids)
+}
 `
 }

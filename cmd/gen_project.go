@@ -33,7 +33,9 @@ func GenGo(app string) {
 						{Name: "middleware"},
 					}},
 					{Name: "entity", Child: []TreePath{
-						{Name: "request"},
+						{Name: "request", Child: []TreePath{
+							{Name: "common.go", Template: template.RequestCommon()},
+						}},
 						{Name: "models"},
 						{Name: "vo", Child: []TreePath{
 							{Name: "base.go", Template: template.Base(app)},
