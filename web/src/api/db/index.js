@@ -37,12 +37,24 @@ export const getTable = (data) => {
 }
 
 /**
- * getTable 预览代码
+ * previewCode 预览代码
  * @returns {Promise<axios.AxiosResponse<any>>}
  */
 export const previewCode = (data) => {
     return http().request({
         url: 'api/code',
+        method: 'POST',
+        data: data
+    })
+}
+
+/**
+ * GenerateCode 生成代码
+ * @returns {Promise<axios.AxiosResponse<any>>}
+ */
+export const generateCode = (data) => {
+    return http().request({
+        url: 'api/generate_code',
         method: 'POST',
         data: data
     })

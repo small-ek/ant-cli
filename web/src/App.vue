@@ -13,6 +13,7 @@ import Menu from "../src/components/menu/index.vue"
 .bodys {
   min-width: 1200px;
   background-color: var(--color-neutral-1);
-  height: 100vh;
+  height: 100%;
+  min-height: 100vh;
 }
 </style>

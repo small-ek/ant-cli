@@ -29,10 +29,14 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 
 	isImportDate := false
 	isImportJson := false
+	isImportNullString := false
 	isImportDeletedAt := false
 	for _, col := range tableStructure {
 		if col.FieldName == "deleted_at" || col.FieldName == "delete_time" {
 			isImportDeletedAt = true
+		}
+		if col.FieldType == "enum" {
+			isImportNullString = true
 		}
 		if col.FieldName != "deleted_at" && col.FieldName != "delete_time" {
 			switch col.FieldType {
@@ -50,8 +54,12 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 
 	//是否导入JSON
 	if isImportJson == true {
-		importSqlStr := fmt.Sprintf(`"github.com/small-ek/antgo/db/adb/sql"`)
+		importSqlStr := fmt.Sprintf(`"github.com/small-ek/antgo/db/adb/asql"`)
 		buffer.WriteString(importSqlStr)
+	}
+	if isImportNullString == true {
+		importNullStringStr := fmt.Sprintf(`"database/sql"`)
+		buffer.WriteString(importNullStringStr)
 	}
 	//是否导软删除
 	if isImportDeletedAt == true {
@@ -163,8 +171,10 @@ func sqlToGoType(sqlType, columnName string) string {
 		return "int"
 	case "bit", "varbit":
 		return "uint8"
-	case "varchar", "char", "text", "mediumtext", "longtext", "enum", "set", "character varying", "character", "uuid":
+	case "varchar", "char", "text", "mediumtext", "longtext", "set", "character varying", "character", "uuid":
 		return "string"
+	case "enum":
+		return "sql.NullString"
 	case "binary", "varbinary", "blob", "tinyblob", "mediumblob", "longblob", "bytea":
 		return "[]byte"
 	case "date", "datetime", "timestamp", "timestamptz", "time", "timetz":
@@ -172,7 +182,7 @@ func sqlToGoType(sqlType, columnName string) string {
 	case "decimal", "float", "double", "numeric", "real", "double precision":
 		return "float64"
 	case "json", "jsonb":
-		return "sql.Json"
+		return "asql.Json"
 	case "boolean":
 		return "bool"
 	default:

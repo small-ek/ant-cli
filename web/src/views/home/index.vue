@@ -1,7 +1,7 @@
 <script setup>
 import {reactive, ref} from "vue";
 import {useI18n} from "vue-i18n"
-import {getDatabase, getTable, getTableList, previewCode} from "../../api/db/index.js";
+import {generateCode, getDatabase, getTable, getTableList, previewCode} from "../../api/db/index.js";
 import autoCode from "../../components/autoCode/index.vue";
 import {Message} from "@arco-design/web-vue";
 
@@ -129,7 +129,7 @@ const columns = [
     dataIndex: 'comment',
     ellipsis: true,
     tooltip: true,
-    width: 140
+    width: 180
   },
   {
     title: t('table_columns.field_type'),
@@ -143,7 +143,7 @@ const columns = [
     dataIndex: 'field_name',
     ellipsis: true,
     tooltip: true,
-    width: 130
+    width: 150
   },
   {
     title: t('table_columns.required'),
@@ -161,7 +161,7 @@ const columns = [
     title: t('table_columns.conditions'),
     dataIndex: 'conditions',
     slotName: 'conditions',
-    width: 130
+    width: 120
   },
   {
     title: t('table_columns.option'),
@@ -172,7 +172,13 @@ const columns = [
 ];
 
 //关联模型
-const correlationModel = [{name: t('correlationModel.oneToOne'), value: "oneToOne"}, {name: t('correlationModel.oneToMany'), value: "oneToMany"}, {name: t('correlationModel.manyToMany'), value: "manyToMany"}]
+const correlationModel = [{
+  name: t('correlationModel.oneToOne'),
+  value: "oneToOne"
+}, {name: t('correlationModel.oneToMany'), value: "oneToMany"}, {
+  name: t('correlationModel.manyToMany'),
+  value: "manyToMany"
+}]
 
 //获取数据库
 getDatabase().then(res => {
@@ -245,6 +251,21 @@ const getPreviewCode = (is_create) => {
   })
 }
 
+const generate = (module_type) => {
+  generateCode({
+    table_name: form.table,
+    fields: tableData.value,
+    package: form.package_name,
+    module_type: module_type,
+    data_base: form.dbname,
+    table_comment: form.table_comment
+  }).then(res => {
+    Message.info(t('tips.generateSuccess'))
+  }).catch(() => {
+    Message.error(t('tips.generateFail'))
+  })
+}
+
 // editForm 编辑表格
 const editForm = (row, index) => {
   formField.value = {
@@ -267,16 +288,21 @@ const delTable = (index) => {
 
 <template>
   <div class="container">
-    <a-card :style="{ width: '1000px',marginTop:'50px' }" :title="$t('code.generation')" hoverable>
+    <a-card :style="{ width: '1200px',marginTop:'50px' }" :title="$t('code.generation')" hoverable>
       <a-form :rules="rules" :model="form" :style="{width:'850px'}" @submit="handleSubmit">
         <a-form-item field="dbname" :label="$t('code.databaseName')" validate-trigger="blur">
-          <a-select v-model="form.dbname" :placeholder="$t('code.select')" allow-clear allow-search @change="onchangeDbName">
+          <a-select v-model="form.dbname" :placeholder="$t('code.select')" allow-clear allow-search
+                    @change="onchangeDbName">
             <a-option :value="row" v-for="row in dbnameList">{{ row }}</a-option>
           </a-select>
         </a-form-item>
         <a-form-item field="table" :label="$t('code.tableName')" validate-trigger="blur">
-          <a-select v-model="form.table" :placeholder="$t('code.select')" allow-clear allow-search @change="setTableComment">
-            <a-option :value="row.table_name" v-for="row in tableList">{{ row.table_name }}</a-option>
+          <a-select v-model="form.table" :placeholder="$t('code.select')" allow-clear allow-search
+                    @change="setTableComment">
+            <a-option :value="row.table_name" v-for="row in tableList">{{
+                row.table_name
+              }}{{ row.table_comment ? "\n(" + row.table_comment + ")" : '' }}
+            </a-option>
           </a-select>
         </a-form-item>
         <a-form-item field="package_name" :label="$t('code.packageName')" validate-trigger="blur">
@@ -295,7 +321,8 @@ const delTable = (index) => {
         {{ $t("form.addField") }}
       </a-button>
       <!--表格-->
-      <a-table style="margin-top: 10px" :stripe="true" :hoverable="true" :columns="columns" :data="tableData" :pagination="false">
+      <a-table style="margin-top: 10px" :stripe="true" :hoverable="true" :columns="columns" :data="tableData"
+               :pagination="false">
         <template #required="{ rowIndex }">
           <a-radio-group v-if="tableData[rowIndex].field_type!='join'" v-model="tableData[rowIndex].required">
             <a-radio :value="1">{{ $t('tableSelect.ok') }}</a-radio>
@@ -309,13 +336,15 @@ const delTable = (index) => {
           </a-radio-group>
         </template>
         <template #conditions="{ rowIndex }">
-          <a-select v-if="tableData[rowIndex].is_search==1" :style="{width:'100px'}" v-model="tableData[rowIndex].conditions" :placeholder="$t('code.select')">
+          <a-select v-if="tableData[rowIndex].is_search==1" :style="{width:'100px'}"
+                    v-model="tableData[rowIndex].conditions" :placeholder="$t('code.select')">
             <a-option v-for="row in conditionsList" :value="row">{{ row }}</a-option>
           </a-select>
         </template>
         <template #option="{ rowIndex }">
           <a-space v-if="tableData[rowIndex].field_type=='join'">
-            <a-button type="text" style="margin-left: 10px" shape="round" size="mini" @click="editForm(tableData[rowIndex],rowIndex)">
+            <a-button type="text" style="margin-left: 10px" shape="round" size="mini"
+                      @click="editForm(tableData[rowIndex],rowIndex)">
               <template #icon>
                 <icon-eye/>
               </template>
@@ -352,7 +381,8 @@ const delTable = (index) => {
             </a-select>
           </a-form-item>
           <a-form-item field="join_table" :label="$t('form2.join_table')">
-            <a-select :placeholder="$t('code.select')" v-model="formField.join_table" allow-clear allow-search @change="associationTable">
+            <a-select :placeholder="$t('code.select')" v-model="formField.join_table" allow-clear allow-search
+                      @change="associationTable">
               <a-option :value="row.table_name" v-for="row in tableList">{{ row["table_name"] }}</a-option>
             </a-select>
           </a-form-item>
@@ -368,7 +398,7 @@ const delTable = (index) => {
         </a-form>
       </div>
     </a-modal>
-    <div style="margin-top: 15px">
+    <div style="margin-top: 15px;padding-bottom: 20px">
       <a-button type="primary" shape="round" @click="getPreviewCode(false)">
         <template #icon>
           <icon-eye/>
@@ -387,13 +417,14 @@ const delTable = (index) => {
     </div>
     <!--预览代码-->
     <template v-if="preCodeStatus">
-      <autoCode v-model:visible="preCodeStatus" v-model:preCode="preCode"></autoCode>
+      <autoCode v-model:visible="preCodeStatus" v-model:preCode="preCode" @generateCode="generate"></autoCode>
     </template>
   </div>
 </template>
 <style scoped>
 .container {
-  width: 1100px;
+  width: 1200px;
   margin: 0 auto;
+  height: 100%;
 }
 </style>

@@ -5,7 +5,8 @@ import "highlight.js/styles/monokai-sublime.min.css";
 import go from 'highlight.js/lib/languages/go.js';
 import clipboard from 'clipboard';
 import {Message} from "@arco-design/web-vue";
-
+import {useI18n} from "vue-i18n";
+const {t} = useI18n()
 const activeKey = ref(1)
 onMounted(() => {
   nextTick(() => {
@@ -42,6 +43,10 @@ const copyCode = () => {
   Message.info({content: "复制成功", duration: 2000, id: 'copy2'})
 }
 
+const generateCode = () => {
+  emits('generateCode', preCode.value[activeKey.value - 1]["name"])
+}
+
 const onChangeTab = (index) => {
   clipboard.copy(preCode.value[index - 1]['code'])
   Message.info({content: "已复制", duration: 2000, id: 'copy'})
@@ -61,6 +66,15 @@ const onChangeTab = (index) => {
 
     </a-tabs>
     <div>
+      <a-popconfirm :content="t('tips.is_gen_code')" type="info" @ok="generateCode()">
+        <a-button type="primary" style="margin-right: 20px" >
+          <template #icon>
+            <icon-code />
+          </template>
+          生成当前代码
+        </a-button>
+      </a-popconfirm>
+
       <a-button type="primary" style="float: right" @click="copyCode">
         <template #icon>
           <icon-copy/>

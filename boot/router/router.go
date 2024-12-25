@@ -23,6 +23,7 @@ type Template struct {
 	Package      string                    `json:"package"`       // 包名
 	IsCreate     bool                      `json:"is_create"`     // 是否创建
 	DataBase     string                    `json:"data_base"`     // 数据库
+	ModuleType   string                    `json:"module_type"`   // 模块类型
 }
 
 func Router() *gin.Engine {
@@ -207,6 +208,66 @@ func Load(f embed.FS) *gin.Engine {
 			{"name": "Dao", "code": daoStr},
 			{"name": "Model", "code": modelStr},
 		})
+	})
+
+	//生成单个代码
+	app.POST("api/generate_code", func(c *gin.Context) {
+		var code Template
+		if err := c.BindJSON(&code); err != nil {
+			c.JSON(400, gin.H{"error": "Invalid request payload", "details": err.Error()})
+			return
+		}
+
+		var moduleConfig = map[string]struct {
+			Path     string
+			Generate func() string
+		}{
+			"Dao": {
+				Path:     "./app/dao/" + code.TableName + ".go",
+				Generate: func() string { return template.GenDao(code.TableName, code.Fields) },
+			},
+			"Model": {
+				Path:     "./app/entity/models/" + code.TableName + ".go",
+				Generate: func() string { return template.GenGormModel(code.DataBase, code.TableName, code.Fields) },
+			},
+			"Service": {
+				Path:     "./app/service/" + code.TableName + ".go",
+				Generate: func() string { return template.GenService(code.TableName, code.Fields) },
+			},
+			"Request": {
+				Path:     "./app/entity/request/" + code.TableName + ".go",
+				Generate: func() string { return template.GenRequest(code.TableName, code.Fields) },
+			},
+			"Controller": {
+				Path:     "./app/http/" + code.Package + "/" + code.TableName + ".go",
+				Generate: func() string { return template.GenController(code.TableName, code.TableComment, code.Package) },
+			},
+			"Route": {
+				Path:     "./routes/" + code.TableName + ".go",
+				Generate: func() string { return template.GenRoute(code.TableName) },
+			},
+		}
+
+		config, exists := moduleConfig[code.ModuleType]
+		if !exists {
+			c.JSON(400, gin.H{"error": "Invalid module type"})
+			return
+		}
+
+		// 检查文件是否已存在
+		if utils.Exists(config.Path) {
+			c.JSON(409, gin.H{"message": "The file already exists"})
+			return
+		}
+
+		// 生成文件
+		fileContent := config.Generate()
+		if err := utils.WriteFile(config.Path, fileContent); err != nil {
+			c.JSON(500, gin.H{"error": "Failed to write file", "details": err.Error()})
+			return
+		}
+
+		c.JSON(200, gin.H{"message": "success"})
 	})
 
 	return app

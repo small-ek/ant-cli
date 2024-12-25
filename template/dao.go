@@ -19,14 +19,14 @@ func GenDao(table string, tableStructure []TableStructure) string {
 			preloadImport = `"gorm.io/gorm/clause"`
 		}
 		if col.IsSearch == 1 && col.Conditions != "" {
-			whereStr += `sql.Where("` + col.FieldName + `", "` + col.Conditions + `", page.FilterMap["` + col.FieldName + `"]` + `),`
+			whereStr += `asql.Where("` + col.FieldName + `", "` + col.Conditions + `", page.FilterMap["` + col.FieldName + `"]` + `),`
 		}
 	}
 
 	return `package dao
 
 import (
-	"github.com/small-ek/antgo/db/adb/sql"
+	"github.com/small-ek/antgo/db/adb/asql"
 	"github.com/small-ek/antgo/frame/ant"
 	"github.com/small-ek/antgo/utils/page"
 	"gorm.io/gorm"
@@ -76,9 +76,9 @@ func (dao *` + humpTable + `Dao) GetList() (list []models.` + humpTable + `) {
 func (dao *` + humpTable + `Dao) GetPage(page page.PageParam) (list []models.` + humpTable + `, total int64, err error) {
 	err = dao.db.Model(&dao.models).Scopes(
 		` + whereStr + `
-		sql.Filters(page.Filter),
-		sql.Order(page.Order, page.Desc),
-		sql.Paginate(page.PageSize, page.CurrentPage),
+		asql.Filters(page.Filter),
+		asql.Order(page.Order, page.Desc),
+		asql.Paginate(page.PageSize, page.CurrentPage),
 	).` + preload + `Find(&list).Offset(-1).Limit(1).Count(&total).Error
 	return list, total, err
 }
