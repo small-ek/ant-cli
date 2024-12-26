@@ -127,7 +127,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 		} else if col.FieldName == "id" {
 			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;primaryKey;autoIncrement;\" uri:\"%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
 				utils.ToCamelCase(col.FieldName),
-				sqlToGoType(col.FieldType, col.FieldName),
+				noNullSqlToGoType(col.FieldType, col.FieldName),
 				col.FieldName,
 				col.FieldName,
 				col.FieldName,
@@ -156,6 +156,33 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 
 // sqlToGoType 数据库类型
 func sqlToGoType(sqlType, columnName string) string {
+	if columnName == "deleted_at" || columnName == "delete_time" {
+		return "gorm.DeletedAt"
+	}
+	switch sqlType {
+	case "int", "tinyint", "smallint", "mediumint", "bigint", "serial", "bigserial", "int2", "int4", "int8", "integer", "smallserial", "serial2", "serial4", "serial8", "bigserial2", "bigserial4", "bigserial8", "oid":
+		return "*int"
+	case "bit", "varbit":
+		return "uint8"
+	case "varchar", "char", "text", "mediumtext", "longtext", "set", "character varying", "character", "uuid", "enum":
+		return "string"
+	case "binary", "varbinary", "blob", "tinyblob", "mediumblob", "longblob", "bytea":
+		return "[]byte"
+	case "date", "datetime", "timestamp", "timestamptz", "time", "timetz":
+		return "time.Time"
+	case "decimal", "float", "double", "numeric", "real", "double precision":
+		return "float64"
+	case "json", "jsonb":
+		return "asql.Json"
+	case "boolean":
+		return "*bool"
+	default:
+		return "interface{}"
+	}
+}
+
+// noNullSqlToGoType 非指针数据库类型
+func noNullSqlToGoType(sqlType, columnName string) string {
 	if columnName == "deleted_at" || columnName == "delete_time" {
 		return "gorm.DeletedAt"
 	}
