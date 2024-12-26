@@ -71,18 +71,9 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 	buffer.WriteString("\n)\n\n")
 	structStr := fmt.Sprintf("type %s struct { \n", utils.ToCamelCase(table))
 	buffer.WriteString(structStr)
+
 	for _, col := range tableStructure {
-		if col.FieldName == "id" {
-			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;primaryKey;autoIncrement;\" uri:\"%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
-				utils.ToCamelCase(col.FieldName),
-				sqlToGoType(col.FieldType, col.FieldName),
-				col.FieldName,
-				col.FieldName,
-				col.FieldName,
-				col.FieldName,
-				utils.RemoveNewlines(col.Comment),
-				utils.GetComment(col.Comment)))
-		} else if col.FieldName == "created_at" || col.FieldName == "updated_at" || col.FieldName == "create_time" || col.FieldName == "update_time" {
+		if col.FieldName == "created_at" || col.FieldName == "updated_at" || col.FieldName == "create_time" || col.FieldName == "update_time" {
 			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
 				utils.ToCamelCase(col.FieldName),
 				sqlToGoType(col.FieldType, col.FieldName),
@@ -136,6 +127,16 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 					utils.GetComment(col.Comment)))
 			}
 
+		} else if col.FieldName == "id" {
+			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s;primaryKey;autoIncrement;\" uri:\"%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
+				utils.ToCamelCase(col.FieldName),
+				sqlToGoType(col.FieldType, col.FieldName),
+				col.FieldName,
+				col.FieldName,
+				col.FieldName,
+				col.FieldName,
+				utils.RemoveNewlines(col.Comment),
+				utils.GetComment(col.Comment)))
 		} else {
 			buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"column:%s%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
 				utils.ToCamelCase(col.FieldName),
