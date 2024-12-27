@@ -92,7 +92,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 		} else if col.FieldType == "join" { //关联表
 			switch col.JoinType {
 			case "oneToOne":
-				buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"<-:false;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
+				buffer.WriteString(fmt.Sprintf("    %s %s `gorm:\"foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
 					utils.ToCamelCase(col.JoinTable),
 					utils.ToCamelCase(col.JoinTable),
 					utils.ToCamelCase(col.JoinField),
@@ -102,7 +102,7 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 					utils.RemoveNewlines(col.Comment),
 					utils.GetComment(col.Comment)))
 			case "oneToMany":
-				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"<-:false;foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
+				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"foreignKey:%s;references:%s\" json:\"%s\" form:\"%s\" comment:\"%s\"`%s\n",
 					utils.ToCamelCase(col.JoinTable),
 					utils.ToCamelCase(col.JoinTable),
 					utils.ToCamelCase(col.JoinField),
@@ -112,12 +112,14 @@ func GenGormModel(database, table string, tableStructure []TableStructure) strin
 					utils.RemoveNewlines(col.Comment),
 					utils.GetComment(col.Comment)))
 			case "manyToMany":
-				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"<-:false;many2many:%s;foreignKey:%s;References:%s\" json:\"%s\" form:\"%s\" comment:\"%s\" `%s\n",
+				buffer.WriteString(fmt.Sprintf("    %s []%s `gorm:\"many2many:%s;foreignKey:%s;References:%s;joinForeignKey:%s;joinReferences:%s\" json:\"%s\" form:\"%s\" comment:\"%s\" `%s\n",
 					utils.ToCamelCase(col.JoinTable),
 					utils.ToCamelCase(col.JoinTable),
 					utils.Many2Many(table, col.JoinTable),
 					utils.ToCamelCase(col.FieldName),
 					utils.ToCamelCase(col.JoinField),
+					table+"_id",
+					col.JoinTable+"_id",
 					col.JoinTable,
 					col.JoinTable,
 					utils.RemoveNewlines(col.Comment),
