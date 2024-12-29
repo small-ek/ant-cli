@@ -6,7 +6,9 @@
     "packageName": "控制器包名称",
     "select": "请选择",
     "input": "请输入",
-    "verify": "确 认"
+    "verify": "确 认",
+    "isWeb": "是否生成前端代码",
+    "web_package": "前端包名称"
   },
   "verify": {
     "databaseName": "数据库名称是必填项",

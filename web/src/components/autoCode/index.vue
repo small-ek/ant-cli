@@ -30,7 +30,6 @@ const props = defineProps({
 })
 
 let {visible, preCode} = toRefs(props)
-console.log(preCode)
 
 const emits = defineEmits(['update:visible'])
 
@@ -91,5 +90,9 @@ const onChangeTab = (index) => {
   border-radius: 15px;
   white-space: pre-wrap;
   word-wrap: break-word;
+}
+pre {
+  height: 500px; /* 设置固定高度 */
+  overflow-y: scroll; /* 让内容可以纵向滚动 */
 }
 </style>

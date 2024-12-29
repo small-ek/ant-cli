@@ -6,6 +6,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/small-ek/ant-cli/template"
+	"github.com/small-ek/ant-cli/template/web"
 	"github.com/small-ek/ant-cli/utils"
 	"github.com/small-ek/antgo/frame/ant"
 	"github.com/small-ek/antgo/frame/gin_middleware"
@@ -24,6 +25,8 @@ type Template struct {
 	IsCreate     bool                      `json:"is_create"`     // 是否创建
 	DataBase     string                    `json:"data_base"`     // 数据库
 	ModuleType   string                    `json:"module_type"`   // 模块类型
+	IsWeb        bool                      `json:"is_web"`        // 是否web
+	WebPackage   string                    `json:"web_package"`   // web包名
 }
 
 func Router() *gin.Engine {
@@ -200,14 +203,30 @@ func Load(f embed.FS) *gin.Engine {
 			utils.WriteFile("./app/http/"+code.Package+"/"+code.TableName+".go", controllerStr)
 			utils.WriteFile("./routes/"+code.TableName+".go", routeStr)
 		}
-		c.JSON(200, []map[string]interface{}{
+		result := []map[string]interface{}{
 			{"name": "Route", "code": routeStr},
 			{"name": "Controller", "code": controllerStr},
 			{"name": "Request", "code": requestStr},
 			{"name": "Service", "code": serviceStr},
 			{"name": "Dao", "code": daoStr},
 			{"name": "Model", "code": modelStr},
-		})
+		}
+		if code.IsWeb == true {
+			webStr, err := web.Views(code.TableName)
+			if err != nil {
+				c.JSON(409, gin.H{"message": err.Error()})
+				return
+			}
+			result = append(result, map[string]interface{}{"name": "Web", "code": webStr})
+
+			apiStr, err := web.Api(code.TableName)
+			if err != nil {
+				c.JSON(409, gin.H{"message": err.Error()})
+				return
+			}
+			result = append(result, map[string]interface{}{"name": "Api", "code": apiStr})
+		}
+		c.JSON(200, result)
 	})
 
 	//生成单个代码

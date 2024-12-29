@@ -56,7 +56,9 @@ const form = reactive({
   dbname: '',
   table: '',
   package_name: 'api',
-  table_comment: ''
+  table_comment: '',
+  is_web: false,
+  web_package: 'web'
 });
 
 const formField = ref({
@@ -238,7 +240,9 @@ const getPreviewCode = (is_create) => {
     package: form.package_name,
     is_create: is_create,
     data_base: form.dbname,
-    table_comment: form.table_comment
+    table_comment: form.table_comment,
+    is_web: form.is_web,
+    web_package: form.web_package
   }).then(res => {
     if (is_create === false) {
       preCodeStatus.value = true
@@ -258,7 +262,9 @@ const generate = (module_type) => {
     package: form.package_name,
     module_type: module_type,
     data_base: form.dbname,
-    table_comment: form.table_comment
+    table_comment: form.table_comment,
+    is_web: form.is_web,
+    web_package: form.web_package
   }).then(res => {
     Message.info(t('tips.generateSuccess'))
   }).catch(() => {
@@ -307,6 +313,12 @@ const delTable = (index) => {
         </a-form-item>
         <a-form-item field="package_name" :label="$t('code.packageName')" validate-trigger="blur">
           <a-input v-model="form.package_name" :placeholder="$t('code.input')"/>
+        </a-form-item>
+        <a-form-item field="is_web" :label="$t('code.isWeb')" validate-trigger="blur">
+          <a-switch  v-model:model-value="form.is_web"/>
+        </a-form-item>
+        <a-form-item field="web_package" v-if="form.is_web" :label="$t('code.web_package')" validate-trigger="blur">
+          <a-input v-model="form.web_package" :placeholder="$t('code.input')"/>
         </a-form-item>
         <a-form-item>
           <a-space>
