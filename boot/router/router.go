@@ -2,7 +2,6 @@ package router
 
 import (
 	"embed"
-	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/small-ek/ant-cli/template"
@@ -68,7 +67,6 @@ func Load(f embed.FS) *gin.Engine {
 			return
 		}
 		rawURL := c.Request.URL.String()
-		fmt.Println(rawURL)
 		ext := filepath.Ext(rawURL)
 		if ext == ".js" {
 			c.Header("Content-Type", "application/javascript")

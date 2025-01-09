@@ -80,8 +80,15 @@ func main() {
 				Action:  funcs.Build.Action,
 			},
 			{
-				Name:   "rsa",
-				Usage:  "Generate RSA certificate",
+				Name:  "rsa",
+				Usage: "Generate RSA certificate",
+				Flags: []cli.Flag{
+					&cli.IntFlag{
+						Name:  "size",
+						Usage: "Size of the RSA key",
+						Value: 2048, // Default value
+					},
+				},
 				Action: funcs.Rsa.Action,
 			},
 			{

@@ -83,7 +83,7 @@ const sorterChange = (field, sort) => {
 
 const updatedStatus = (status, row) => {
   row.status = status;
-  updates(row).then((res) => {
+  {{.importsApiName}}().updates(row).then((res) => {
     if (res.code === 0) {
       Message.success('操作成功');
     } else {

@@ -15,8 +15,15 @@ type Rsa struct {
 
 // Action
 func (r Rsa) Action(c *cli.Context) error {
+	keySize := c.Int("size")
+	if keySize == 1024 || keySize == 2048 || keySize == 4096 {
+		fmt.Println("有效的密钥长度:", keySize)
+	} else {
+		fmt.Println("无效的密钥长度，使用默认长度2048")
+		keySize = 2048
+	}
 	// 生成RSA私钥
-	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	privateKey, err := rsa.GenerateKey(rand.Reader, keySize)
 	if err != nil {
 		fmt.Println("私钥生成失败:", err)
 		return err
