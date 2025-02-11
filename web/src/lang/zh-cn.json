@@ -43,6 +43,7 @@
     "required": "是否必填",
     "is_search": "是否搜索",
     "conditions": "查询条件",
+    "form_type": "表单类型",
     "option": "操作"
   },
   "correlationModel": {

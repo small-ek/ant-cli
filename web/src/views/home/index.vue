@@ -33,7 +33,8 @@ const newField = ({values, errors}) => {
       join_field: formField.value.join_field,
       required: 0,
       is_search: 0,
-      conditions: ""
+      conditions: "",
+      form_type: "input"
     })
   } else {
     tableData.value[formField.value.update_index] = {
@@ -166,6 +167,12 @@ const columns = [
     width: 120
   },
   {
+    title: t('table_columns.form_type'),
+    dataIndex: 'form_type',
+    slotName: 'form_type',
+    width: 120
+  },
+  {
     title: t('table_columns.option'),
     dataIndex: 'option',
     slotName: 'option',
@@ -286,6 +293,8 @@ const editForm = (row, index) => {
   visible.value = true
 }
 const conditionsList = ["=", "!=", "<", ">", "<=", ">=", "LIKE", "IN", "NOT IN", "BETWEEN", "NOT BETWEEN"];
+const formList = ["input", "password", "switch", "radio-group-btn", "textarea", "number", "select", "checkbox", "tree-select", "tree", "datePicker", "dateRange", "timePicker", "inputTag", "images", "image", "editor"];
+const formTypeList = [{key:"input",label:""}];
 // delTable 删除表格
 const delTable = (index) => {
   tableData.value.splice(index, 1)
@@ -315,7 +324,7 @@ const delTable = (index) => {
           <a-input v-model="form.package_name" :placeholder="$t('code.input')"/>
         </a-form-item>
         <a-form-item field="is_web" :label="$t('code.isWeb')" validate-trigger="blur">
-          <a-switch  v-model:model-value="form.is_web"/>
+          <a-switch v-model:model-value="form.is_web"/>
         </a-form-item>
         <a-form-item field="web_package" v-if="form.is_web" :label="$t('code.web_package')" validate-trigger="blur">
           <a-input v-model="form.web_package" :placeholder="$t('code.input')"/>
@@ -351,6 +360,12 @@ const delTable = (index) => {
           <a-select v-if="tableData[rowIndex].is_search==1" :style="{width:'100px'}"
                     v-model="tableData[rowIndex].conditions" :placeholder="$t('code.select')">
             <a-option v-for="row in conditionsList" :value="row">{{ row }}</a-option>
+          </a-select>
+        </template>
+        <template #form_type="{ rowIndex }">
+          <a-select :style="{width:'100px'}"
+                    v-model="tableData[rowIndex].form_type" :placeholder="$t('code.select')">
+            <a-option v-for="row in formList" :value="row">{{ row }}</a-option>
           </a-select>
         </template>
         <template #option="{ rowIndex }">
