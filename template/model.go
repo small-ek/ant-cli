@@ -163,41 +163,14 @@ func sqlToGoType(sqlType, columnName string) string {
 	}
 	switch sqlType {
 	case "int", "tinyint", "smallint", "mediumint", "bigint", "serial", "bigserial", "int2", "int4", "int8", "integer", "smallserial", "serial2", "serial4", "serial8", "bigserial2", "bigserial4", "bigserial8", "oid":
-		return "*int"
-	case "bit", "varbit":
-		return "uint8"
-	case "varchar", "char", "text", "mediumtext", "longtext", "set", "character varying", "character", "uuid", "enum", "time", "timetz":
-		return "string"
-	case "binary", "varbinary", "blob", "tinyblob", "mediumblob", "longblob", "bytea":
-		return "[]byte"
-	case "date", "datetime", "timestamp", "timestamptz":
-		return "time.Time"
-	case "decimal", "float", "double", "numeric", "real", "double precision":
-		return "float64"
-	case "json", "jsonb":
-		return "asql.Json"
-	case "boolean":
-		return "*bool"
-	default:
-		return "interface{}"
-	}
-}
-
-// noNullSqlToGoType 非指针数据库类型
-func noNullSqlToGoType(sqlType, columnName string) string {
-	if columnName == "deleted_at" || columnName == "delete_time" {
-		return "gorm.DeletedAt"
-	}
-	switch sqlType {
-	case "int", "tinyint", "smallint", "mediumint", "bigint", "serial", "bigserial", "int2", "int4", "int8", "integer", "smallserial", "serial2", "serial4", "serial8", "bigserial2", "bigserial4", "bigserial8", "oid":
 		return "int"
 	case "bit", "varbit":
 		return "uint8"
-	case "varchar", "char", "text", "mediumtext", "longtext", "set", "character varying", "character", "uuid", "enum":
+	case "varchar", "char", "text", "mediumtext", "longtext", "set", "character varying", "character", "uuid", "enum", "time", "timetz", "inet":
 		return "string"
 	case "binary", "varbinary", "blob", "tinyblob", "mediumblob", "longblob", "bytea":
 		return "[]byte"
-	case "date", "datetime", "timestamp", "timestamptz", "time", "timetz":
+	case "date", "datetime", "timestamp", "timestamptz", "timestamp with time zone":
 		return "time.Time"
 	case "decimal", "float", "double", "numeric", "real", "double precision":
 		return "float64"
@@ -206,7 +179,35 @@ func noNullSqlToGoType(sqlType, columnName string) string {
 	case "boolean":
 		return "bool"
 	default:
-		return "interface{}"
+		return "string"
+	}
+}
+
+// noNullSqlToGoType 非指针数据库类型
+func noNullSqlToGoType(sqlType, columnName string) string {
+
+	if columnName == "deleted_at" || columnName == "delete_time" {
+		return "gorm.DeletedAt"
+	}
+	switch sqlType {
+	case "int", "tinyint", "smallint", "mediumint", "bigint", "serial", "bigserial", "int2", "int4", "int8", "integer", "smallserial", "serial2", "serial4", "serial8", "bigserial2", "bigserial4", "bigserial8", "oid":
+		return "int"
+	case "bit", "varbit":
+		return "uint8"
+	case "varchar", "char", "text", "mediumtext", "longtext", "set", "character varying", "character", "uuid", "enum", "inet":
+		return "string"
+	case "binary", "varbinary", "blob", "tinyblob", "mediumblob", "longblob", "bytea":
+		return "[]byte"
+	case "date", "datetime", "timestamp", "timestamptz", "time", "timetz", "timestamp with time zone":
+		return "time.Time"
+	case "decimal", "float", "double", "numeric", "real", "double precision":
+		return "float64"
+	case "json", "jsonb":
+		return "asql.Json"
+	case "boolean":
+		return "bool"
+	default:
+		return "string"
 	}
 }
 
