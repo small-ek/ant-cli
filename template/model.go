@@ -166,11 +166,11 @@ func sqlToGoType(sqlType, columnName string) string {
 		return "int"
 	case "bit", "varbit":
 		return "uint8"
-	case "varchar", "char", "text", "mediumtext", "longtext", "set", "character varying", "character", "uuid", "enum", "time", "timetz", "inet":
+	case "varchar", "char", "text", "mediumtext", "longtext", "set", "character varying", "character", "uuid", "enum", "inet", "date", "time", "timetz":
 		return "string"
 	case "binary", "varbinary", "blob", "tinyblob", "mediumblob", "longblob", "bytea":
 		return "[]byte"
-	case "date", "datetime", "timestamp", "timestamptz", "timestamp with time zone":
+	case "datetime", "timestamp", "timestamptz", "timestamp with time zone":
 		return "time.Time"
 	case "decimal", "float", "double", "numeric", "real", "double precision":
 		return "float64"
@@ -194,11 +194,11 @@ func noNullSqlToGoType(sqlType, columnName string) string {
 		return "int"
 	case "bit", "varbit":
 		return "uint8"
-	case "varchar", "char", "text", "mediumtext", "longtext", "set", "character varying", "character", "uuid", "enum", "inet":
+	case "varchar", "char", "text", "mediumtext", "longtext", "set", "character varying", "character", "uuid", "enum", "inet", "date", "time", "timetz":
 		return "string"
 	case "binary", "varbinary", "blob", "tinyblob", "mediumblob", "longblob", "bytea":
 		return "[]byte"
-	case "date", "datetime", "timestamp", "timestamptz", "time", "timetz", "timestamp with time zone":
+	case "datetime", "timestamp", "timestamptz", "timestamp with time zone":
 		return "time.Time"
 	case "decimal", "float", "double", "numeric", "real", "double precision":
 		return "float64"
