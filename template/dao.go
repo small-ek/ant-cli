@@ -26,6 +26,7 @@ func GenDao(table string, tableStructure []TableStructure) string {
 	return `package dao
 
 import (
+	"context"
 	"github.com/small-ek/antgo/db/adb/asql"
 	"github.com/small-ek/antgo/frame/ant"
 	"github.com/small-ek/antgo/utils/page"

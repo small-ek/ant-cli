@@ -23,6 +23,7 @@ func GenService(table string, tableStructure []TableStructure) string {
 	return `package service
 
 import (
+	"context"
 	"github.com/small-ek/antgo/os/alog"
 	"go.uber.org/zap"
 	"reflect"
@@ -36,6 +37,7 @@ type ` + humpTable + ` struct {
 	req request.` + humpTable + `Request
 	reqForm request.` + humpTable + `RequestForm
 	reqIds  request.IdsRequest
+	ctx     context.Context
 }
 
 func New` + humpTable + `Service() *` + humpTable + ` {
@@ -60,7 +62,7 @@ func (svc *` + humpTable + `) SetReq(ctx context.Context,req interface{}) *` + h
 }
 
 // SetCtx 设置上下文
-func (svc *TLearningResourceTag) SetCtx(ctx context.Context) *` + humpTable + ` {
+func (svc *` + humpTable + `) SetCtx(ctx context.Context) *` + humpTable + ` {
 	svc.ctx = ctx
 	return svc
 }
