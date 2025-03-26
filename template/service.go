@@ -50,6 +50,7 @@ func (svc *` + humpTable + `) SetReq(req interface{}) *` + humpTable + ` {
 		case request.` + humpTable + `Request:
 			svc.req = value
 		case request.` + humpTable + `RequestForm:
+			svc.reqForm.` + humpTable + ` = models.` + humpTable + `{}
 			conv.ToStruct(value, &svc.reqForm.` + humpTable + `)
 		default:
 			alog.Write.Error("SetReq", zap.Any("Unsupported request type", reflect.TypeOf(value)))
