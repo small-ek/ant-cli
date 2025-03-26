@@ -51,7 +51,7 @@ func (ctrl *` + humpTable + `Controller) Index(c *gin.Context) {
 		return
 	}
 
-	list, total, err := ctrl.` + humpTable + `Service.SetReq(req).Index()
+	list, total, err := ctrl.` + humpTable + `Service.SetReq(c,req).Index()
 	if err != nil {
 		ctrl.Fail(c, vo.FAILED, err)
 		return
@@ -75,7 +75,7 @@ func (ctrl *` + humpTable + `Controller) Show(c *gin.Context) {
 		return
 	}
 
-	result := ctrl.` + humpTable + `Service.SetReq(req).Show()
+	result := ctrl.` + humpTable + `Service.SetReq(c,req).Show()
 	ctrl.Success(c, vo.SUCCESS, result)
 }
 
@@ -96,7 +96,7 @@ func (ctrl *` + humpTable + `Controller) Create(c *gin.Context) {
 		return
 	}
 
-	if err := ctrl.` + humpTable + `Service.SetReq(req).Store(); err != nil {
+	if err := ctrl.` + humpTable + `Service.SetReq(c,req).Store(); err != nil {
 		ctrl.Fail(c, vo.CREATION_FAILED, err)
 		return
 	}
@@ -120,7 +120,7 @@ func (ctrl *` + humpTable + `Controller) Update(c *gin.Context) {
 		return
 	}
 
-	if err := ctrl.` + humpTable + `Service.SetReq(req).Update();err!=nil{
+	if err := ctrl.` + humpTable + `Service.SetReq(c,req).Update();err!=nil{
 		ctrl.Fail(c, vo.UPDATE_FAILED, err)
 		return
 	}
@@ -143,7 +143,7 @@ func (ctrl *` + humpTable + `Controller) Delete(c *gin.Context) {
 		return
 	}
 
-	if err := ctrl.` + humpTable + `Service.SetReq(req).Delete(); err != nil {
+	if err := ctrl.` + humpTable + `Service.SetReq(c,req).Delete(); err != nil {
 		ctrl.Fail(c, vo.DELETE_FAILED, err)
 		return
 	}

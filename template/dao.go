@@ -39,11 +39,11 @@ type ` + humpTable + `Dao struct {
 	models *models.` + humpTable + `
 }
 
-func New` + humpTable + `Dao(db *gorm.DB) *` + humpTable + `Dao {
+func New` + humpTable + `Dao(ctx context.Context,db *gorm.DB) *` + humpTable + `Dao {
 	if db == nil {
 		db = ant.Db()
 	}
-	return &` + humpTable + `Dao{db: db}
+	return &` + humpTable + `Dao{db: db.WithContext(ctx)}
 }
 
 // Create

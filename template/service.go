@@ -43,7 +43,8 @@ func New` + humpTable + `Service() *` + humpTable + ` {
 }
 
 //SetReq 设置参数
-func (svc *` + humpTable + `) SetReq(req interface{}) *` + humpTable + ` {
+func (svc *` + humpTable + `) SetReq(ctx context.Context,req interface{}) *` + humpTable + ` {
+	svc.ctx = ctx
 	switch value := req.(type) {
 		case request.IdsRequest:
 			svc.reqIds = value
@@ -58,34 +59,40 @@ func (svc *` + humpTable + `) SetReq(req interface{}) *` + humpTable + ` {
 	return svc
 }
 
+// SetCtx 设置上下文
+func (svc *TLearningResourceTag) SetCtx(ctx context.Context) *` + humpTable + ` {
+	svc.ctx = ctx
+	return svc
+}
+
 // Index 分页
 func (svc *` + humpTable + `) Index() ([]models.` + humpTable + `, int64, error) {
-	return dao.New` + humpTable + `Dao(nil).GetPage(svc.req.PageParam)
+	return dao.New` + humpTable + `Dao(svc.ctx,nil).GetPage(svc.req.PageParam)
 }
 
 // Show 查询单个
 func (svc *` + humpTable + `) Show() models.` + humpTable + ` {
-	return dao.New` + humpTable + `Dao(nil).GetById(svc.req.` + humpTable + `.Id)
+	return dao.New` + humpTable + `Dao(svc.ctx,nil).GetById(svc.req.` + humpTable + `.Id)
 }
 
 // Store 添加
 func (svc *` + humpTable + `) Store() error {
-	return dao.New` + humpTable + `Dao(nil).Create(svc.reqForm.` + humpTable + `)
+	return dao.New` + humpTable + `Dao(svc.ctx,nil).Create(svc.reqForm.` + humpTable + `)
 }
 
 // Update 修改
 func (svc *` + humpTable + `) Update() error {
-	return dao.New` + humpTable + `Dao(nil).Update(svc.reqForm.` + humpTable + `)
+	return dao.New` + humpTable + `Dao(svc.ctx,nil).Update(svc.reqForm.` + humpTable + `)
 }
 
 // Delete 删除
 func (svc *` + humpTable + `) Delete() error {
-	return dao.New` + humpTable + `Dao(nil).DeleteById(svc.req.` + humpTable + `.Id)
+	return dao.New` + humpTable + `Dao(svc.ctx,nil).DeleteById(svc.req.` + humpTable + `.Id)
 }
 
 // Deletes 批量删除
 func (svc *` + humpTable + `) Deletes() error {
-	return dao.New` + humpTable + `Dao(nil).DeleteByIds(svc.reqIds.Ids)
+	return dao.New` + humpTable + `Dao(svc.ctx,nil).DeleteByIds(svc.reqIds.Ids)
 }
 `
 }
