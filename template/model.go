@@ -216,6 +216,8 @@ func sqlDefault(sqlType string) string {
 	switch sqlType {
 	case "enum":
 		return ";default:null"
+	case "date":
+		return ";default:null"
 	default:
 		return ""
 	}

@@ -9,8 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/small-ek/antgo/frame/gin_middleware"
 	"github.com/small-ek/antgo/os/config"
-	"github.com/swaggo/files"
-	"github.com/swaggo/gin-swagger"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"io/ioutil"
 	_ "` + name + `/docs"
 	"` + name + `/routes"
@@ -26,7 +26,7 @@ func Router() *gin.Engine {
 		app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
-	app.Use(requestid.New()).Use(gin_middleware.Recovery()).Use(gin_middleware.Logger())
+	app.Use(requestid.New()).Use(gin_middleware.Recovery()).Use(gin_middleware.Logger()).Use(gin_middleware.WithContextRequestID())
 	//跨域处理
 	if config.GetBool("system.cors") == true {
 		corsConfig := cors.DefaultConfig()
