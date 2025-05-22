@@ -13,7 +13,7 @@ import (
 func LoadSrv(f embed.FS) {
 	gin.ForceConsoleColor()
 
-	configPath := flag.String("config", "./config/config.toml", "Configuration file path")
+	configPath := flag.String("config", "./config/config_dev.toml", "Configuration file path")
 
 	flag.Parse()
 
