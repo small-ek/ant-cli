@@ -8,7 +8,7 @@ import (
 	"github.com/small-ek/ant-cli/template/web"
 	"github.com/small-ek/ant-cli/utils"
 	"github.com/small-ek/antgo/frame/ant"
-	"github.com/small-ek/antgo/frame/gin_middleware"
+	"github.com/small-ek/antgo/net/httpx/middleware/agin"
 	"github.com/small-ek/antgo/os/config"
 	"io/fs"
 	"io/ioutil"
@@ -40,7 +40,7 @@ func Router() *gin.Engine {
 	}
 
 	app := gin.New()
-	app.Use(gin_middleware.Recovery())
+	app.Use(agin.Recovery())
 
 	// 跨域处理
 	// CORS handling
@@ -194,7 +194,18 @@ func Load(embeddedFiles embed.FS) *gin.Engine {
 		modelStr := template.GenGormModel(code.DataBase, code.TableName, code.Fields)
 		daoStr := template.GenDao(code.TableName, code.Fields)
 		serviceStr := template.GenService(code.TableName, code.Fields)
-		controllerStr := template.GenController(code.TableName, code.TableComment, code.Package)
+		//controllerStr := template.GenController(code.TableName, code.TableComment, code.Package)
+		controllerStr := template.GenController(template.ControllerData{
+			Package:   code.Package,
+			TableName: code.TableName,
+			Comment:   code.TableComment,
+			HasCreate: true,
+			HasUpdate: true,
+			HasDelete: true,
+			HasIndex:  true,
+			HasShow:   true,
+		})
+
 		routeStr := template.GenRoute(code.TableName)
 		requestStr := template.GenRequest(code.TableName, code.Fields)
 
@@ -266,8 +277,19 @@ func Load(embeddedFiles embed.FS) *gin.Engine {
 				Generate: func() string { return template.GenRequest(code.TableName, code.Fields) },
 			},
 			"Controller": {
-				Path:     "./app/http/" + code.Package + "/" + code.TableName + ".go",
-				Generate: func() string { return template.GenController(code.TableName, code.TableComment, code.Package) },
+				Path: "./app/http/" + code.Package + "/" + code.TableName + ".go",
+				Generate: func() string {
+					return template.GenController(template.ControllerData{
+						Package:   code.Package,
+						TableName: code.TableName,
+						Comment:   code.TableComment,
+						HasCreate: true,
+						HasUpdate: true,
+						HasDelete: true,
+						HasIndex:  true,
+						HasShow:   true,
+					})
+				},
 			},
 			"Route": {
 				Path:     "./routes/" + code.TableName + ".go",

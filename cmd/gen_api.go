@@ -6,6 +6,7 @@ import (
 	"github.com/small-ek/ant-cli/template"
 	"github.com/small-ek/ant-cli/utils"
 	"github.com/small-ek/antgo/frame/ant"
+	"github.com/small-ek/antgo/utils/conv"
 	"github.com/urfave/cli/v2"
 	"strings"
 )
@@ -60,7 +61,17 @@ func (b GenApi) Action(c *cli.Context) error {
 	getRequestStr := template.GenRequest(tableStr[1], tableStructure)
 	utils.WriteFile("./app/entity/request/"+tableStr[1]+".go", getRequestStr)
 	// 生成Controller
-	getControllerStr := template.GenController(tableStr[1], getTable["table_comment"].(string), "api")
+	//getControllerStr := template.GenController(tableStr[1], getTable["table_comment"].(string), "api")
+	getControllerStr := template.GenController(template.ControllerData{
+		Package:   conv.String(getTable["table_comment"]),
+		TableName: tableStr[1],
+		Comment:   "api",
+		HasCreate: true,
+		HasUpdate: true,
+		HasDelete: true,
+		HasIndex:  true,
+		HasShow:   true,
+	})
 	utils.WriteFile("./app/http/api/"+tableStr[1]+".go", getControllerStr)
 	// 生成Route
 	getRouteStr := template.GenRoute(tableStr[1])
