@@ -1,32 +1,17 @@
 package template
 
 import (
-	"fmt"
 	"github.com/small-ek/ant-cli/utils"
 )
 
 // GenService 生成服务端
-func GenService(table string, tableStructure []TableStructure) string {
+func GenService(table string, _ []TableStructure) string {
 	getFileName := utils.GetFileName()
 	humpTable := utils.ToCamelCase(table)
-	requestStr := ""
-	for _, col := range tableStructure {
-		if col.Required == 1 {
-			requestStr += fmt.Sprintf("svc.req.%s.%s = value.%s\n",
-				utils.ToCamelCase(table),
-				utils.ToCamelCase(col.FieldName),
-				utils.ToCamelCase(col.FieldName),
-			)
-		}
-
-	}
 	return `package service
 
 import (
 	"context"
-	"github.com/small-ek/antgo/os/alog"
-	"go.uber.org/zap"
-	"reflect"
 	"` + getFileName + `/app/dao"
 	"` + getFileName + `/app/entity/models"
 	"` + getFileName + `/app/entity/request"
@@ -34,67 +19,70 @@ import (
 )
 
 type ` + humpTable + ` struct {
-	req request.` + humpTable + `Request
-	reqForm request.` + humpTable + `RequestForm
-	reqIds  request.IdsRequest
+	dao *dao.` + humpTable + `Dao
 	ctx     context.Context
 }
 
-func New` + humpTable + `Service() *` + humpTable + ` {
-	return &` + humpTable + `{}
-}
-
-//SetReq 设置参数
-func (svc *` + humpTable + `) SetReq(ctx context.Context,req interface{}) *` + humpTable + ` {
-	svc.ctx = ctx
-	switch value := req.(type) {
-		case request.IdsRequest:
-			svc.reqIds = value
-		case request.` + humpTable + `Request:
-			svc.req = value
-		case request.` + humpTable + `RequestForm:
-			svc.reqForm.` + humpTable + ` = models.` + humpTable + `{}
-			conv.ToStruct(value, &svc.reqForm.` + humpTable + `)
-		default:
-			alog.Write.Error("SetReq", zap.Any("Unsupported request type", reflect.TypeOf(value)))
+func New` + humpTable + `Service(ctx context.Context) *` + humpTable + ` {
+	return &` + humpTable + `{
+		dao: dao.New` + humpTable + `Dao(ctx, nil),
+		ctx: ctx,
 	}
-	return svc
 }
 
 // SetCtx 设置上下文
 func (svc *` + humpTable + `) SetCtx(ctx context.Context) *` + humpTable + ` {
 	svc.ctx = ctx
+	svc.dao = dao.New` + humpTable + `Dao(ctx, nil)
 	return svc
 }
 
+// bindForm 将请求参数绑定到模型
+func (svc *` + humpTable + `) bindForm(req request.` + humpTable + `RequestForm) (models.` + humpTable + `, error) {
+	var data models.` + humpTable + `
+	if err := conv.ToStruct(req, &data); err != nil {
+		return data, err
+	}
+	return data, nil
+}
+
 // Index 分页
-func (svc *` + humpTable + `) Index() ([]models.` + humpTable + `, int64, error) {
-	return dao.New` + humpTable + `Dao(svc.ctx,nil).GetPage(svc.req.PageParam)
+func (svc *` + humpTable + `) Index(req request.` + humpTable + `Request) ([]models.` + humpTable + `, int64, error) {
+	return svc.dao.GetPage(req.PageParam)
 }
 
 // Show 查询单个
-func (svc *` + humpTable + `) Show() models.` + humpTable + ` {
-	return dao.New` + humpTable + `Dao(svc.ctx,nil).GetById(svc.req.` + humpTable + `.Id)
+func (svc *` + humpTable + `) Show(req request.` + humpTable + `Request) models.` + humpTable + ` {
+	return svc.dao.GetById(req.Id)
 }
 
 // Store 添加
-func (svc *` + humpTable + `) Store() error {
-	return dao.New` + humpTable + `Dao(svc.ctx,nil).Create(svc.reqForm.` + humpTable + `)
+func (svc *` + humpTable + `) Store(req request.` + humpTable + `RequestForm) error {
+	data, err := svc.bindForm(req)
+	if err != nil {
+		return err
+	}
+	_, err = svc.dao.Create(&data)
+	return err
 }
 
 // Update 修改
-func (svc *` + humpTable + `) Update() error {
-	return dao.New` + humpTable + `Dao(svc.ctx,nil).Update(svc.reqForm.` + humpTable + `)
+func (svc *` + humpTable + `) Update(req request.` + humpTable + `RequestForm) error {
+	data, err := svc.bindForm(req)
+	if err != nil {
+		return err
+	}
+	return svc.dao.Update(data)
 }
 
 // Delete 删除
-func (svc *` + humpTable + `) Delete() error {
-	return dao.New` + humpTable + `Dao(svc.ctx,nil).DeleteById(svc.req.` + humpTable + `.Id)
+func (svc *` + humpTable + `) Delete(req request.` + humpTable + `Request) error {
+	return svc.dao.DeleteById(req.Id)
 }
 
 // Deletes 批量删除
-func (svc *` + humpTable + `) Deletes() error {
-	return dao.New` + humpTable + `Dao(svc.ctx,nil).DeleteByIds(svc.reqIds.Ids)
+func (svc *` + humpTable + `) Deletes(req request.IdsRequest) error {
+	return svc.dao.DeleteByIds(req.Ids)
 }
 `
 }

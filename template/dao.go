@@ -2,6 +2,7 @@ package template
 
 import (
 	"github.com/small-ek/ant-cli/utils"
+	"strings"
 )
 
 // table 表名称
@@ -12,6 +13,7 @@ func GenDao(table string, tableStructure []TableStructure) string {
 	smallHumpTable := utils.ToCamelCaseLower(table)
 	preload := ""
 	preloadImport := ""
+	convImport := ""
 	whereStr := ""
 	for _, col := range tableStructure {
 		if col.FieldType == "join" {
@@ -19,7 +21,14 @@ func GenDao(table string, tableStructure []TableStructure) string {
 			preloadImport = `"gorm.io/gorm/clause"`
 		}
 		if col.IsSearch == 1 && col.Conditions != "" {
-			whereStr += `asql.Where("` + col.FieldName + `", "` + col.Conditions + `", page.FilterMap["` + col.FieldName + `"]` + `),`
+			condition := strings.ToUpper(strings.TrimSpace(col.Conditions))
+			switch condition {
+			case "LIKE", "ILIKE", "NOT LIKE", "NOT ILIKE":
+				convImport = `"github.com/small-ek/antgo/utils/conv"`
+				whereStr += `asql.Where("` + col.FieldName + `", "` + condition + `", "%"+conv.String(page.FilterMap["` + col.FieldName + `"])+"%"),`
+			default:
+				whereStr += `asql.Where("` + col.FieldName + `", "` + condition + `", page.FilterMap["` + col.FieldName + `"]),`
+			}
 		}
 	}
 
@@ -30,6 +39,7 @@ import (
 	"github.com/small-ek/antgo/db/adb/asql"
 	"github.com/small-ek/antgo/frame/ant"
 	"github.com/small-ek/antgo/utils/page"
+	` + convImport + `
 	"gorm.io/gorm"
 	"` + getFileName + `/app/entity/models"
 	` + preloadImport + `
@@ -48,8 +58,11 @@ func New` + humpTable + `Dao(ctx context.Context,db *gorm.DB) *` + humpTable + `
 }
 
 // Create
-func (dao *` + humpTable + `Dao) Create(` + smallHumpTable + ` models.` + utils.ToCamelCase(table) + `) error {
-	return dao.db.Create(&` + smallHumpTable + `).Error
+func (dao *` + humpTable + `Dao) Create(` + smallHumpTable + ` *models.` + utils.ToCamelCase(table) + `) (int, error) {
+	if err := dao.db.Create(` + smallHumpTable + `).Error; err != nil {
+		return 0, err
+	}
+	return ` + smallHumpTable + `.Id, nil
 }
 
 // DeleteById

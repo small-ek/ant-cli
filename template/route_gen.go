@@ -20,7 +20,7 @@ func ` + humpTable + `Route(route *gin.RouterGroup) {
 	{
 		v1.GET("", ` + smallHumpTable + `Controller.Index)
 		v1.GET(":id", ` + smallHumpTable + `Controller.Show)
-		v1.DELETE(":id", ` + smallHumpTable + `Controller.Delete)
+		v1.DELETE("", ` + smallHumpTable + `Controller.Delete)
 		v1.POST("", ` + smallHumpTable + `Controller.Create)
 		v1.PUT(":id", ` + smallHumpTable + `Controller.Update)
 	}

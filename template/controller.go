@@ -3,10 +3,11 @@ package template
 import (
 	"bytes"
 	"context"
+	"text/template"
+
 	"github.com/small-ek/ant-cli/utils"
 	"github.com/small-ek/antgo/os/alog"
 	"go.uber.org/zap"
-	"text/template"
 )
 
 // ControllerData 定义生成控制器需要的数据结构
@@ -46,13 +47,10 @@ import (
 
 type {{.TableCamel}}Controller struct {
 	vo.Base
-	{{.TableCamel}}Service *service.{{.TableCamel}}
 }
 
 func New{{.TableCamel}}Controller() *{{.TableCamel}}Controller {
-	return &{{.TableCamel}}Controller{
-		{{.TableCamel}}Service: service.New{{.TableCamel}}Service(),
-	}
+	return &{{.TableCamel}}Controller{}
 }
 
 {{- if .HasIndex }}
@@ -75,7 +73,7 @@ func (ctrl *{{.TableCamel}}Controller) Index(c *gin.Context) {
 		return
 	}
 
-	list, total, err := ctrl.{{.TableCamel}}Service.SetReq(c, req).Index()
+	list, total, err := service.New{{.TableCamel}}Service(c).Index(req)
 	if err != nil {
 		ctrl.Fail(c, vo.FAILED, err)
 		return
@@ -99,7 +97,7 @@ func (ctrl *{{.TableCamel}}Controller) Show(c *gin.Context) {
 		return
 	}
 
-	result := ctrl.{{.TableCamel}}Service.SetReq(c, req).Show()
+	result := service.New{{.TableCamel}}Service(c).Show(req)
 	ctrl.Success(c, vo.SUCCESS, result)
 }
 {{- end }}
@@ -120,7 +118,7 @@ func (ctrl *{{.TableCamel}}Controller) Create(c *gin.Context) {
 		return
 	}
 
-	if err := ctrl.{{.TableCamel}}Service.SetReq(c, req).Store(); err != nil {
+	if err := service.New{{.TableCamel}}Service(c).Store(req); err != nil {
 		ctrl.Fail(c, vo.CREATION_FAILED, err)
 		return
 	}
@@ -144,7 +142,7 @@ func (ctrl *{{.TableCamel}}Controller) Update(c *gin.Context) {
 		return
 	}
 
-	if err := ctrl.{{.TableCamel}}Service.SetReq(c, req).Update(); err != nil {
+	if err := service.New{{.TableCamel}}Service(c).Update(req); err != nil {
 		ctrl.Fail(c, vo.UPDATE_FAILED, err)
 		return
 	}
@@ -157,17 +155,18 @@ func (ctrl *{{.TableCamel}}Controller) Update(c *gin.Context) {
 // @Summary 删除{{.Comment}}数据
 // @Accept json
 // @Produce json
+// @Param data body request.IdsRequest true "删除参数"
 // @Success 0 {object} response.Write
 // @Failure 1 {object} response.Write
-// @Router /{{.TableKebab}}/:id [delete]
+// @Router /{{.TableKebab}} [delete]
 func (ctrl *{{.TableCamel}}Controller) Delete(c *gin.Context) {
-	var req request.{{.TableCamel}}Request
-	if err := c.ShouldBindUri(&req); err != nil {
+	var req request.IdsRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		ctrl.Fail(c, vo.INVALID_REQUEST_PARAMETERS, err)
 		return
 	}
 
-	if err := ctrl.{{.TableCamel}}Service.SetReq(c, req).Delete(); err != nil {
+	if err := service.New{{.TableCamel}}Service(c).Deletes(req); err != nil {
 		ctrl.Fail(c, vo.DELETE_FAILED, err)
 		return
 	}
